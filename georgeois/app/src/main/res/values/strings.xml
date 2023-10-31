@@ -1,5 +1,13 @@
 <resources>
     <string name="app_name">거르주아</string>
+    <string name="app_name_eng">Georgeois</string>
 
+    <!-- 메뉴이름 -->
+    <string name="menu_home">홈</string>
+    <string name="menu_chatting">오픈채팅</string>
+    <string name="menu_board">꿀팁게시판</string>
+    <string name="menu_myPage">마이페이지</string>
+    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
 </resources>

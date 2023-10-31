@@ -6,8 +6,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="android:windowBackground">@color/white</item>
         <item name="colorError">@color/accentRed</item>
-        <item name="statusBarBackground">@color/colorPrimary</item>
-
+        <item name="android:statusBarColor">@color/accentGray</item>
         <!-- 툴바 테마 스타일 설정 -->
         <item name="toolbarStyle">@style/Theme.Georgeois.Toolbar</item>
     </style>
@@ -20,6 +19,14 @@
         <item name="android:gravity">center</item>
         <item name="titleCentered">true</item>
     </style>
+
+    <!--바텀 네비게이션 item text-->
+    <style name="Theme.Georgeois.BottomNavigation">
+        <item name="android:fontFamily">@font/space</item>
+        <item name="android:textSize">@dimen/font_size_14sp</item>
+        <item name="android:background">@android:color/transparent</item>
+    </style>
+
 
 
     <style name="Theme.Georgeois" parent="Base.Theme.Georgeois" />
