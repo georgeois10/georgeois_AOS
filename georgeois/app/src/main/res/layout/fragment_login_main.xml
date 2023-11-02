@@ -37,8 +37,7 @@
                 android:textStyle="bold"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/space"
-                android:textColor="@color/accentGray"
+                style="@style/Theme.Georgeois.Text"
                 android:text="거지에서 부르주아의 삶으로"
                 android:textSize="@dimen/font_size_20sp" />
 
@@ -48,9 +47,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/margin_10dp"
                 android:layout_marginTop="@dimen/margin_10dp"
-                android:fontFamily="@font/space"
+                style="@style/Theme.Georgeois.Text"
                 android:text="@string/app_name"
-                android:textColor="@color/accentGray"
                 android:textSize="60sp"
                 android:textStyle="bold" />
             <Space
@@ -110,10 +108,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:layout_margin="@dimen/margin_8dp"
-                    android:fontFamily="@font/space"
-                    android:textColor="@color/black"
+                    style="@style/Theme.Georgeois.Text"
                     android:textSize="@dimen/font_size_16sp"
-                    style="bold"
                     android:text="아이디 찾기" />
 
                 <View
@@ -121,17 +117,15 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:layout_margin="@dimen/margin_4dp"
-                    android:background="?android:attr/listDivider" />
+                    android:background="@color/accentGray" />
                 <TextView
                     android:id="@+id/textView_loginMain_findPw"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:layout_margin="@dimen/margin_8dp"
-                    android:fontFamily="@font/space"
-                    android:textColor="@color/black"
                     android:textSize="@dimen/font_size_16sp"
-                    style="bold"
+                    style="@style/Theme.Georgeois.Text"
                     android:text="비밀번호 찾기" />
 
                 <View
@@ -139,7 +133,7 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:layout_margin="@dimen/margin_4dp"
-                    android:background="?android:attr/listDivider" />
+                    android:background="@color/accentGray" />
 
                 <TextView
                     android:id="@+id/textView_loginMain_join"
@@ -147,9 +141,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:layout_margin="@dimen/margin_8dp"
-                    android:fontFamily="@font/space"
-                    android:textColor="@color/black"
-                    style="bold"
+                    style="@style/Theme.Georgeois.Text"
                     android:textSize="@dimen/font_size_16sp"
                     android:text="회원가입" />
             </LinearLayout>
@@ -184,8 +176,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:layout_gravity="center"
-                        android:fontFamily="@font/space"
-                        android:textColor="@color/black"
+                        style="@style/Theme.Georgeois.Text"
                         android:textSize="@dimen/font_size_16sp"
                         android:text="카카오 로그인" />
                 </LinearLayout>
@@ -214,8 +205,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:fontFamily="@font/space"
-                        android:textColor="@color/black"
+                        style="@style/Theme.Georgeois.Text"
                         android:textSize="@dimen/font_size_16sp"
                         android:text="네이버 로그인" />
                 </LinearLayout>

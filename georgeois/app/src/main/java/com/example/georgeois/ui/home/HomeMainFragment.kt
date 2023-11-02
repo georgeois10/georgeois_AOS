@@ -9,7 +9,7 @@ import com.example.georgeois.R
 
 
 class HomeMainFragment : Fragment() {
-
+    
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
