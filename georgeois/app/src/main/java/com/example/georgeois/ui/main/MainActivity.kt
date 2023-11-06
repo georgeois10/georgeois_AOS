@@ -1,13 +1,13 @@
 package com.example.georgeois.ui.main
 
-import android.Manifest
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.SystemClock
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.example.georgeois.R
 import com.example.georgeois.databinding.ActivityMainBinding
+import com.example.georgeois.ui.home.HomeRegisterFragment
+import com.example.georgeois.ui.home.HomeMainFragment
 import com.example.georgeois.ui.user.LoginMainFragment
 import com.google.android.material.transition.MaterialSharedAxis
 
@@ -28,6 +28,8 @@ class MainActivity : AppCompatActivity() {
     companion object{
         val MAIN_FRAGMENT = "MainFragment"
         val LOGIN_MAIN_FRAGMENT = "LoginMainFragment"
+        val HOME_MAIN_FRAGMENT = "HomeMainFragment"
+        val HOME_REGISTER_FRAGMENT = "HomeRegisterFragment"
     }
     fun replaceFragment(name:String, addToBackStack:Boolean, bundle:Bundle?){
         // Fragment 교체 상태로 설정한다.
@@ -42,6 +44,8 @@ class MainActivity : AppCompatActivity() {
         newFragment = when(name){
             MAIN_FRAGMENT -> MainFragment()
             LOGIN_MAIN_FRAGMENT -> LoginMainFragment()
+            HOME_MAIN_FRAGMENT -> HomeMainFragment()
+            HOME_REGISTER_FRAGMENT -> HomeRegisterFragment()
             else -> Fragment()
         }
 
