@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ui.home.HomeRegisterFragment" >
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/materialToolbar_homeRegister"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="@style/Theme.Georgeois.Toolbar" />
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding = "@dimen/padding_size_15dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/button_homeRegister_in"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="수입"
+                    android:textSize="@dimen/font_size_18sp"
+                    style="Bold"
+                    android:backgroundTint="@color/accentGreen"
+                    android:fontFamily="@font/space"
+                    android:layout_marginRight="@dimen/margin_4dp"/>
+
+                <Button
+                    android:id="@+id/button_homeRegister_out"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textSize="@dimen/font_size_18sp"
+                    style="Bold"
+                    android:backgroundTint="@color/accentGray"
+                    android:fontFamily="@font/space"
+                    android:layout_marginLeft="@dimen/margin_4dp"
+                    android:text="지출" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:padding="@dimen/padding_size_15dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_vertical"
+                        android:gravity="center"
+                        android:text="날짜"
+                        android:fontFamily="@font/space"
+                        android:textSize="@dimen/font_size_18sp"
+                        android:layout_marginRight="@dimen/margin_8dp"/>
+
+                    <TextView
+                        android:id="@+id/textView_homeRegister_date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="right"
+                        android:text="오늘날짜 표시"
+                        android:fontFamily="@font/space"
+                        android:textSize="@dimen/font_size_18sp"/>
+
+
+                </LinearLayout>
+                <TextView
+                    android:layout_marginTop="@dimen/margin_8dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/space"
+                    android:textSize="@dimen/font_size_18sp"
+                    android:text="자산" />
+
+                <com.google.android.material.chip.ChipGroup
+                    android:layout_marginTop="@dimen/margin_8dp"
+                    android:id="@+id/chipGroup_homeRegister"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_homeRegister_cash"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/space"
+                        android:text="현금"
+                        android:textSize="@dimen/font_size_16sp" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_homeRegister_cashCard"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="체크카드"
+                        android:fontFamily="@font/space"
+                        android:textSize="@dimen/font_size_16sp"/>
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_homeRegister_creditCard"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="신용카드"
+                        android:fontFamily="@font/space"
+                        android:textSize="@dimen/font_size_16sp"/>
+                </com.google.android.material.chip.ChipGroup>
+
+                <TextView
+                    android:layout_marginTop="@dimen/margin_8dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="카테고리"
+                    android:fontFamily="@font/space"
+                    android:textSize="@dimen/font_size_18sp"/>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:layout_marginTop="@dimen/margin_8dp"
+                    android:id="@+id/recyclerView_homeRegister_category"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"/>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:text="금액"
+                        android:layout_marginRight="@dimen/margin_8dp"
+                        android:fontFamily="@font/space"
+                        android:textSize="@dimen/font_size_18sp"/>
+
+                    <TextView
+                        android:id="@+id/textView_homeRegister_price"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="0"
+                        android:gravity="right"
+                        android:fontFamily="@font/space"
+                        android:layout_marginRight="@dimen/margin_8dp"
+                        android:textSize="@dimen/font_size_18sp"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="원"
+                        android:gravity="right"
+                        android:fontFamily="@font/space"
+                        android:textSize="@dimen/font_size_18sp"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="내용"
+                        android:gravity="center"
+                        android:layout_marginEnd="@dimen/margin_8dp"
+                        android:fontFamily="@font/space"
+                        android:textSize="@dimen/font_size_18sp"/>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/textInputLayout_homeRegister_content"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/textInputEditText_homeRegister_content"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="textMultiLine"
+                            android:fontFamily="@font/space"
+                            android:textSize="@dimen/font_size_18sp"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
+
+
+                <CheckBox
+                    android:id="@+id/checkBox_homeRegister_noBudget"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="예산에서 제외"
+                    android:fontFamily="@font/space"
+                    android:textSize="@dimen/font_size_18sp"/>
+
+                <ImageButton
+                    android:id="@+id/imageButton_homeRegister"
+                    android:layout_gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="#00FFFFFF"
+                    android:src="@drawable/ic_add_photo_alternate_24px">
+
+                </ImageButton>
+                <ImageView
+                    android:id="@+id/imageView_homeRegister"
+                    android:layout_gravity="center"
+                    android:layout_width="@dimen/image_size_memo"
+                    android:layout_height="@dimen/image_size_memo"
+                    android:visibility="gone"/>
+            </LinearLayout>
+
+
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

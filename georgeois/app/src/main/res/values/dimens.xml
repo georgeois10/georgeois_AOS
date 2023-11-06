@@ -21,4 +21,7 @@
     <!-- profile image size -->
     <dimen name="image_size_profile">80dp</dimen>
 
+    <!--memo Image size-->
+    <dimen name="image_size_memo"> 150dp </dimen>
+
 </resources>
