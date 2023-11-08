@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".ui.home.HomeRegisterFragment" >
+    tools:context=".ui.home.HomeRegisterFragment"
+    android:transitionGroup="true">
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/materialToolbar_homeRegister"
         android:layout_width="match_parent"
@@ -34,7 +35,8 @@
                     android:layout_weight="1"
                     android:text="수입"
                     android:textSize="@dimen/font_size_18sp"
-                    style="Bold"
+                    style="@style/Theme.Georgeois.Text"
+                    android:textColor="@color/white"
                     android:backgroundTint="@color/accentGreen"
                     android:fontFamily="@font/space"
                     android:layout_marginRight="@dimen/margin_4dp"/>
@@ -45,7 +47,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:textSize="@dimen/font_size_18sp"
-                    style="Bold"
+                    style="@style/Theme.Georgeois.Text"
+                    android:textColor="@color/white"
                     android:backgroundTint="@color/accentGray"
                     android:fontFamily="@font/space"
                     android:layout_marginLeft="@dimen/margin_4dp"
@@ -86,7 +89,7 @@
 
                 </LinearLayout>
                 <TextView
-                    android:layout_marginTop="@dimen/margin_8dp"
+                    android:layout_marginTop="@dimen/margin_12dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/space"
@@ -94,88 +97,109 @@
                     android:text="자산" />
 
                 <com.google.android.material.chip.ChipGroup
-                    android:layout_marginTop="@dimen/margin_8dp"
                     android:id="@+id/chipGroup_homeRegister"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="wrap_content"
+                    app:checkedChip="@id/chip_homeRegister_cash">
 
                     <com.google.android.material.chip.Chip
                         android:id="@+id/chip_homeRegister_cash"
+                        style="@style/Widget.MaterialComponents.Chip.Choice"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/space"
                         android:text="현금"
-                        android:textSize="@dimen/font_size_16sp" />
+                        android:textSize="@dimen/font_size_16sp"
+                        android:checkable="true" />
 
                     <com.google.android.material.chip.Chip
                         android:id="@+id/chip_homeRegister_cashCard"
+                        style="@style/Widget.MaterialComponents.Chip.Choice"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="체크카드"
                         android:fontFamily="@font/space"
-                        android:textSize="@dimen/font_size_16sp"/>
+                        android:text="체크카드"
+                        android:textSize="@dimen/font_size_16sp"
+                        android:checkable="true" />
 
                     <com.google.android.material.chip.Chip
                         android:id="@+id/chip_homeRegister_creditCard"
+                        style="@style/Widget.MaterialComponents.Chip.Choice"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="신용카드"
                         android:fontFamily="@font/space"
-                        android:textSize="@dimen/font_size_16sp"/>
+                        android:text="신용카드"
+                        android:textSize="@dimen/font_size_16sp"
+                        android:checkable="true" />
                 </com.google.android.material.chip.ChipGroup>
-
-                <TextView
-                    android:layout_marginTop="@dimen/margin_8dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="카테고리"
-                    android:fontFamily="@font/space"
-                    android:textSize="@dimen/font_size_18sp"/>
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:layout_marginTop="@dimen/margin_8dp"
-                    android:id="@+id/recyclerView_homeRegister_category"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal"/>
 
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:layout_marginTop="@dimen/margin_8dp"
+                    >
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="카테고리"
+                        android:fontFamily="@font/space"
+                        android:textSize="@dimen/font_size_18sp"
+                        android:layout_marginRight="@dimen/margin_8dp"
+                        android:layout_gravity="center"/>
+                    <Spinner
+                        android:id="@+id/spinner_homeRegister"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/spinner_home_register_background"/>
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="@dimen/margin_12dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:gravity="center"
-                        android:text="금액"
                         android:layout_marginRight="@dimen/margin_8dp"
                         android:fontFamily="@font/space"
-                        android:textSize="@dimen/font_size_18sp"/>
+                        android:text="금액"
+                        android:gravity="center"
+                        android:textSize="@dimen/font_size_18sp" />
 
-                    <TextView
-                        android:id="@+id/textView_homeRegister_price"
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/textInputLayout_homeRegister_money"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="0"
+                        android:layout_gravity="right"
                         android:gravity="right"
-                        android:fontFamily="@font/space"
-                        android:layout_marginRight="@dimen/margin_8dp"
-                        android:textSize="@dimen/font_size_18sp"/>
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="원"
-                        android:gravity="right"
-                        android:fontFamily="@font/space"
-                        android:textSize="@dimen/font_size_18sp"/>
+                        app:boxBackgroundColor="#00FFFFFF"
+                        app:boxBackgroundMode="filled"
+                        app:boxStrokeErrorColor="@color/accentRed">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/textInputEditText_homeRegister_money"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="right"
+                            android:backgroundTint="#00FFFFFF"
+                            android:gravity="right"
+                            android:inputType="number"
+                            android:fontFamily="@font/space"
+                            android:textSize="@dimen/font_size_18sp" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
                 </LinearLayout>
                 <LinearLayout
+                    android:layout_marginTop="@dimen/margin_12dp"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="horizontal">
+                    android:orientation="vertical">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -225,6 +249,7 @@
                     android:layout_gravity="center"
                     android:layout_width="@dimen/image_size_memo"
                     android:layout_height="@dimen/image_size_memo"
+                    android:src="@drawable/ic_arrow_drop_down"
                     android:visibility="gone"/>
             </LinearLayout>
 
