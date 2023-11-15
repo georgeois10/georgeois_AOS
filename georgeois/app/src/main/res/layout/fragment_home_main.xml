@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".ui.home.HomeMainFragment">
+    tools:context=".ui.home.HomeMainFragment"
+    android:transitionGroup="true">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/materialToolbar_homeMain"
@@ -146,9 +147,11 @@
             android:clickable="true"
             android:paddingTop="@dimen/padding_size_15dp"
             android:layout_margin="@dimen/margin_12dp"
+            android:backgroundTint="@color/colorPrimary"
             android:src="@drawable/ic_add_24px"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:tint="@color/white"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </LinearLayout>

@@ -6,55 +6,81 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.georgeois.R
+import com.example.georgeois.databinding.FragmentHomeAnalysisBinding
+import com.example.georgeois.ui.main.MainActivity
+import com.github.mikephil.charting.data.PieData
+import com.github.mikephil.charting.data.PieDataSet
+import com.github.mikephil.charting.data.PieEntry
+import com.github.mikephil.charting.utils.ColorTemplate
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [HomeAnalysisFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class HomeAnalysisFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
-
+    lateinit var fragmentHomeAnalysisBinding: FragmentHomeAnalysisBinding
+    lateinit var mainActivity: MainActivity
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_home_analysis, container, false)
-    }
+        fragmentHomeAnalysisBinding = FragmentHomeAnalysisBinding.inflate(inflater)
+        mainActivity = activity as MainActivity
+        fragmentHomeAnalysisBinding.pieChartHomeAnalysis.setUsePercentValues(true)
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment HomeAnalysisFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            HomeAnalysisFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+        // 넣을 데이터 설정
+        val dataList = ArrayList<PieEntry>()
+        var tempTotalCategory1 = 145000f
+        var tempTotalCategory2 = 2000f
+        var tempTotalCategory3 = 300000f
+        var tempTotalCategory4 = 60000f
+        var tempTotalCategory5 = 70000f
+
+        dataList.add(PieEntry(tempTotalCategory1, "감자"))
+        dataList.add(PieEntry(tempTotalCategory2, "사과"))
+        dataList.add(PieEntry(tempTotalCategory3, "바나나"))
+        dataList.add(PieEntry(tempTotalCategory4, "딸기"))
+        dataList.add(PieEntry(tempTotalCategory5, "오렌지"))
+        dataList.add(PieEntry(40000f, "감자1"))
+        dataList.add(PieEntry(80000f, "사과2"))
+        dataList.add(PieEntry(123400f, "바나나3"))
+        dataList.add(PieEntry(345523f, "딸기4"))
+        dataList.add(PieEntry(1234f, "오렌지5"))
+        // 값 받아오면 정렬하고 넣기
+        dataList.sortedBy { it.y }
+        val dataSet = PieDataSet(dataList,"")
+        with(dataSet){
+            sliceSpace = 1f
+            setColors(*ColorTemplate.PASTEL_COLORS)
+        }
+        dataSet.setDrawValues(false)
+        fragmentHomeAnalysisBinding.run {
+            materialToolbarHomeAnalysis.run {
+                title = "분석"
+                setNavigationIcon(R.drawable.ic_arrow_back_24px)
+                setNavigationOnClickListener {
+                    mainActivity.removeFragment(MainActivity.HOME_ANALYSIS_FRAGMENT)
                 }
             }
+            var data = PieData(dataSet)
+            pieChartHomeAnalysis.data =data
+            // 차트 설명
+            pieChartHomeAnalysis.description.isEnabled = false
+            // 차트 회전 비활성화
+            pieChartHomeAnalysis.isRotationEnabled = false
+            // 하단 설명 비활성화
+            pieChartHomeAnalysis.legend.isEnabled = false
+            // 구멍 없애기
+            pieChartHomeAnalysis.isDrawHoleEnabled = false
+            // 터치 막기
+            pieChartHomeAnalysis.setTouchEnabled(false)
+
+            // 애니메이션 설정
+            pieChartHomeAnalysis.animateY(1000) // 애니메이션 설정
+            pieChartHomeAnalysis.invalidate() // 차트 갱신
+
+
+
+        }
+        return fragmentHomeAnalysisBinding.root
     }
+
+
 }
+

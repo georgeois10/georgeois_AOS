@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ui.board.BoardDetailFragment">
+
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/materialToolbar_boardDetail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="@style/Theme.Georgeois.Toolbar" />
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/padding_size_15dp">
+
+            <TextView
+                style="@style/Theme.Georgeois.Text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="보드 제목"
+                android:textSize="@dimen/font_size_26sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_12dp"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/imageView_boardDetail_profile"
+                    android:layout_width="@dimen/image_size_board_profile"
+                    android:layout_height="@dimen/image_size_board_profile"
+                    android:scaleType="centerCrop"
+                    tools:src="@tools:sample/avatars" />
+
+                <TextView
+                    android:layout_marginStart="@dimen/margin_12dp"
+                    android:id="@+id/textView_boardDetail_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    style="@style/Theme.Georgeois.Text"
+                    android:text="이름" />
+
+                <TextView
+                    android:layout_marginStart="@dimen/margin_12dp"
+                    android:id="@+id/textView_boardDetail_date"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="end|center"
+                    style="@style/Theme.Georgeois.Text"
+                    android:text="2023.10.22" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_marginTop="@dimen/margin_12dp"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_weight="1"
+                android:background="?android:attr/listDivider" />
+
+
+        </LinearLayout>
+
+    </ScrollView>
+</LinearLayout>

@@ -26,7 +26,7 @@ class HomeMainFragment : Fragment() {
 
             // 분석
             buttonHomeMainAnalysis.setOnClickListener {
-
+                mainActivity.replaceFragment(MainActivity.HOME_ANALYSIS_FRAGMENT,true,null)
             }
 
             // 등록

@@ -1,24 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:transitionGroup="true">
 
-    <ScrollView
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <LinearLayout
+        <!-- NestedScrollingChild goes here (NestedScrollView, RecyclerView, etc.). -->
+        <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical" >
+            app:layout_behavior="@string/searchbar_scrolling_view_behavior">
 
-            <TextView
-                android:id="@+id/textView"
+
+        </androidx.core.widget.NestedScrollView>
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <com.google.android.material.search.SearchBar
+                android:id="@+id/searchBar_boardMain"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="게시판" />
-        </LinearLayout>
-    </ScrollView>
-</LinearLayout>
+                android:hint="검색어를 입력해주세요." />
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:theme="@style/Theme.Georgeois.Text">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recyclerView_boardMain_board"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+                </LinearLayout>
+            </ScrollView>
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <com.google.android.material.search.SearchView
+            android:id="@+id/searchView_boardMain"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_anchor="@id/searchBar_boardMain">
+
+        </com.google.android.material.search.SearchView>
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chipGroup_boardMain"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:chipSpacing="8dp"
+            app:layout_anchor="@id/searchBar_boardMain" />
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floatingActionButton_boardMain_register"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        app:srcCompat="@drawable/ic_write_24px"
+        android:layout_gravity="bottom|end"
+        android:backgroundTint="@color/colorPrimary"
+        app:tint="@color/white"
+        android:paddingTop="@dimen/padding_size_15dp"
+        android:layout_margin="@dimen/margin_12dp"/>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -6,6 +6,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.example.georgeois.R
 import com.example.georgeois.databinding.ActivityMainBinding
+import com.example.georgeois.ui.board.BoardDetailFragment
+import com.example.georgeois.ui.board.BoardRegisterFragment
+import com.example.georgeois.ui.home.HomeAnalysisFragment
 import com.example.georgeois.ui.home.HomeRegisterFragment
 import com.example.georgeois.ui.home.HomeMainFragment
 import com.example.georgeois.ui.user.LoginMainFragment
@@ -30,6 +33,9 @@ class MainActivity : AppCompatActivity() {
         val LOGIN_MAIN_FRAGMENT = "LoginMainFragment"
         val HOME_MAIN_FRAGMENT = "HomeMainFragment"
         val HOME_REGISTER_FRAGMENT = "HomeRegisterFragment"
+        val HOME_ANALYSIS_FRAGMENT = "HomeAnalysisFragment"
+        val BOARD_REGISTER_FRAGMENT = "BoardRegisterFragment"
+        val BOARD_DETAIL_FRAGMENT = "BoardDetailFragment"
     }
     fun replaceFragment(name:String, addToBackStack:Boolean, bundle:Bundle?){
         // Fragment 교체 상태로 설정한다.
@@ -46,6 +52,9 @@ class MainActivity : AppCompatActivity() {
             LOGIN_MAIN_FRAGMENT -> LoginMainFragment()
             HOME_MAIN_FRAGMENT -> HomeMainFragment()
             HOME_REGISTER_FRAGMENT -> HomeRegisterFragment()
+            HOME_ANALYSIS_FRAGMENT -> HomeAnalysisFragment()
+            BOARD_REGISTER_FRAGMENT -> BoardRegisterFragment()
+            BOARD_DETAIL_FRAGMENT -> BoardDetailFragment()
             else -> Fragment()
         }
 

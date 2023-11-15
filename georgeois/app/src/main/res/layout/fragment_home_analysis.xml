@@ -1,14 +1,94 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.home.HomeAnalysisFragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    tools:context=".ui.home.HomeAnalysisFragment"
+    android:transitionGroup="true">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/materialToolbar_homeAnalysis"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="@style/Theme.Georgeois.Toolbar" />
 
-</FrameLayout>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="@dimen/padding_size_15dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+
+                <ImageButton
+                    android:id="@+id/imageButton_homeAnalysis_left"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:src="@drawable/ic_chevron_left_24px"
+                    android:backgroundTint="#00FFFFFF" />
+
+                <TextView
+                    android:id="@+id/textView_homeAnalysis_"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    style="@style/Theme.Georgeois.Text"
+                    android:gravity="center"
+                    android:layout_gravity="center"
+                    android:textSize="@dimen/font_size_20sp"
+                    android:text="날짜" />
+
+                <ImageButton
+                    android:id="@+id/imageButton_homeAnalysis_right"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:src="@drawable/ic_chevron_right_24px"
+                    android:backgroundTint="#00FFFFFF"/>
+            </LinearLayout>
+
+            <com.github.mikephil.charting.charts.PieChart
+                android:id="@+id/pieChart_homeAnalysis"
+                android:layout_width="match_parent"
+                android:layout_height="400dp" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_marginTop="@dimen/margin_12dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardPreventCornerOverlap="false"
+                app:cardUseCompatPadding="true">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:padding="@dimen/padding_size_15dp">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recyclerView_homeAnalysis"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+    </ScrollView>
+
+
+
+
+</LinearLayout>

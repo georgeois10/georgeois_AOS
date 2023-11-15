@@ -17,11 +17,12 @@
     <dimen name="font_size_16sp"> 16sp </dimen>
     <dimen name="font_size_18sp"> 18sp </dimen>
     <dimen name="font_size_20sp"> 20sp </dimen>
-
+    <dimen name="font_size_26sp"> 26sp </dimen>
     <!-- profile image size -->
+    <dimen name="image_size_board_profile"> 50dp </dimen>
     <dimen name="image_size_profile">80dp</dimen>
 
     <!--memo Image size-->
-    <dimen name="image_size_memo"> 150dp </dimen>
+    <dimen name="image_size_memo"> 200dp </dimen>
 
 </resources>

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/margin_4dp"
+    android:orientation="vertical">
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardBackgroundColor="#00FFFFFF"
+        app:cardCornerRadius="0dp"
+        app:contentPadding="0dp">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="10dp">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/textView_rowBoardMain_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="제목" />
+
+                <TextView
+                    android:id="@+id/textView_rowBoardMain_context"
+                    android:layout_marginTop="@dimen/margin_4dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="내용" />
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+
+                <TextView
+                    android:id="@+id/textView_rowBoardMain_date"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="right"
+                    android:text="날짜" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_4dp">
+                    <TextView
+                        android:id="@+id/textView_rowBoardMain_hits"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/margin_4dp"
+                        android:text="15"
+                        app:drawableTint="@color/accentGray"
+                        app:drawableStartCompat="@drawable/ic_visibility_24px" />
+                    <TextView
+                        android:id="@+id/textView_rowBoardMain_comment"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/margin_4dp"
+                        android:text="3"
+                        app:drawableTint="@color/accentGray"
+                        app:drawableStartCompat="@drawable/ic_comment_24px" />
+                    <TextView
+                        android:id="@+id/textView_rowBoardMain_recommend"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/margin_4dp"
+                        android:text="3"
+                        app:drawableTint="@color/accentGray"
+                        app:drawableStartCompat="@drawable/ic_thumb_up_24px" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+
+</LinearLayout>
