@@ -17,11 +17,13 @@ class BoardDetailFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        boardDetailBinding = FragmentBoardDetailBinding.inflate(inflater)
         boardDetailBinding.run {
-            var title = arguments?.getString("boardTitle")!!
+            var boardTitle = arguments?.getString("boardTitle")!!
             materialToolbarBoardDetail.run {
-                title = title
+                title = boardTitle
             }
+            boardDetailBinding.textViewBoardDetailTitle.text = boardTitle
         }
         return boardDetailBinding.root
     }

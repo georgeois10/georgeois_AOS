@@ -77,7 +77,7 @@ class BoardMainFragment : Fragment() {
                 boardTitle = rowBoardMainBinding.textViewRowBoardMainTitle
                 rowBoardMainBinding.root.setOnClickListener {
                     val bundle = Bundle()
-                    bundle.putString("boardTitle", boardTitle.toString())
+                    bundle.putString("boardTitle", boardTitle.text.toString())
                     mainActivity.replaceFragment(MainActivity.BOARD_DETAIL_FRAGMENT,true,bundle)
                 }
             }

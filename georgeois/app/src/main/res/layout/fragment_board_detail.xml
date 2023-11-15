@@ -26,6 +26,7 @@
             android:padding="@dimen/padding_size_15dp">
 
             <TextView
+                android:id="@+id/textView_boardDetail_title"
                 style="@style/Theme.Georgeois.Text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
