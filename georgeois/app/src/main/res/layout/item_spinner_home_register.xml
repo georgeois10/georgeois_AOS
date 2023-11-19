@@ -13,6 +13,6 @@
         android:layout_height="wrap_content"
         android:text="아이템값"
         style="@style/Theme.Georgeois.Text"
-        android:textSize="@dimen/font_size_18sp" />
+        android:textSize="@dimen/font_size_16sp" />
 
 </LinearLayout>

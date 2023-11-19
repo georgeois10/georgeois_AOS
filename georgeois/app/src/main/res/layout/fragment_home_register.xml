@@ -33,7 +33,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="수입"
-                    android:textSize="@dimen/font_size_18sp"
+                    android:textSize="@dimen/font_size_16sp"
+                    android:textStyle="bold"
                     style="@style/Theme.Georgeois.Text"
                     android:textColor="@color/white"
                     android:backgroundTint="@color/accentGreen"
@@ -45,7 +46,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:textSize="@dimen/font_size_18sp"
+                    android:textSize="@dimen/font_size_16sp"
+                    android:textStyle="bold"
                     style="@style/Theme.Georgeois.Text"
                     android:textColor="@color/white"
                     android:backgroundTint="@color/accentGray"
@@ -83,7 +85,7 @@
                         android:gravity="right"
                         android:text="오늘날짜 표시"
                         android:fontFamily="@font/space"
-                        android:textSize="@dimen/font_size_18sp"/>
+                        android:textSize="@dimen/font_size_16sp"/>
 
 
                 </LinearLayout>
@@ -159,6 +161,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:textSize="@dimen/font_size_16sp"
                         android:background="@drawable/spinner_home_register_background"/>
                 </LinearLayout>
 
@@ -228,7 +231,7 @@
                             android:layout_height="wrap_content"
                             android:inputType="textMultiLine"
                             android:fontFamily="@font/space"
-                            android:textSize="@dimen/font_size_18sp"/>
+                            android:textSize="@dimen/font_size_16sp"/>
                     </com.google.android.material.textfield.TextInputLayout>
                 </LinearLayout>
 

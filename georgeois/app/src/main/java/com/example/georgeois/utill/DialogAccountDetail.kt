@@ -14,7 +14,17 @@ class DialogAccountDetail(private val context: Context, private val layoutInflat
 
         val dialogAccountDetailBinding = DialogAccountDetailBinding.inflate(layoutInflater)
         val builder = MaterialAlertDialogBuilder(context)
-        val dialog = builder.setView(dialogAccountDetailBinding.root).create()
+        builder.setView(dialogAccountDetailBinding.root)
+
+        builder.setPositiveButton("수정") { dialog, which ->
+
+        }
+        builder.setNegativeButton("취소"){ dialog,which ->
+
+        }
+
+        val dialog = builder.create()
+
         dialogAccountDetailBinding.imageButtonDialogAccountDetailDelete.setOnClickListener {
             dialog.dismiss()
         }
@@ -26,6 +36,7 @@ class DialogAccountDetail(private val context: Context, private val layoutInflat
             dialogAccountDetailBinding.constraintLayoutDialogAccountDetail.visibility = View.GONE
             dialogAccountDetailBinding.imageButtonDialogAccountDetail.visibility = View.VISIBLE
         }
+
         dialog.show()
     }
 }

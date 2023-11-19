@@ -7,7 +7,13 @@
     android:transitionGroup="true"
     tools:context=".ui.home.HomeAnalysisCategoryFragment">
 
-    <!-- TODO: Update blank fragment layout -->
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/materialToolbar_homeAnalysisCategory"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="@style/Theme.Georgeois.Toolbar" />
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -18,13 +24,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical" >
 
-            <com.google.android.material.appbar.MaterialToolbar
-                android:id="@+id/materialToolbar_homeAnalysisCategory"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="?attr/colorPrimary"
-                android:minHeight="?attr/actionBarSize"
-                android:theme="@style/Theme.Georgeois.Toolbar" />
+
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -74,17 +74,22 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="총" />
+                        android:text="총"
+                        style="@style/Theme.Georgeois.Text"
+                        android:textSize="@dimen/font_size_16sp"/>
 
                     <TextView
                         android:id="@+id/textView_homeAnalysisCategory_sumOfRow"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/margin_4dp"
+                        style="@style/Theme.Georgeois.Text"
+                        android:textSize="@dimen/font_size_16sp"
                         android:text="1건" />
                 </LinearLayout>
 
                 <LinearLayout
+                    android:layout_marginTop="@dimen/margin_4dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
@@ -93,17 +98,22 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="합계" />
+                        android:text="합계"
+                        style="@style/Theme.Georgeois.Text"
+                        android:textSize="@dimen/font_size_16sp"/>
 
                     <TextView
                         android:id="@+id/textView_homeAnalysisCategory_totalOfRow"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="10,000"
+                        style="@style/Theme.Georgeois.Text"
+                        android:textSize="@dimen/font_size_16sp"
                         android:layout_marginLeft="@dimen/margin_4dp"/>
                 </LinearLayout>
 
                 <androidx.recyclerview.widget.RecyclerView
+                    android:layout_marginTop="@dimen/margin_4dp"
                     android:id="@+id/recyclerView_homeAnalysisCategory"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />

@@ -10,9 +10,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.georgeois.R
 import com.example.georgeois.databinding.FragmentHomeAnalysisBinding
-import com.example.georgeois.databinding.RowHomeMainBinding
 import com.example.georgeois.databinding.RowMainAnalysisBinding
 import com.example.georgeois.ui.main.MainActivity
+import com.example.georgeois.utill.MoneyType
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
@@ -123,11 +123,11 @@ class HomeAnalysisFragment : Fragment() {
         }
 
         override fun onBindViewHolder(holder: HomeAnalysisViewHolder, position: Int) {
-            val currencyFormat = NumberFormat.getCurrencyInstance(Locale.getDefault())
-            val formattedValue = currencyFormat.format(itemList[position].value.toInt())
-
-            holder.rowHomeAnalysisBinding.textViewMainAnalysisCategory.text = itemList[position].label
-            holder.rowHomeAnalysisBinding.textViewMainAnalysisTotalAmount.text = formattedValue
+            var item = itemList[position]
+            val moneyType = MoneyType()
+            val formattedMoney = moneyType.moneyText("${item.value}")
+            holder.rowHomeAnalysisBinding.textViewMainAnalysisCategory.text = item.label
+            holder.rowHomeAnalysisBinding.textViewMainAnalysisTotalAmount.text = formattedMoney
         }
 
         override fun getItemCount(): Int {

@@ -16,7 +16,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             style="@style/Theme.Georgeois.Text"
-            android:textSize="@dimen/font_size_20sp"
+            android:textSize="@dimen/font_size_18sp"
             android:text="카테고리" />
 
         <TextView
@@ -26,7 +26,7 @@
             android:layout_weight="1"
             style="@style/Theme.Georgeois.Text"
             android:textColor="@color/accentGray"
-            android:textSize="@dimen/font_size_18sp"
+            android:textSize="@dimen/font_size_16sp"
             android:text="건수" />
     </LinearLayout>
 
@@ -36,7 +36,7 @@
         android:layout_height="match_parent"
         android:gravity="center"
         style="@style/Theme.Georgeois.Text"
-        android:textSize="@dimen/font_size_20sp"
+        android:textSize="@dimen/font_size_18sp"
         android:drawableEnd="@drawable/ic_chevron_right_24px"
         android:text="금액" />
 

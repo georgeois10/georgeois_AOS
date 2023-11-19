@@ -46,7 +46,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="@dimen/font_size_16sp"
+                    android:textSize="@dimen/font_size_18sp"
                     style="@style/Theme.Georgeois.Text"
                     android:text="카테고리" />
 
@@ -57,7 +57,7 @@
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/font_size_16sp"
                     style="@style/Theme.Georgeois.Text"
-                    android:gravity="right"
+                    android:gravity="right|center_vertical"
                     android:text="운동" />
             </LinearLayout>
             <LinearLayout
@@ -69,7 +69,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="@dimen/font_size_16sp"
+                    android:textSize="@dimen/font_size_18sp"
                     style="@style/Theme.Georgeois.Text"
                     android:text="자산" />
 
@@ -80,7 +80,7 @@
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/font_size_16sp"
                     style="@style/Theme.Georgeois.Text"
-                    android:gravity="right"
+                    android:gravity="right|center_vertical"
                     android:text="현금or카드" />
             </LinearLayout>
             <LinearLayout
@@ -92,7 +92,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="@dimen/font_size_16sp"
+                    android:textSize="@dimen/font_size_18sp"
                     style="@style/Theme.Georgeois.Text"
                     android:text="날짜" />
 
@@ -118,6 +118,8 @@
                     android:id="@+id/checkBox_dialogAccountDetail_noBudget"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    style="@style/Theme.Georgeois.Text"
+                    android:textSize="@dimen/font_size_18sp"
                     android:text="예산에서 제외" />
             </LinearLayout>
             <LinearLayout
@@ -129,7 +131,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="@dimen/font_size_16sp"
+                    android:textSize="@dimen/font_size_18sp"
                     style="@style/Theme.Georgeois.Text"
                     android:text="내용" />
 

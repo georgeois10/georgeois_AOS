@@ -3,13 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="@dimen/margin_4dp"
+    android:paddingTop="@dimen/margin_4dp"
+    android:paddingBottom="@dimen/margin_8dp"
     android:orientation="vertical">
+
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="@dimen/margin_8dp"
+        android:layout_margin="@dimen/margin_4dp"
         android:orientation="vertical">
 
         <LinearLayout
@@ -19,40 +21,38 @@
 
             <TextView
                 android:id="@+id/textView_boardDetailComment_name"
+                style="@style/Theme.Georgeois.Text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                style="@style/Theme.Georgeois.Text"
-                android:textSize="@dimen/font_size_16sp"
-                android:text="유저닉네임" />
+                android:text="유저닉네임"
+                android:textSize="@dimen/font_size_16sp" />
 
             <TextView
                 android:id="@+id/textView_boardDetailComment_date"
+                style="@style/Theme.Georgeois.Text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="right"
-                style="@style/Theme.Georgeois.Text"
-                android:textSize="@dimen/font_size_16sp"
-                android:text="날짜" />
+                android:text="날짜"
+                android:textSize="@dimen/font_size_16sp" />
         </LinearLayout>
 
         <TextView
             android:id="@+id/textView_boardDetailComment_content"
+            style="@style/Theme.Georgeois.Text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/margin_8dp"
             android:layout_marginBottom="@dimen/margin_4dp"
-            style="@style/Theme.Georgeois.Text"
-            android:textSize="@dimen/font_size_18sp"
-            android:text="댓글 내용" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/accentGray" />
+            android:text="댓글 내용"
+            android:textSize="@dimen/font_size_18sp" />
 
 
     </LinearLayout>
 
-
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="?android:attr/listDivider" />
 </LinearLayout>

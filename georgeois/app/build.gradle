@@ -50,5 +50,6 @@ dependencies {
 
     // 파이차트
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
-
+    // 원형 이미지 뷰
+    implementation 'de.hdodenhof:circleimageview:3.1.0'
 }

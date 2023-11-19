@@ -16,7 +16,7 @@
         android:background="?attr/colorPrimary"
         android:minHeight="?attr/actionBarSize"
         android:theme="@style/Theme.Georgeois.Toolbar" />
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -40,12 +40,14 @@
                 android:layout_marginTop="@dimen/margin_12dp"
                 android:orientation="horizontal">
 
-                <ImageView
+                <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/imageView_boardDetail_profile"
                     android:layout_width="@dimen/image_size_board_profile"
                     android:layout_height="@dimen/image_size_board_profile"
+                    android:layout_gravity="center"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/ic_save_24px" />
+                    android:src="@drawable/ic_person_24px"
+                    app:civ_border_width="1dp" />
 
                 <TextView
 
@@ -84,7 +86,7 @@
                 android:layout_height="wrap_content"
                 android:text="내용"
                 style="@style/Theme.Georgeois.Text"
-                android:textSize="@dimen/font_size_18sp"
+                android:textSize="@dimen/font_size_16sp"
 
                 />
             <LinearLayout
@@ -100,6 +102,8 @@
                     android:text="15"
                     app:drawableTint="@color/accentGray"
                     android:drawablePadding="@dimen/margin_4dp"
+                    style="@style/Theme.Georgeois.Text"
+                    android:textSize="@dimen/font_size_16sp"
                     app:drawableStartCompat="@drawable/ic_visibility_24px" />
                 <TextView
                     android:id="@+id/textView_boardDetail_commentCount"
@@ -109,6 +113,8 @@
                     android:text="3"
                     android:drawablePadding="@dimen/margin_4dp"
                     app:drawableTint="@color/accentGray"
+                    style="@style/Theme.Georgeois.Text"
+                    android:textSize="@dimen/font_size_16sp"
                     app:drawableStartCompat="@drawable/ic_comment_24px" />
                 <TextView
                     android:id="@+id/textView_boardDetail_recommendCount"
@@ -118,6 +124,8 @@
                     android:drawablePadding="@dimen/margin_4dp"
                     android:text="3"
                     app:drawableTint="@color/accentGray"
+                    style="@style/Theme.Georgeois.Text"
+                    android:textSize="@dimen/font_size_16sp"
                     app:drawableStartCompat="@drawable/ic_thumb_up_24px" />
             </LinearLayout>
 
@@ -148,8 +156,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="추천"
+                        android:layout_marginTop="@dimen/margin_8dp"
                         style="@style/Theme.Georgeois.Text"
-                        android:textSize="@dimen/font_size_18sp"/>
+                        android:textSize="@dimen/font_size_16sp"/>
                 </LinearLayout>
                 <LinearLayout
                     android:id="@+id/linearLayout_boardDetail_report"
@@ -172,9 +181,10 @@
                         android:gravity="center"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        style="@style/Theme.Georgeois.Text"
                         android:text="신고"
-                        android:textSize="@dimen/font_size_18sp"/>
+                        android:layout_marginTop="@dimen/margin_8dp"
+                        style="@style/Theme.Georgeois.Text"
+                        android:textSize="@dimen/font_size_16sp"/>
                 </LinearLayout>
             </LinearLayout>
 
@@ -189,7 +199,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     style="@style/Theme.Georgeois.Text"
-                    android:textSize="@dimen/font_size_18sp"
+                    android:textSize="@dimen/font_size_16sp"
                     android:text="댓글" />
                 <TextView
                     android:layout_marginLeft="@dimen/margin_4dp"
@@ -197,7 +207,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     style="@style/Theme.Georgeois.Text"
-                    android:textSize="@dimen/font_size_18sp"
+                    android:textSize="@dimen/font_size_16sp"
                     android:text="(3)" />
             </LinearLayout>
 
@@ -233,7 +243,7 @@
                         android:layout_height="match_parent"
                         android:backgroundTint="#00FFFFFF"
                         android:hint="댓글을 입력하세요"
-                        android:textSize="@dimen/font_size_18sp" />
+                        android:textSize="@dimen/font_size_16sp" />
 
 
                 </com.google.android.material.textfield.TextInputLayout>
@@ -250,11 +260,12 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerview_boardDetail_comment"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:layout_margin="@dimen/margin_4dp"/>
 
 
         </LinearLayout>
 
 
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 </LinearLayout>

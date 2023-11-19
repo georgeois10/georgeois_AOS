@@ -31,6 +31,7 @@ import com.example.georgeois.R
 import com.example.georgeois.databinding.FragmentHomeRegisterBinding
 import com.example.georgeois.databinding.ItemSpinnerHomeRegisterBinding
 import com.example.georgeois.ui.main.MainActivity
+import com.example.georgeois.utill.MoneyTextWatcher
 import com.google.android.material.chip.Chip
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.MaterialDatePicker
@@ -117,7 +118,7 @@ class HomeRegisterFragment : Fragment() {
             // 자산 설정
             assetSetting()
 
-            textInputLayoutHomeRegisterMoney.editText?.addTextChangedListener(MoneyTextWatcher(textInputLayoutHomeRegisterMoney))
+            textInputLayoutHomeRegisterMoney.editText?.addTextChangedListener(MoneyTextWatcher(textInputEditTextHomeRegisterMoney))
 
 
 
@@ -248,28 +249,4 @@ class CategorySpinnerAdapter(context: Context, @LayoutRes private val resId:Int,
 }
 
 
-// 금액 textWatcher
-class MoneyTextWatcher(private val textInputLayout: TextInputLayout) : TextWatcher {
-    private val numberFormat = NumberFormat.getInstance(Locale.getDefault())
-
-    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-        // 이 메서드는 텍스트 변경 전에 호출됩니다.
-    }
-
-    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-        // 이 메서드는 텍스트가 변경될 때 호출됩니다.
-        val text = s.toString().replace(",", "").trim()
-        val parsed = if (text.isNotEmpty()) text.toDouble() else 0.0
-        val formatted = numberFormat.format(parsed)
-
-        textInputLayout.editText?.removeTextChangedListener(this)
-        textInputLayout.editText?.setText(formatted)
-        textInputLayout.editText?.setSelection(formatted.length)
-        textInputLayout.editText?.addTextChangedListener(this)
-    }
-
-    override fun afterTextChanged(s: Editable?) {
-        // 이 메서드는 텍스트 변경 후에 호출됩니다.
-    }
-}
 

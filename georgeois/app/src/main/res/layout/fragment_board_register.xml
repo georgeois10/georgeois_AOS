@@ -50,7 +50,7 @@
                 android:gravity="top"
                 android:hint="내용"
                 style="@style/Theme.Georgeois.Text"
-                android:textSize="@dimen/font_size_18sp"
+                android:textSize="@dimen/font_size_16sp"
                 android:background="#00FFFFFF"/>
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -115,8 +115,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
                 android:background="#00FFFFFF"
-                android:src="@drawable/ic_add_photo_alternate_24px"
-                app:tint="@color/colorPrimary" />
+                android:src="@drawable/ic_add_photo_alternate_24px" />
 
             <TextView
                 android:id="@+id/textView_boardRegister_textCount"
@@ -125,7 +124,7 @@
                 android:layout_gravity="center"
                 android:gravity="end"
                 style="@style/Theme.Georgeois.Text"
-                android:textSize="@dimen/font_size_18sp"
+                android:textSize="@dimen/font_size_16sp"
                 android:text="80/80" />
         </LinearLayout>
 
