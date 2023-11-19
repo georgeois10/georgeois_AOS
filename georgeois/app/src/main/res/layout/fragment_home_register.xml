@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".ui.home.HomeRegisterFragment"
     android:transitionGroup="true">
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/materialToolbar_homeRegister"
@@ -88,50 +87,57 @@
 
 
                 </LinearLayout>
-                <TextView
-                    android:layout_marginTop="@dimen/margin_12dp"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/space"
-                    android:textSize="@dimen/font_size_18sp"
-                    android:text="자산" />
-
-                <com.google.android.material.chip.ChipGroup
-                    android:id="@+id/chipGroup_homeRegister"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:checkedChip="@id/chip_homeRegister_cash">
-
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/chip_homeRegister_cash"
-                        style="@style/Widget.MaterialComponents.Chip.Choice"
-                        android:layout_width="wrap_content"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_marginTop="@dimen/margin_12dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/space"
-                        android:text="현금"
-                        android:textSize="@dimen/font_size_16sp"
-                        android:checkable="true" />
+                        android:textSize="@dimen/font_size_18sp"
+                        android:text="자산" />
 
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/chip_homeRegister_cashCard"
-                        style="@style/Widget.MaterialComponents.Chip.Choice"
-                        android:layout_width="wrap_content"
+                    <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/chipGroup_homeRegister"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/space"
-                        android:text="체크카드"
-                        android:textSize="@dimen/font_size_16sp"
-                        android:checkable="true" />
+                        app:checkedChip="@id/chip_homeRegister_cash">
 
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/chip_homeRegister_creditCard"
-                        style="@style/Widget.MaterialComponents.Chip.Choice"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/space"
-                        android:text="신용카드"
-                        android:textSize="@dimen/font_size_16sp"
-                        android:checkable="true" />
-                </com.google.android.material.chip.ChipGroup>
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chip_homeRegister_cash"
+                            style="@style/Widget.MaterialComponents.Chip.Choice"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/space"
+                            android:text="현금"
+                            android:textSize="@dimen/font_size_16sp"
+                            android:checkable="true" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chip_homeRegister_cashCard"
+                            style="@style/Widget.MaterialComponents.Chip.Choice"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/space"
+                            android:text="체크카드"
+                            android:textSize="@dimen/font_size_16sp"
+                            android:checkable="true" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chip_homeRegister_creditCard"
+                            style="@style/Widget.MaterialComponents.Chip.Choice"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/space"
+                            android:text="신용카드"
+                            android:textSize="@dimen/font_size_16sp"
+                            android:checkable="true" />
+                    </com.google.android.material.chip.ChipGroup>
+
+                </LinearLayout>
+
 
 
                 <LinearLayout
@@ -244,13 +250,41 @@
                     android:src="@drawable/ic_add_photo_alternate_24px">
 
                 </ImageButton>
-                <ImageView
-                    android:id="@+id/imageView_homeRegister"
-                    android:layout_gravity="center"
-                    android:layout_width="@dimen/image_size_memo"
-                    android:layout_height="@dimen/image_size_memo"
-                    android:src="@drawable/ic_arrow_drop_down"
-                    android:visibility="gone"/>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/constraintLayout_homeRegister"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:visibility="gone">
+
+                    <ImageView
+                        android:id="@+id/imageView_homeRegister"
+                        android:layout_width="@dimen/image_size_memo"
+                        android:layout_height="@dimen/image_size_memo"
+                        android:layout_gravity="center"
+                        android:scaleType="fitXY"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:src="@mipmap/ic_launcher" />
+
+                    <ImageButton
+                        android:id="@+id/imageButton_homeRegister_delete"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="top"
+                        android:background="#00FFFFFF"
+                        app:layout_constraintEnd_toEndOf="@+id/imageView_homeRegister"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:src="@drawable/ic_close_24px"
+                        app:tint="@color/accentRed"
+                        android:visibility="visible" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
             </LinearLayout>
 
 

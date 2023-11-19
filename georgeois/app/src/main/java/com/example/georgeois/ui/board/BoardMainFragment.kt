@@ -78,6 +78,7 @@ class BoardMainFragment : Fragment() {
                 rowBoardMainBinding.root.setOnClickListener {
                     val bundle = Bundle()
                     bundle.putString("boardTitle", boardTitle.text.toString())
+                    if(boardTitle.text == "Item 2") bundle.putString("boardOwner","Owner")
                     mainActivity.replaceFragment(MainActivity.BOARD_DETAIL_FRAGMENT,true,bundle)
                 }
             }

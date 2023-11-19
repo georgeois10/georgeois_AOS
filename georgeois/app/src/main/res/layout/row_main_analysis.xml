@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/padding_size_15dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/textView_mainAnalysis_category"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            style="@style/Theme.Georgeois.Text"
+            android:textSize="@dimen/font_size_20sp"
+            android:text="카테고리" />
+
+        <TextView
+            android:id="@+id/textView_mainAnalysis_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            style="@style/Theme.Georgeois.Text"
+            android:textColor="@color/accentGray"
+            android:textSize="@dimen/font_size_18sp"
+            android:text="건수" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/textView_mainAnalysis_totalAmount"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        style="@style/Theme.Georgeois.Text"
+        android:textSize="@dimen/font_size_20sp"
+        android:drawableEnd="@drawable/ic_chevron_right_24px"
+        android:text="금액" />
+
+</LinearLayout>

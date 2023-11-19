@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:transitionGroup="true"
     tools:context=".ui.board.BoardDetailFragment">
 
 
@@ -31,7 +32,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="보드 제목"
-                android:textSize="@dimen/font_size_26sp" />
+                android:textSize="@dimen/font_size_20sp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -44,15 +45,17 @@
                     android:layout_width="@dimen/image_size_board_profile"
                     android:layout_height="@dimen/image_size_board_profile"
                     android:scaleType="centerCrop"
-                    tools:src="@tools:sample/avatars" />
+                    android:src="@drawable/ic_save_24px" />
 
                 <TextView
+
                     android:layout_marginStart="@dimen/margin_12dp"
-                    android:id="@+id/textView_boardDetail_name"
+                    android:id="@+id/textView_boardDetail_nickName"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:gravity="center"
                     style="@style/Theme.Georgeois.Text"
+                    android:textSize="@dimen/font_size_18sp"
                     android:text="이름" />
 
                 <TextView
@@ -62,19 +65,196 @@
                     android:layout_height="match_parent"
                     android:gravity="end|center"
                     style="@style/Theme.Georgeois.Text"
+                    android:textSize="@dimen/font_size_18sp"
                     android:text="2023.10.22" />
 
             </LinearLayout>
 
             <View
                 android:layout_marginTop="@dimen/margin_12dp"
+                android:layout_marginBottom="@dimen/margin_12dp"
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
                 android:layout_weight="1"
                 android:background="?android:attr/listDivider" />
 
+            <TextView
+                android:id="@+id/textView_boardDetail_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="내용"
+                style="@style/Theme.Georgeois.Text"
+                android:textSize="@dimen/font_size_18sp"
+
+                />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="right"
+                android:layout_marginTop="@dimen/margin_4dp">
+                <TextView
+                    android:id="@+id/textView_boardDetail_hitsCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin_4dp"
+                    android:text="15"
+                    app:drawableTint="@color/accentGray"
+                    android:drawablePadding="@dimen/margin_4dp"
+                    app:drawableStartCompat="@drawable/ic_visibility_24px" />
+                <TextView
+                    android:id="@+id/textView_boardDetail_commentCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin_4dp"
+                    android:text="3"
+                    android:drawablePadding="@dimen/margin_4dp"
+                    app:drawableTint="@color/accentGray"
+                    app:drawableStartCompat="@drawable/ic_comment_24px" />
+                <TextView
+                    android:id="@+id/textView_boardDetail_recommendCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin_4dp"
+                    android:drawablePadding="@dimen/margin_4dp"
+                    android:text="3"
+                    app:drawableTint="@color/accentGray"
+                    app:drawableStartCompat="@drawable/ic_thumb_up_24px" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="@dimen/padding_size_15dp"
+                android:gravity="center">
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:layout_marginLeft="@dimen/margin_8dp"
+                    android:layout_marginRight="@dimen/margin_8dp">
+                    <ImageButton
+                        android:id="@+id/imageButton_boardDetail_recommend"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:src="@drawable/ic_thumb_up_24px"
+                        android:background="@drawable/shape_for_circle_button"
+
+                        app:tint="@color/white"/>
+
+                    <TextView
+                        android:gravity="center"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="추천"
+                        style="@style/Theme.Georgeois.Text"
+                        android:textSize="@dimen/font_size_18sp"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/linearLayout_boardDetail_report"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginLeft="@dimen/margin_8dp"
+                    android:layout_marginRight="@dimen/margin_8dp"
+                    android:gravity="center">
+                    <ImageButton
+                        android:id="@+id/imageButton_boardDetail_report"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:src="@drawable/ic_report_24px"
+                        android:background="@drawable/shape_for_circle_button"
+                        android:backgroundTint="@color/accentRed"
+                        app:tint="@color/white"/>
+
+                    <TextView
+                        android:gravity="center"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        style="@style/Theme.Georgeois.Text"
+                        android:text="신고"
+                        android:textSize="@dimen/font_size_18sp"/>
+                </LinearLayout>
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:layout_marginBottom="@dimen/margin_12dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/Theme.Georgeois.Text"
+                    android:textSize="@dimen/font_size_18sp"
+                    android:text="댓글" />
+                <TextView
+                    android:layout_marginLeft="@dimen/margin_4dp"
+                    android:id="@+id/textView_boardDetail_commentCount2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/Theme.Georgeois.Text"
+                    android:textSize="@dimen/font_size_18sp"
+                    android:text="(3)" />
+            </LinearLayout>
+
+            <View
+                android:id="@+id/divider"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginBottom="@dimen/margin_12dp"
+                android:background="?android:attr/listDivider" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/textInputLayout_boardDetail_comment"
+                    style="@style/Theme.Georgeois.Text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:hint="댓글"
+                    android:textSize="@dimen/font_size_18sp"
+                    app:boxBackgroundColor="#00FFFFFF"
+
+                    app:boxBackgroundMode="filled"
+                    app:cursorErrorColor="@color/accentRed">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/textInputEditText_boardDetail_comment"
+                        style="@style/Theme.Georgeois.Text"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:backgroundTint="#00FFFFFF"
+                        android:hint="댓글을 입력하세요"
+                        android:textSize="@dimen/font_size_18sp" />
+
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <ImageButton
+                    android:id="@+id/imageButton_boardDetail_commentSend"
+                    app:tint="@color/white"
+                    android:background="@color/colorPrimary"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_send_24px" />
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerview_boardDetail_comment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
 
         </LinearLayout>
+
 
     </ScrollView>
 </LinearLayout>

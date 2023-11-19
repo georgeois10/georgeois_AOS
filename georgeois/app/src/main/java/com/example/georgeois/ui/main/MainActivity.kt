@@ -8,6 +8,7 @@ import com.example.georgeois.R
 import com.example.georgeois.databinding.ActivityMainBinding
 import com.example.georgeois.ui.board.BoardDetailFragment
 import com.example.georgeois.ui.board.BoardRegisterFragment
+import com.example.georgeois.ui.home.HomeAnalysisCategoryFragment
 import com.example.georgeois.ui.home.HomeAnalysisFragment
 import com.example.georgeois.ui.home.HomeRegisterFragment
 import com.example.georgeois.ui.home.HomeMainFragment
@@ -33,6 +34,7 @@ class MainActivity : AppCompatActivity() {
         val LOGIN_MAIN_FRAGMENT = "LoginMainFragment"
         val HOME_MAIN_FRAGMENT = "HomeMainFragment"
         val HOME_REGISTER_FRAGMENT = "HomeRegisterFragment"
+        val HOME_ANALYSIS_CATEGORY_FRAGMENT = "HomeAnalysisCategoryFragment"
         val HOME_ANALYSIS_FRAGMENT = "HomeAnalysisFragment"
         val BOARD_REGISTER_FRAGMENT = "BoardRegisterFragment"
         val BOARD_DETAIL_FRAGMENT = "BoardDetailFragment"
@@ -52,6 +54,7 @@ class MainActivity : AppCompatActivity() {
             LOGIN_MAIN_FRAGMENT -> LoginMainFragment()
             HOME_MAIN_FRAGMENT -> HomeMainFragment()
             HOME_REGISTER_FRAGMENT -> HomeRegisterFragment()
+            HOME_ANALYSIS_CATEGORY_FRAGMENT -> HomeAnalysisCategoryFragment()
             HOME_ANALYSIS_FRAGMENT -> HomeAnalysisFragment()
             BOARD_REGISTER_FRAGMENT -> BoardRegisterFragment()
             BOARD_DETAIL_FRAGMENT -> BoardDetailFragment()

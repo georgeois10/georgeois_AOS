@@ -5,13 +5,20 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.georgeois.R
 import com.example.georgeois.databinding.FragmentHomeAnalysisBinding
+import com.example.georgeois.databinding.RowHomeMainBinding
+import com.example.georgeois.databinding.RowMainAnalysisBinding
 import com.example.georgeois.ui.main.MainActivity
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.utils.ColorTemplate
+import java.text.NumberFormat
+import java.util.Locale
 
 class HomeAnalysisFragment : Fragment() {
     lateinit var fragmentHomeAnalysisBinding: FragmentHomeAnalysisBinding
@@ -76,9 +83,56 @@ class HomeAnalysisFragment : Fragment() {
             pieChartHomeAnalysis.invalidate() // 차트 갱신
 
 
+            val adapter = HomeAnalysisAdapter(dataList)
+            recyclerViewHomeAnalysis.layoutManager = LinearLayoutManager(requireContext())
+            recyclerViewHomeAnalysis.adapter = adapter
+        }
+
+
+        return fragmentHomeAnalysisBinding.root
+    }
+    inner class HomeAnalysisAdapter(var itemList: ArrayList<PieEntry>) :
+        RecyclerView.Adapter<HomeAnalysisAdapter.HomeAnalysisViewHolder>() {
+
+        inner class HomeAnalysisViewHolder(val rowHomeAnalysisBinding: RowMainAnalysisBinding) :
+            RecyclerView.ViewHolder(rowHomeAnalysisBinding.root) {
+            val category : TextView
+            init {
+
+                category = rowHomeAnalysisBinding.textViewMainAnalysisCategory
+                // 클릭시
+                rowHomeAnalysisBinding.root.setOnClickListener {
+                    val bundle = Bundle()
+                    bundle.putString("category", category.text.toString())
+
+                    mainActivity.replaceFragment(MainActivity.HOME_ANALYSIS_CATEGORY_FRAGMENT,true,bundle)
+                }
+            }
+
 
         }
-        return fragmentHomeAnalysisBinding.root
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HomeAnalysisViewHolder {
+            val rowHomeAnalysisBinding = RowMainAnalysisBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            val homeAnalysisViewHolder = HomeAnalysisViewHolder(rowHomeAnalysisBinding)
+            rowHomeAnalysisBinding.root.layoutParams = ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+            return homeAnalysisViewHolder
+        }
+
+        override fun onBindViewHolder(holder: HomeAnalysisViewHolder, position: Int) {
+            val currencyFormat = NumberFormat.getCurrencyInstance(Locale.getDefault())
+            val formattedValue = currencyFormat.format(itemList[position].value.toInt())
+
+            holder.rowHomeAnalysisBinding.textViewMainAnalysisCategory.text = itemList[position].label
+            holder.rowHomeAnalysisBinding.textViewMainAnalysisTotalAmount.text = formattedValue
+        }
+
+        override fun getItemCount(): Int {
+            return itemList.size
+        }
     }
 
 

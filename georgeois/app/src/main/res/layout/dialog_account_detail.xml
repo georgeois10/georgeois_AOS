@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="@dimen/padding_size_15dp">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <ImageButton
+                android:id="@+id/imageButton_dialogAccountDetail_delete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/ic_delete_24px"
+                android:background="#00FFFFFF"
+                android:layout_gravity="right"
+                app:tint="@color/accentRed" />
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/Theme.Georgeois.Text"
+                android:textSize="40sp"
+                android:gravity="center"
+                android:text="금액" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="@dimen/margin_10dp"
+                android:background="@color/accentGray" />
+
+            <LinearLayout
+                android:layout_margin="@dimen/margin_10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/font_size_16sp"
+                    style="@style/Theme.Georgeois.Text"
+                    android:text="카테고리" />
+
+                <TextView
+                    android:layout_marginStart="@dimen/margin_10dp"
+                    android:id="@+id/textView4"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/font_size_16sp"
+                    style="@style/Theme.Georgeois.Text"
+                    android:gravity="right"
+                    android:text="운동" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_margin="@dimen/margin_10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/font_size_16sp"
+                    style="@style/Theme.Georgeois.Text"
+                    android:text="자산" />
+
+                <TextView
+                    android:layout_marginStart="@dimen/margin_10dp"
+                    android:id="@+id/textView_dialogAccountDetail_property"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/font_size_16sp"
+                    style="@style/Theme.Georgeois.Text"
+                    android:gravity="right"
+                    android:text="현금or카드" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_margin="@dimen/margin_10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/font_size_16sp"
+                    style="@style/Theme.Georgeois.Text"
+                    android:text="날짜" />
+
+                <TextView
+                    android:layout_marginStart="@dimen/margin_10dp"
+                    android:id="@+id/textView_dialogAccountDetail_date"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/font_size_16sp"
+                    style="@style/Theme.Georgeois.Text"
+                    android:gravity="right"
+                    android:text="날짜" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_margin="@dimen/margin_10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="right"
+                android:orientation="horizontal">
+
+                <CheckBox
+                    android:layout_gravity="right"
+                    android:id="@+id/checkBox_dialogAccountDetail_noBudget"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="예산에서 제외" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_margin="@dimen/margin_10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/font_size_16sp"
+                    style="@style/Theme.Georgeois.Text"
+                    android:text="내용" />
+
+                <TextView
+                    android:layout_marginStart="@dimen/margin_10dp"
+                    android:id="@+id/textView_dialogAccountDetail_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/font_size_16sp"
+                    style="@style/Theme.Georgeois.Text"
+                    android:gravity="right"
+                    android:text="붕어빵 10개 사먹는데 그럼 이건 메모가 아니라 내용인걸가?그럼 얼마만큼 유지해야하는거지 ?" />
+            </LinearLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="@dimen/margin_10dp"
+                android:background="@color/accentGray" />
+            <ImageButton
+                android:id="@+id/imageButton_dialogAccountDetail"
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#00FFFFFF"
+                android:src="@drawable/ic_add_photo_alternate_24px">
+
+            </ImageButton>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_marginTop="@dimen/margin_10dp"
+                android:id="@+id/constraintLayout_dialogAccountDetail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <ImageView
+                    android:id="@+id/imageView_dialogAccountDetail"
+                    android:layout_width="@dimen/image_size_memo"
+                    android:layout_height="@dimen/image_size_memo"
+                    android:layout_gravity="center"
+                    android:scaleType="fitXY"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:src="@mipmap/ic_launcher" />
+
+                <ImageButton
+                    android:id="@+id/imageButton_dialogAccountDetail_imageDelete"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top"
+                    android:background="#00FFFFFF"
+                    app:layout_constraintEnd_toEndOf="@+id/imageView_dialogAccountDetail"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:src="@drawable/ic_close_24px"
+                    app:tint="@color/accentRed" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</LinearLayout>

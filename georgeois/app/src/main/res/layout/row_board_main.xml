@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="@dimen/margin_4dp"
+    android:padding="@dimen/margin_4dp"
     android:orientation="vertical">
 
     <com.google.android.material.card.MaterialCardView
@@ -27,6 +27,8 @@
                     android:id="@+id/textView_rowBoardMain_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    style="@style/Theme.Georgeois.Text"
+                    android:textSize="@dimen/font_size_18sp"
                     android:text="제목" />
 
                 <TextView
@@ -34,6 +36,8 @@
                     android:layout_marginTop="@dimen/margin_4dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    style="@style/Theme.Georgeois.Text"
+                    android:textSize="@dimen/font_size_16sp"
                     android:text="내용" />
 
             </LinearLayout>
@@ -48,6 +52,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="right"
+                    style="@style/Theme.Georgeois.Text"
+                    android:textSize="@dimen/font_size_16sp"
                     android:text="날짜" />
 
                 <LinearLayout
@@ -59,15 +65,21 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/margin_4dp"
+                        style="@style/Theme.Georgeois.Text"
+                        android:textSize="@dimen/font_size_16sp"
                         android:text="15"
                         app:drawableTint="@color/accentGray"
+                        android:drawablePadding="@dimen/margin_4dp"
                         app:drawableStartCompat="@drawable/ic_visibility_24px" />
                     <TextView
                         android:id="@+id/textView_rowBoardMain_comment"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/margin_4dp"
+                        style="@style/Theme.Georgeois.Text"
+                        android:textSize="@dimen/font_size_16sp"
                         android:text="3"
+                        android:drawablePadding="@dimen/margin_4dp"
                         app:drawableTint="@color/accentGray"
                         app:drawableStartCompat="@drawable/ic_comment_24px" />
                     <TextView
@@ -75,6 +87,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/margin_4dp"
+                        style="@style/Theme.Georgeois.Text"
+                        android:textSize="@dimen/font_size_16sp"
+                        android:drawablePadding="@dimen/margin_4dp"
                         android:text="3"
                         app:drawableTint="@color/accentGray"
                         app:drawableStartCompat="@drawable/ic_thumb_up_24px" />
