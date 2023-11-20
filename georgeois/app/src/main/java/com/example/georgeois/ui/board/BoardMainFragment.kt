@@ -29,7 +29,7 @@ class BoardMainFragment : Fragment() {
             floatingActionButtonBoardMainRegister.setOnClickListener {
                 mainActivity.replaceFragment(MainActivity.BOARD_REGISTER_FRAGMENT,true,null)
             }
-            var itemList = mutableListOf("Item 1", "Item 2", "Item 3")
+            var itemList = mutableListOf("Item 1", "Item 2", "Item 3","Item 3","Item 3","Item 3","Item 3","Item 3","Item 4", "item5")
 
             val adapter = BoardMainAdapter(itemList)
             recyclerViewBoardMainBoard.layoutManager = LinearLayoutManager(requireContext())
