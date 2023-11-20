@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ui.board.BoardRegisterFragment"
+    android:transitionGroup="true">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/materialToolbar_boardRegister"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="@style/Theme.Georgeois.Toolbar" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/padding_size_15dp">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/textInputLayout_boardRegister_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/textInputEditText_boardRegister_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/Theme.Georgeois.Text"
+                    android:textSize="@dimen/font_size_18sp"
+                    android:hint="제목" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <EditText
+                android:layout_marginTop="@dimen/margin_12dp"
+                android:id="@+id/editText_boardRegister_context"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="top"
+                android:hint="내용"
+                style="@style/Theme.Georgeois.Text"
+                android:textSize="@dimen/font_size_16sp"
+                android:background="#00FFFFFF"/>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/constraintLayout_boardRegister"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <ImageView
+                    android:id="@+id/imageView_boardRegister"
+                    android:layout_width="@dimen/image_size_memo"
+                    android:layout_height="@dimen/image_size_memo"
+                    android:layout_gravity="center"
+                    android:scaleType="fitXY"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:src="@mipmap/ic_launcher" />
+
+                <ImageButton
+                    android:id="@+id/imageButton_boardRegister_delete"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top"
+                    android:background="#00FFFFFF"
+                    app:layout_constraintEnd_toEndOf="@+id/imageView_boardRegister"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:src="@drawable/ic_close_24px"
+                    app:tint="@color/accentRed"
+                    android:visibility="visible" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/padding_size_15dp"
+        android:orientation="vertical">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/accentGray" />
+
+        <LinearLayout
+            android:layout_marginTop="@dimen/margin_12dp"
+            android:id="@+id/linearLayout_imageButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/imageButton_boardRegister_add"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:background="#00FFFFFF"
+                android:src="@drawable/ic_add_photo_alternate_24px" />
+
+            <TextView
+                android:id="@+id/textView_boardRegister_textCount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="end"
+                style="@style/Theme.Georgeois.Text"
+                android:textSize="@dimen/font_size_16sp"
+                android:text="80/80" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

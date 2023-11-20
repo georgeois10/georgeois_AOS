@@ -1,13 +1,18 @@
 package com.example.georgeois.ui.main
 
-import android.Manifest
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.SystemClock
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.example.georgeois.R
 import com.example.georgeois.databinding.ActivityMainBinding
+
+import com.example.georgeois.ui.board.BoardDetailFragment
+import com.example.georgeois.ui.board.BoardRegisterFragment
+import com.example.georgeois.ui.home.HomeAnalysisCategoryFragment
+import com.example.georgeois.ui.home.HomeAnalysisFragment
+import com.example.georgeois.ui.home.HomeRegisterFragment
+import com.example.georgeois.ui.home.HomeMainFragment
 import com.example.georgeois.ui.chat.AddChatFragment
 import com.example.georgeois.ui.chat.ChatAccountBookFragment
 import com.example.georgeois.ui.chat.ChatRoomFragment
@@ -41,6 +46,13 @@ class MainActivity : AppCompatActivity() {
     companion object{
         val MAIN_FRAGMENT = "MainFragment"
         val LOGIN_MAIN_FRAGMENT = "LoginMainFragment"
+
+        val HOME_MAIN_FRAGMENT = "HomeMainFragment"
+        val HOME_REGISTER_FRAGMENT = "HomeRegisterFragment"
+        val HOME_ANALYSIS_CATEGORY_FRAGMENT = "HomeAnalysisCategoryFragment"
+        val HOME_ANALYSIS_FRAGMENT = "HomeAnalysisFragment"
+        val BOARD_REGISTER_FRAGMENT = "BoardRegisterFragment"
+        val BOARD_DETAIL_FRAGMENT = "BoardDetailFragment"
         val ADD_CHAT_FRAGMENT = "AddChatFragment"
         val CHAT_ROOM_FRAGMENT = "ChatRoomFragment"
         val CHAT_ACCOUT_BOOK_FRAGMENT = "ChatAccountBookFragment"
@@ -68,6 +80,12 @@ class MainActivity : AppCompatActivity() {
         newFragment = when(name){
             MAIN_FRAGMENT -> MainFragment()
             LOGIN_MAIN_FRAGMENT -> LoginMainFragment()
+            HOME_MAIN_FRAGMENT -> HomeMainFragment()
+            HOME_REGISTER_FRAGMENT -> HomeRegisterFragment()
+            HOME_ANALYSIS_CATEGORY_FRAGMENT -> HomeAnalysisCategoryFragment()
+            HOME_ANALYSIS_FRAGMENT -> HomeAnalysisFragment()
+            BOARD_REGISTER_FRAGMENT -> BoardRegisterFragment()
+            BOARD_DETAIL_FRAGMENT -> BoardDetailFragment()
             ADD_CHAT_FRAGMENT -> AddChatFragment()
             CHAT_ROOM_FRAGMENT -> ChatRoomFragment()
             CHAT_ACCOUT_BOOK_FRAGMENT -> ChatAccountBookFragment()
