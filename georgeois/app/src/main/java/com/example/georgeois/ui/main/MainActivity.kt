@@ -8,7 +8,12 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.example.georgeois.R
 import com.example.georgeois.databinding.ActivityMainBinding
+import com.example.georgeois.ui.user.JoinMainFragment
+import com.example.georgeois.ui.user.JoinSocialFragment
+import com.example.georgeois.ui.user.LoginFindIdFragment
+import com.example.georgeois.ui.user.LoginFindPasswordFragment
 import com.example.georgeois.ui.user.LoginMainFragment
+import com.example.georgeois.ui.user.LoginResetPasswordFragment
 import com.google.android.material.transition.MaterialSharedAxis
 
 class MainActivity : AppCompatActivity() {
@@ -28,6 +33,11 @@ class MainActivity : AppCompatActivity() {
     companion object{
         val MAIN_FRAGMENT = "MainFragment"
         val LOGIN_MAIN_FRAGMENT = "LoginMainFragment"
+        val JOIN_MAIN_FRAGMENT = "JoinMainFragment"
+        val JOIN_SOCIAL_FRAGMENT = "JoinSocialFragment"
+        val LOGIN_FIND_PASSWORD_FRAGMENT = "LoginFindPasswordFragment"
+        val LOGIN_FIND_ID_FRAGMENT = "LoginFindIdFragment"
+        val LOGIN_RESET_PASSWORD_FRAGMENT = "LoginResetPasswordFragment"
     }
     fun replaceFragment(name:String, addToBackStack:Boolean, bundle:Bundle?){
         // Fragment 교체 상태로 설정한다.
@@ -42,6 +52,11 @@ class MainActivity : AppCompatActivity() {
         newFragment = when(name){
             MAIN_FRAGMENT -> MainFragment()
             LOGIN_MAIN_FRAGMENT -> LoginMainFragment()
+            JOIN_MAIN_FRAGMENT -> JoinMainFragment()
+            JOIN_SOCIAL_FRAGMENT -> JoinSocialFragment()
+            LOGIN_FIND_PASSWORD_FRAGMENT -> LoginFindPasswordFragment()
+            LOGIN_FIND_ID_FRAGMENT -> LoginFindIdFragment()
+            LOGIN_RESET_PASSWORD_FRAGMENT -> LoginResetPasswordFragment()
             else -> Fragment()
         }
 
