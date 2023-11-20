@@ -114,11 +114,11 @@
                     <com.google.android.material.card.MaterialCardView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        app:cardCornerRadius="0dp"
+                        android:layout_marginBottom="50dp"
+                        app:cardCornerRadius="5dp"
                         app:cardPreventCornerOverlap="false"
                         app:cardUseCompatPadding="true"
-                        app:contentPadding="0dp"
-                        android:layout_marginBottom="50dp">
+                        app:contentPadding="0dp">
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -126,19 +126,20 @@
                             android:orientation="vertical">
 
                             <TextView
-                                android:layout_margin="@dimen/margin_8dp"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="17일 목요일"
+                                android:layout_margin="@dimen/margin_8dp"
                                 android:fontFamily="@font/space"
+                                android:text="17일 목요일"
                                 android:textSize="@dimen/font_size_18sp">
 
                             </TextView>
+
                             <androidx.recyclerview.widget.RecyclerView
                                 android:id="@+id/recyclerView_homeMain"
-                                android:padding="5dp"
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content" />
+                                android:layout_height="wrap_content"
+                                android:padding="5dp" />
                         </LinearLayout>
 
                     </com.google.android.material.card.MaterialCardView>
@@ -153,14 +154,15 @@
             android:id="@+id/floatingActionButton_homeMain_register"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="15dp"
+            android:layout_marginBottom="15dp"
+            android:backgroundTint="@color/colorPrimary"
             android:clickable="true"
             android:paddingTop="@dimen/padding_size_15dp"
-            android:layout_margin="@dimen/margin_12dp"
-            android:backgroundTint="@color/colorPrimary"
             android:src="@drawable/ic_add_24px"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:tint="@color/white"/>
+            app:tint="@color/white" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </LinearLayout>

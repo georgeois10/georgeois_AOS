@@ -21,11 +21,13 @@
         <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
             <com.google.android.material.search.SearchBar
                 android:id="@+id/searchBar_boardMain"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="검색어를 입력해주세요." />
+                android:hint="검색어를 입력해주세요."
+                android:theme="@style/SearchBarStyle" />
 
             <ScrollView
                 android:layout_width="match_parent"
@@ -35,13 +37,14 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:padding="11dp">
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/recyclerView_boardMain_board"
-                        android:padding="6dp"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
+                        android:layout_height="match_parent"
+                        android:padding="6dp" />
                 </LinearLayout>
             </ScrollView>
         </com.google.android.material.appbar.AppBarLayout>
@@ -50,6 +53,8 @@
             android:id="@+id/searchView_boardMain"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="@null"
+            android:theme="@style/SearchViewStyle"
             app:layout_anchor="@id/searchBar_boardMain">
 
         </com.google.android.material.search.SearchView>
@@ -66,11 +71,12 @@
         android:id="@+id/floatingActionButton_boardMain_register"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:clickable="true"
-        app:srcCompat="@drawable/ic_write_24px"
         android:layout_gravity="bottom|end"
+        android:layout_marginRight="@dimen/padding_size_15dp"
+        android:layout_marginBottom="@dimen/padding_size_15dp"
         android:backgroundTint="@color/colorPrimary"
-        app:tint="@color/white"
+        android:clickable="true"
         android:paddingTop="@dimen/padding_size_15dp"
-        android:layout_margin="@dimen/margin_12dp"/>
+        app:srcCompat="@drawable/ic_write_24px"
+        app:tint="@color/white" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
