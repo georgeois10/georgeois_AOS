@@ -49,6 +49,7 @@ class ChatAccountBookFragment : Fragment() {
                     mainActivity.removeFragment(MainActivity.CHAT_ACCOUT_BOOK_FRAGMENT)
                 }
             }
+
             recyclerViewChatAccountBook.run {
                 adapter = ChatAccountBookRecyclerView()
                 layoutManager = LinearLayoutManager(mainActivity)

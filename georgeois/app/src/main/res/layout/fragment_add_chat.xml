@@ -75,6 +75,19 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
+            android:id="@+id/textView9090"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="@dimen/padding_size_15dp"
+            android:drawableStart="@drawable/ic_help_24px"
+            android:fontFamily="@font/space"
+            android:gravity="center"
+            android:text="  1,000만원 이하로 입력해주세요."
+            android:textColor="@color/accentRed"
+            android:textSize="12sp" />
+
+        <TextView
             android:id="@+id/textView12"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -89,39 +102,65 @@
             android:layout_height="wrap_content"
             android:background="@drawable/border_chat_main_recyclerview"
             android:orientation="vertical"
-            android:paddingLeft="40dp">
+            android:paddingLeft="@dimen/padding_size_15dp"
+            android:paddingRight="@dimen/padding_size_15dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1">
 
-                <CheckBox
-                    android:id="@+id/checkBox_add_chat_male"
-                    android:layout_width="wrap_content"
+                <RadioGroup
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:fontFamily="@font/space"
-                    android:text="남성"
-                    android:textSize="@dimen/font_size_16sp" />
+                    android:orientation="horizontal">
 
-                <CheckBox
-                    android:id="@+id/checkBox_add_chat_female"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:fontFamily="@font/space"
-                    android:text="여성"
-                    android:textSize="@dimen/font_size_16sp" />
+                    <RadioButton
+                        android:id="@+id/checkBox_add_chat_male"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="남성" />
 
-                <CheckBox
-                    android:id="@+id/checkBox_add_chat_none"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:fontFamily="@font/space"
-                    android:text="성별 무관"
-                    android:textSize="@dimen/font_size_16sp" />
+                    <RadioButton
+                        android:id="@+id/checkBox_add_chat_female"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="여성" />
+
+                    <RadioButton
+                        android:id="@+id/checkBox_add_chat_none"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="성별 무관" />
+                </RadioGroup>
+                <!--                <CheckBox-->
+                <!--                    android:id="@+id/checkBox_add_chat_male"-->
+                <!--                    android:layout_width="wrap_content"-->
+                <!--                    android:layout_height="wrap_content"-->
+                <!--                    android:layout_weight="1"-->
+                <!--                    android:fontFamily="@font/space"-->
+                <!--                    android:text="남성"-->
+                <!--                    android:textSize="@dimen/font_size_16sp" />-->
+
+                <!--                <CheckBox-->
+                <!--                    android:id="@+id/checkBox_add_chat_female"-->
+                <!--                    android:layout_width="wrap_content"-->
+                <!--                    android:layout_height="wrap_content"-->
+                <!--                    android:layout_weight="1"-->
+                <!--                    android:fontFamily="@font/space"-->
+                <!--                    android:text="여성"-->
+                <!--                    android:textSize="@dimen/font_size_16sp" />-->
+
+                <!--                <CheckBox-->
+                <!--                    android:id="@+id/checkBox_add_chat_none"-->
+                <!--                    android:layout_width="wrap_content"-->
+                <!--                    android:layout_height="wrap_content"-->
+                <!--                    android:layout_weight="1"-->
+                <!--                    android:fontFamily="@font/space"-->
+                <!--                    android:text="성별 무관"-->
+                <!--                    android:textSize="@dimen/font_size_16sp" />-->
 
             </LinearLayout>
 

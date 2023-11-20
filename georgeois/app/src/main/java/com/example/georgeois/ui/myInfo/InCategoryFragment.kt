@@ -116,7 +116,7 @@ class InCategoryFragment : Fragment() {
             }
 
             override fun onClick(v: View?) {
-                mainActivity.replaceFragment(MainActivity.CHAT_ROOM_FRAGMENT,true,null)
+
             }
         }
 
