@@ -56,12 +56,14 @@
                         android:layout_height="75dp"
                         android:src="@drawable/img_crown" />
 
-                    <ImageView
+                    <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/imageView_chat_account_book_saving_user_image"
                         android:layout_width="80dp"
                         android:layout_height="80dp"
                         android:layout_gravity="center_horizontal"
-                        android:src="@drawable/ic_person_24px" />
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/ic_person_24px"
+                        app:civ_border_width="1dp" />
 
                     <TextView
                         android:id="@+id/textView_chat_account_book_saving_user_nickName"
@@ -96,12 +98,14 @@
                         android:layout_height="75dp"
                         android:src="@drawable/img_crown" />
 
-                    <ImageView
+                    <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/imageView_chat_account_book_comsumption_user_image"
                         android:layout_width="80dp"
                         android:layout_height="80dp"
                         android:layout_gravity="center_horizontal"
-                        android:src="@drawable/ic_person_24px" />
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/ic_person_24px"
+                        app:civ_border_width="1dp" />
 
                     <TextView
                         android:id="@+id/textView_chat_account_book_consumption_user_nickName"

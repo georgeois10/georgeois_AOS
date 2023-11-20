@@ -45,15 +45,6 @@ class MyInfoMainFragment : Fragment() {
 
             // 프로필
             layoutMyInfoMainEditMyInfo.run {
-                // 이미지를 로드하고 Bitmap 객체로 변환
-                val originalBitmap = BitmapFactory.decodeResource(resources, R.drawable.img_profile)
-
-                // 이미지를 동그란 테두리로 처리
-                val roundedBitmap = getRoundedBitmap(originalBitmap, 2, Color.GRAY)
-
-                // 처리된 이미지를 ImageView에 설정
-                imageViewMyInfoMainUserProfileImage.setImageBitmap(roundedBitmap)
-
                 buttonMyInfoMainEditInfo.isEnabled = false
 
                 setOnClickListener {
@@ -165,31 +156,6 @@ class MyInfoMainFragment : Fragment() {
         }
 
         return fragmentMyInfoMainBinding.root
-    }
-
-    fun getRoundedBitmap(bitmap: Bitmap, borderWidth: Int, borderColor: Int): Bitmap {
-        val width = bitmap.width
-        val height = bitmap.height
-
-        val outputBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
-        val canvas = Canvas(outputBitmap)
-
-        val paint = Paint()
-        paint.isAntiAlias = true
-        paint.color = borderColor
-
-        // 이미지 중심 좌표 계산
-        val centerX = width / 2.0f
-        val centerY = height / 2.0f
-
-        // 테두리를 그립니다.
-        canvas.drawCircle(centerX, centerY, centerX - borderWidth, paint)
-
-        // 이미지를 중심에 그립니다.
-        paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN)
-        canvas.drawBitmap(bitmap, 0f, 0f, paint)
-
-        return outputBitmap
     }
 
     fun setCustomTitle(title: String): TextView {
