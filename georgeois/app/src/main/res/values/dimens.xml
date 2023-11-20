@@ -3,6 +3,7 @@
 
     <!--padding-->
     <dimen name="padding_size_15dp"> 15dp </dimen>
+
     <!--vertical-->
     <dimen name="margin_32dp"> 32dp </dimen>
     <dimen name="margin_40dp"> 40dp </dimen>
@@ -18,6 +19,7 @@
     <dimen name="font_size_18sp"> 18sp </dimen>
     <dimen name="font_size_20sp"> 20sp </dimen>
     <dimen name="font_size_26sp"> 26sp </dimen>
+   
     <!-- profile image size -->
     <dimen name="image_size_board_profile"> 40dp </dimen>
     <dimen name="image_size_profile">80dp</dimen>

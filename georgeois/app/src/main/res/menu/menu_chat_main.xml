@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/menu_search_chat"
+        android:icon="@drawable/ic_search_24px"
+        android:title="검색"
+        android:visible="true"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/menu_add_chat"
+        android:icon="@drawable/ic_add_chat_24px"
+        android:title="오픈 채팅 만들기"
+        android:visible="true"
+        app:showAsAction="always" />
+</menu>
