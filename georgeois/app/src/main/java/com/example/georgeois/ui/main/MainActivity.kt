@@ -8,6 +8,14 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.example.georgeois.R
 import com.example.georgeois.databinding.ActivityMainBinding
+import com.example.georgeois.ui.chat.AddChatFragment
+import com.example.georgeois.ui.chat.ChatAccountBookFragment
+import com.example.georgeois.ui.chat.ChatRoomFragment
+import com.example.georgeois.ui.myInfo.EditProfileFragment
+import com.example.georgeois.ui.myInfo.InCategoryFragment
+import com.example.georgeois.ui.myInfo.ModifyPasswordFragment
+import com.example.georgeois.ui.myInfo.MyPostFragment
+import com.example.georgeois.ui.myInfo.OutCategoryFragment
 import com.example.georgeois.ui.user.JoinMainFragment
 import com.example.georgeois.ui.user.JoinSocialFragment
 import com.example.georgeois.ui.user.LoginFindIdFragment
@@ -33,6 +41,14 @@ class MainActivity : AppCompatActivity() {
     companion object{
         val MAIN_FRAGMENT = "MainFragment"
         val LOGIN_MAIN_FRAGMENT = "LoginMainFragment"
+        val ADD_CHAT_FRAGMENT = "AddChatFragment"
+        val CHAT_ROOM_FRAGMENT = "ChatRoomFragment"
+        val CHAT_ACCOUT_BOOK_FRAGMENT = "ChatAccountBookFragment"
+        val EDIT_PROFILE_FRAGMENT = "EditProfileFragment"
+        val MODIFY_PASSWORD_FRAGMENT = "ModifyPasswordFragment"
+        val MY_POST_FRAGMENT = "MyPostFragment"
+        val IN_CATEGORY_FRAGMENT = "InCategoryFragment"
+        val OUT_CATEGORY_FRAGMENT = "OutCategoryFragment"
         val JOIN_MAIN_FRAGMENT = "JoinMainFragment"
         val JOIN_SOCIAL_FRAGMENT = "JoinSocialFragment"
         val LOGIN_FIND_PASSWORD_FRAGMENT = "LoginFindPasswordFragment"
@@ -52,6 +68,14 @@ class MainActivity : AppCompatActivity() {
         newFragment = when(name){
             MAIN_FRAGMENT -> MainFragment()
             LOGIN_MAIN_FRAGMENT -> LoginMainFragment()
+            ADD_CHAT_FRAGMENT -> AddChatFragment()
+            CHAT_ROOM_FRAGMENT -> ChatRoomFragment()
+            CHAT_ACCOUT_BOOK_FRAGMENT -> ChatAccountBookFragment()
+            EDIT_PROFILE_FRAGMENT -> EditProfileFragment()
+            MODIFY_PASSWORD_FRAGMENT -> ModifyPasswordFragment()
+            MY_POST_FRAGMENT -> MyPostFragment()
+            IN_CATEGORY_FRAGMENT -> InCategoryFragment()
+            OUT_CATEGORY_FRAGMENT -> OutCategoryFragment()
             JOIN_MAIN_FRAGMENT -> JoinMainFragment()
             JOIN_SOCIAL_FRAGMENT -> JoinSocialFragment()
             LOGIN_FIND_PASSWORD_FRAGMENT -> LoginFindPasswordFragment()

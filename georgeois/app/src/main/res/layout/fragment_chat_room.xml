@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawerLayout_chat_room"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ui.chat.ChatRoomFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar_chat_room"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="?attr/actionBarSize"
+            android:theme="@style/Theme.Georgeois.Toolbar"
+            app:menu="@menu/menu_chat_room" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView_chat_room"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:padding="10dp"
+            android:transitionGroup="true" />
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/textInputLayout_chat_room_input_message"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:background="@null"
+                android:transitionGroup="true"
+                app:boxStrokeWidth="0dp"
+                app:boxStrokeWidthFocused="0dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/textInputEditText_chat_room_input_message"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/border_chat_main_recyclerview"
+                    android:fontFamily="@font/space"
+                    android:inputType="textMultiLine|textNoSuggestions"
+                    android:maxLength="300" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <LinearLayout
+                android:id="@+id/linearLayout_chat_room_send"
+                android:layout_width="35dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical">
+
+                <ImageView
+                    android:id="@+id/imageView"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_send_24px"
+                    android:tint="@color/colorPrimary" />
+            </LinearLayout>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+    </LinearLayout>
+
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/navigationView_chat_room"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="right"
+        android:background="@color/ic_launcher_background"
+        android:transitionGroup="true">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <TextView
+                android:id="@+id/textView_chat_room_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/padding_size_15dp"
+                android:fontFamily="@font/space"
+                android:text="방제목"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                android:textSize="@dimen/font_size_20sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textView17"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/space"
+                    android:text="예산"
+                    android:textSize="@dimen/font_size_16sp" />
+
+                <TextView
+                    android:id="@+id/textView_chat_room_budget"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/padding_size_15dp"
+                    android:fontFamily="@font/space"
+                    android:text="300,000 원"
+                    android:textSize="@dimen/font_size_16sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textView18"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/space"
+                    android:text="출생년도"
+                    android:textSize="@dimen/font_size_16sp" />
+
+                <TextView
+                    android:id="@+id/textView_chat_room_birth"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/padding_size_15dp"
+                    android:fontFamily="@font/space"
+                    android:text="1990년~2000년"
+                    android:textSize="@dimen/font_size_16sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textView19"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/space"
+                    android:text="성별"
+                    android:textSize="@dimen/font_size_16sp" />
+
+                <TextView
+                    android:id="@+id/textView_chat_room_gender"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/padding_size_15dp"
+                    android:fontFamily="@font/space"
+                    android:text="성별 무관"
+                    android:textSize="@dimen/font_size_16sp" />
+            </LinearLayout>
+
+            <View
+                android:id="@+id/divider3"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="?android:attr/listDivider" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:fontFamily="@font/space"
+                android:text="참여중인 유저"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:textSize="@dimen/font_size_18sp" />
+
+            <!--            <LinearLayout-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="match_parent"-->
+            <!--                android:layout_marginTop="30dp"-->
+            <!--                android:orientation="horizontal">-->
+
+            <!--                <de.hdodenhof.circleimageview.CircleImageView-->
+            <!--                    android:id="@+id/imageView_chat_room_user_image"-->
+            <!--                    android:layout_width="30dp"-->
+            <!--                    android:layout_height="30dp"-->
+            <!--                    android:src="@drawable/ic_person_24px" />-->
+
+            <!--                <TextView-->
+            <!--                    android:id="@+id/textView_chat_room_user_name"-->
+            <!--                    android:layout_width="wrap_content"-->
+            <!--                    android:layout_height="wrap_content"-->
+            <!--                    android:layout_gravity="center"-->
+            <!--                    android:layout_marginLeft="10dp"-->
+            <!--                    android:text="유저 닉네임"-->
+            <!--                    android:textSize="@dimen/font_size_16sp"-->
+            <!--                    android:textStyle="bold" />-->
+
+            <!--                <View-->
+            <!--                    android:layout_width="0dp"-->
+            <!--                    android:layout_height="0dp"-->
+            <!--                    android:layout_weight="1" />-->
+
+            <!--                <Button-->
+            <!--                    android:id="@+id/button_chat_room_exit"-->
+            <!--                    style="@style/Widget.Material3.Button.ElevatedButton"-->
+            <!--                    android:layout_width="60dp"-->
+            <!--                    android:layout_height="30dp"-->
+            <!--                    android:padding="0dp"-->
+            <!--                    android:text="나가기"-->
+            <!--                    android:textAppearance="@style/TextAppearance.AppCompat.Small"-->
+            <!--                    android:textColor="@color/black" />-->
+            <!--            </LinearLayout>-->
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView_chat_room_user_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="20dp" />
+
+            <View
+                android:id="@+id/divider4"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="?android:attr/listDivider" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+    </com.google.android.material.navigation.NavigationView>
+</androidx.drawerlayout.widget.DrawerLayout>

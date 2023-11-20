@@ -39,26 +39,29 @@
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
                         android:padding="@dimen/padding_size_15dp">
+
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:orientation="horizontal">
+
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:textColor="@color/accentGreen"
                                 android:fontFamily="@font/space"
-                                android:textSize="@dimen/font_size_16sp"
-                                android:text="현재달 수입 : " />
+                                android:text="현재달 수입 : "
+                                android:textColor="@color/accentGreen"
+                                android:textSize="@dimen/font_size_16sp" />
+
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:textColor="@color/accentGreen"
                                 android:fontFamily="@font/space"
-                                android:textSize="@dimen/font_size_16sp"
-                                android:text="100000">
-                            </TextView>
+                                android:text="100000"
+                                android:textColor="@color/accentGreen"
+                                android:textSize="@dimen/font_size_16sp"></TextView>
                         </LinearLayout>
+
                         <LinearLayout
                             android:layout_marginTop="@dimen/margin_10dp"
                             android:layout_width="wrap_content"
