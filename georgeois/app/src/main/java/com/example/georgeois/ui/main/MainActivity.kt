@@ -16,7 +16,12 @@ import com.example.georgeois.ui.myInfo.InCategoryFragment
 import com.example.georgeois.ui.myInfo.ModifyPasswordFragment
 import com.example.georgeois.ui.myInfo.MyPostFragment
 import com.example.georgeois.ui.myInfo.OutCategoryFragment
+import com.example.georgeois.ui.user.JoinMainFragment
+import com.example.georgeois.ui.user.JoinSocialFragment
+import com.example.georgeois.ui.user.LoginFindIdFragment
+import com.example.georgeois.ui.user.LoginFindPasswordFragment
 import com.example.georgeois.ui.user.LoginMainFragment
+import com.example.georgeois.ui.user.LoginResetPasswordFragment
 import com.google.android.material.transition.MaterialSharedAxis
 
 class MainActivity : AppCompatActivity() {
@@ -44,6 +49,11 @@ class MainActivity : AppCompatActivity() {
         val MY_POST_FRAGMENT = "MyPostFragment"
         val IN_CATEGORY_FRAGMENT = "InCategoryFragment"
         val OUT_CATEGORY_FRAGMENT = "OutCategoryFragment"
+        val JOIN_MAIN_FRAGMENT = "JoinMainFragment"
+        val JOIN_SOCIAL_FRAGMENT = "JoinSocialFragment"
+        val LOGIN_FIND_PASSWORD_FRAGMENT = "LoginFindPasswordFragment"
+        val LOGIN_FIND_ID_FRAGMENT = "LoginFindIdFragment"
+        val LOGIN_RESET_PASSWORD_FRAGMENT = "LoginResetPasswordFragment"
     }
     fun replaceFragment(name:String, addToBackStack:Boolean, bundle:Bundle?){
         // Fragment 교체 상태로 설정한다.
@@ -66,6 +76,11 @@ class MainActivity : AppCompatActivity() {
             MY_POST_FRAGMENT -> MyPostFragment()
             IN_CATEGORY_FRAGMENT -> InCategoryFragment()
             OUT_CATEGORY_FRAGMENT -> OutCategoryFragment()
+            JOIN_MAIN_FRAGMENT -> JoinMainFragment()
+            JOIN_SOCIAL_FRAGMENT -> JoinSocialFragment()
+            LOGIN_FIND_PASSWORD_FRAGMENT -> LoginFindPasswordFragment()
+            LOGIN_FIND_ID_FRAGMENT -> LoginFindIdFragment()
+            LOGIN_RESET_PASSWORD_FRAGMENT -> LoginResetPasswordFragment()
             else -> Fragment()
         }
 
