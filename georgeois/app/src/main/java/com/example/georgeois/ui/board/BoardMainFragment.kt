@@ -1,6 +1,7 @@
 package com.example.georgeois.ui.board
 
 import android.annotation.SuppressLint
+import android.graphics.Rect
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -11,8 +12,10 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.georgeois.R
 import com.example.georgeois.databinding.FragmentBoardMainBinding
 import com.example.georgeois.databinding.RowBoardMainBinding
+import com.example.georgeois.ui.chat.SpaceItemDecoration
 import com.example.georgeois.ui.main.MainActivity
 
 class BoardMainFragment : Fragment() {
@@ -34,6 +37,8 @@ class BoardMainFragment : Fragment() {
             val adapter = BoardMainAdapter(itemList)
             recyclerViewBoardMainBoard.layoutManager = LinearLayoutManager(requireContext())
             recyclerViewBoardMainBoard.adapter = adapter
+            val spacingInPixels = resources.getDimensionPixelSize(R.dimen.margin_10dp) // 여백 크기를 리소스에서 가져옴
+            recyclerViewBoardMainBoard.addItemDecoration(SpaceItemDecoration(spacingInPixels))
 
 
             searchViewBoardMain
@@ -105,4 +110,14 @@ class BoardMainFragment : Fragment() {
         }
     }
 
+}
+class SpaceItemDecoration(private val bottomSpace: Int) : RecyclerView.ItemDecoration() {
+    override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
+        super.getItemOffsets(outRect, view, parent, state)
+
+        // 마지막 아이템이 아닐 경우에만 바텀 여백을 추가
+        if (parent.getChildAdapterPosition(view) != parent.adapter?.itemCount?.minus(1)) {
+            outRect.bottom = bottomSpace
+        }
+    }
 }

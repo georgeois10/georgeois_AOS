@@ -2,128 +2,119 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="60dp"
+    android:background="@drawable/border_chat_main_recyclerview"
     android:orientation="vertical"
-    android:padding="@dimen/margin_4dp">
+    android:padding="10dp">
 
-    <com.google.android.material.card.MaterialCardView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardBackgroundColor="#00FFFFFF"
-        app:cardCornerRadius="5dp"
-        app:contentPadding="0dp">
+        android:orientation="horizontal">
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="10dp">
+            android:layout_weight="1"
+            android:orientation="vertical">
 
-            <LinearLayout
-                android:layout_width="wrap_content"
+            <TextView
+                android:id="@+id/textView_rowBoardMain_title"
+                style="@style/Theme.Georgeois.Text"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
+                android:text="제목"
+                android:textSize="@dimen/font_size_18sp" />
 
-                <TextView
-                    android:id="@+id/textView_rowBoardMain_title"
-                    style="@style/Theme.Georgeois.Text"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="제목"
-                    android:textSize="@dimen/font_size_18sp" />
-
-                <TextView
-                    android:id="@+id/textView_rowBoardMain_context"
-                    style="@style/Theme.Georgeois.Text"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/margin_4dp"
-                    android:text="내용"
-                    android:textSize="@dimen/font_size_16sp" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
+            <TextView
+                android:id="@+id/textView_rowBoardMain_context"
+                style="@style/Theme.Georgeois.Text"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:layout_marginTop="5dp"
+                android:text="내용"
+                android:textSize="@dimen/font_size_16sp" />
 
-
-                <TextView
-                    android:id="@+id/textView_rowBoardMain_date"
-                    style="@style/Theme.Georgeois.Text"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="right"
-                    android:text="날짜"
-                    android:textSize="@dimen/font_size_16sp" />
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/margin_4dp">
-
-                    <ImageView
-                        android:id="@+id/imageView2"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:layout_weight="1"
-                        app:srcCompat="@drawable/ic_visibility_24px" />
-
-                    <TextView
-                        android:id="@+id/textView_rowBoardMain_hits"
-                        style="@style/Theme.Georgeois.Text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="20dp"
-                        android:layout_marginStart="@dimen/margin_4dp"
-                        android:drawablePadding="@dimen/margin_4dp"
-                        android:text="15"
-                        android:textSize="@dimen/font_size_16sp"
-                        app:drawableTint="@color/accentGray" />
-
-                    <ImageView
-                        android:id="@+id/imageView4"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:layout_marginLeft="5dp"
-                        android:layout_weight="1"
-                        app:srcCompat="@drawable/ic_comment_24px" />
-
-                    <TextView
-                        android:id="@+id/textView_rowBoardMain_comment"
-                        style="@style/Theme.Georgeois.Text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="20dp"
-                        android:layout_marginStart="@dimen/margin_4dp"
-                        android:drawablePadding="@dimen/margin_4dp"
-                        android:text="3"
-                        android:textSize="@dimen/font_size_16sp"
-                        app:drawableTint="@color/accentGray" />
-
-                    <ImageView
-                        android:id="@+id/imageView5"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:layout_marginLeft="5dp"
-                        android:layout_weight="1"
-                        app:srcCompat="@drawable/ic_thumb_up_24px" />
-
-                    <TextView
-                        android:id="@+id/textView_rowBoardMain_recommend"
-                        style="@style/Theme.Georgeois.Text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="20dp"
-                        android:layout_marginStart="@dimen/margin_4dp"
-                        android:drawablePadding="@dimen/margin_4dp"
-                        android:text="3"
-                        android:textSize="@dimen/font_size_16sp"
-                        app:drawableTint="@color/accentGray" />
-                </LinearLayout>
-            </LinearLayout>
         </LinearLayout>
 
-    </com.google.android.material.card.MaterialCardView>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+
+            <TextView
+                android:id="@+id/textView_rowBoardMain_date"
+                style="@style/Theme.Georgeois.Text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="right"
+                android:text="날짜"
+                android:textSize="@dimen/font_size_16sp" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp">
+
+                <ImageView
+                    android:id="@+id/imageView2"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_weight="1"
+                    app:srcCompat="@drawable/ic_visibility_24px" />
+
+                <TextView
+                    android:id="@+id/textView_rowBoardMain_hits"
+                    style="@style/Theme.Georgeois.Text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="20dp"
+                    android:layout_marginStart="@dimen/margin_4dp"
+                    android:drawablePadding="@dimen/margin_4dp"
+                    android:text="15"
+                    android:textSize="@dimen/font_size_16sp"
+                    app:drawableTint="@color/accentGray" />
+
+                <ImageView
+                    android:id="@+id/imageView4"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_weight="1"
+                    app:srcCompat="@drawable/ic_comment_24px" />
+
+                <TextView
+                    android:id="@+id/textView_rowBoardMain_comment"
+                    style="@style/Theme.Georgeois.Text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="20dp"
+                    android:layout_marginStart="@dimen/margin_4dp"
+                    android:drawablePadding="@dimen/margin_4dp"
+                    android:text="3"
+                    android:textSize="@dimen/font_size_16sp"
+                    app:drawableTint="@color/accentGray" />
+
+                <ImageView
+                    android:id="@+id/imageView5"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_weight="1"
+                    app:srcCompat="@drawable/ic_thumb_up_24px" />
+
+                <TextView
+                    android:id="@+id/textView_rowBoardMain_recommend"
+                    style="@style/Theme.Georgeois.Text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="20dp"
+                    android:layout_marginStart="@dimen/margin_4dp"
+                    android:drawablePadding="@dimen/margin_4dp"
+                    android:text="3"
+                    android:textSize="@dimen/font_size_16sp"
+                    app:drawableTint="@color/accentGray" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
 
 
 </LinearLayout>

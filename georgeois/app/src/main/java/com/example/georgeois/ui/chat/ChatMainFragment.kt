@@ -25,7 +25,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.search.SearchBar
 import kotlin.concurrent.thread
 
-
 class ChatMainFragment : Fragment() {
     var size = 10
     lateinit var fragmentChatMainBinding: FragmentChatMainBinding
@@ -48,11 +47,11 @@ class ChatMainFragment : Fragment() {
                 }
             }
             searchBarChatMain.run{
-                hint = "검색어를 입력해주세요"
+                hint = "검색어를 입력해주세요."
             }
 
             searchViewChatMain.run{
-                hint = "검색어를 입력해주세요"
+                hint = "검색어를 입력해주세요."
 
                 addTransitionListener { searchView, previousState, newState ->
                     // 서치바를 눌러 서치뷰가 보일 때
