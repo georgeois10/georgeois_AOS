@@ -21,23 +21,34 @@
             android:theme="@style/Theme.Georgeois.Toolbar"
             app:menu="@menu/menu_chat_room" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView_chat_room"
+        <LinearLayout
+            android:id="@+id/linearLayout_chat_room"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="match_parent"
             android:layout_weight="1"
-            android:padding="10dp"
-            android:transitionGroup="true" />
+            android:orientation="vertical">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView_chat_room"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:padding="10dp"
+                android:transitionGroup="true">
+
+            </androidx.recyclerview.widget.RecyclerView>
+        </LinearLayout>
 
         <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/linearLayoutCompat"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="70dp"
             android:orientation="horizontal">
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/textInputLayout_chat_room_input_message"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_margin="5dp"
                 android:layout_weight="1"
                 android:background="@null"
@@ -48,7 +59,7 @@
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/textInputEditText_chat_room_input_message"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:background="@drawable/border_chat_main_recyclerview"
                     android:fontFamily="@font/space"
                     android:inputType="textMultiLine|textNoSuggestions"

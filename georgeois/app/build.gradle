@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -52,4 +53,8 @@ dependencies {
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
     // 원형 이미지 뷰
     implementation 'de.hdodenhof:circleimageview:3.1.0'
+    //파이어베이스 & 파이어스토어
+    implementation(platform("com.google.firebase:firebase-bom:32.6.0"))
+    implementation("com.google.firebase:firebase-analytics")
+    implementation 'com.google.firebase:firebase-firestore:24.8.1'
 }
