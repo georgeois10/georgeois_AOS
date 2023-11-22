@@ -8,8 +8,8 @@ import androidx.fragment.app.Fragment
 import com.example.georgeois.R
 import com.example.georgeois.databinding.FragmentLoginResetPasswordBinding
 import com.example.georgeois.ui.main.MainActivity
-import com.example.georgeois.util.CheckValidation
-import com.example.georgeois.util.CommonTextWatcher
+import com.example.georgeois.utill.CheckValidation
+import com.example.georgeois.utill.CommonTextWatcher
 import com.google.android.material.textfield.TextInputLayout
 
 class LoginResetPasswordFragment : Fragment() {
