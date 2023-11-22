@@ -78,7 +78,7 @@
                     android:layout_height="30dp"
                     android:layout_gravity="center"
                     android:src="@drawable/ic_send_24px"
-                    android:tint="@color/colorPrimary" />
+                    app:tint="@color/colorPrimary" />
             </LinearLayout>
 
         </androidx.appcompat.widget.LinearLayoutCompat>
