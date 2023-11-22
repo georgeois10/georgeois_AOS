@@ -40,7 +40,9 @@
 
                         <com.google.android.material.card.MaterialCardView
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content">
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/border_my_info_main"
+                            android:backgroundTint="#00000000">
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
@@ -58,6 +60,7 @@
                                         android:textSize="@dimen/font_size_16sp"
                                         android:text="현재달 수입 : " />
                                     <TextView
+                                        android:id="@+id/textView_homeMain_inMoney"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:textColor="@color/accentGreen"
@@ -79,6 +82,7 @@
                                         android:textSize="@dimen/font_size_16sp"
                                         android:text="현재달 지출 : " />
                                     <TextView
+                                        android:id="@+id/textView_homeMain_outMoney"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:fontFamily="@font/space"
@@ -116,6 +120,8 @@
                         android:layout_height="match_parent"
                         android:layout_marginBottom="50dp"
                         app:cardCornerRadius="5dp"
+                        android:background="@drawable/border_my_info_main"
+                        android:backgroundTint="#00000000"
                         app:cardPreventCornerOverlap="false"
                         app:cardUseCompatPadding="true"
                         app:contentPadding="0dp">
