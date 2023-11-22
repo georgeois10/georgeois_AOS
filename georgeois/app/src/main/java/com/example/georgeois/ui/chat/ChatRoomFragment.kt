@@ -38,6 +38,7 @@ class ChatRoomFragment : Fragment() {
     lateinit var chatViewModel: ChatViewModel
     var userList = mutableListOf<String>()
     var chatList = mutableListOf<ChatingContent>()
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?

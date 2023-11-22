@@ -71,7 +71,7 @@ class HomeMainFragment : Fragment() {
             init {
 
                 rowHomeMainBinding.root.setOnClickListener {
-                    val dialogAccountDetail = DialogAccountDetail(requireContext(),layoutInflater)
+                    val dialogAccountDetail = DialogAccountDetail(requireContext(), layoutInflater)
                     dialogAccountDetail.callFunction()
                 }
             }
@@ -80,7 +80,8 @@ class HomeMainFragment : Fragment() {
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HomeMainViewHolder {
-            val rowHomeMainBinding = RowHomeMainBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            val rowHomeMainBinding =
+                RowHomeMainBinding.inflate(LayoutInflater.from(parent.context), parent, false)
             val boardMainViewHolder = HomeMainViewHolder(rowHomeMainBinding)
             rowHomeMainBinding.root.layoutParams = ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
@@ -97,6 +98,4 @@ class HomeMainFragment : Fragment() {
             return itemList.size
         }
     }
-
-
 }

@@ -1,5 +1,6 @@
 package com.example.georgeois.ui.main
 
+import android.graphics.Rect
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -12,9 +13,31 @@ import com.example.georgeois.ui.board.BoardMainFragment
 import com.example.georgeois.ui.chat.ChatMainFragment
 import com.example.georgeois.ui.home.HomeMainFragment
 import com.example.georgeois.ui.myInfo.MyInfoMainFragment
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 
 class MainFragment : Fragment() {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val contentView = view.findViewById<View>(R.id.linearLayout_main)
+        val bottomNavigationView = view.findViewById<BottomNavigationView>(R.id.bottomNavigationView_MainFragment)
+
+        contentView.viewTreeObserver.addOnGlobalLayoutListener {
+            val r = Rect()
+            contentView.getWindowVisibleDisplayFrame(r)
+            val screenHeight = contentView.rootView.height
+
+            // 키보드의 높이를 계산합니다
+            val keypadHeight = screenHeight - r.bottom
+
+            // 키보드가 열렸는지 확인합니다
+            if (keypadHeight > screenHeight * 0.15) { // 키보드가 열림
+                bottomNavigationView.visibility = View.GONE
+            } else {
+                bottomNavigationView.visibility = View.VISIBLE
+            }
+        }
+    }
     lateinit var fragmentMainBinding: FragmentMainBinding
     lateinit var mainActivity:MainActivity
 

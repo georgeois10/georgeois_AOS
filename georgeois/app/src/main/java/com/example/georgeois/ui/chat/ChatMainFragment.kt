@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.content.res.ResourcesCompat
@@ -19,22 +20,28 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.georgeois.R
 import com.example.georgeois.databinding.FragmentChatMainBinding
+import com.example.georgeois.databinding.FragmentMainBinding
 import com.example.georgeois.databinding.RowChatMainBinding
 import com.example.georgeois.ui.main.MainActivity
+import com.example.georgeois.ui.main.MainFragment
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.search.SearchBar
 import kotlin.concurrent.thread
 
 class ChatMainFragment : Fragment() {
     var size = 10
+    lateinit var callback: OnBackPressedCallback
     lateinit var fragmentChatMainBinding: FragmentChatMainBinding
     lateinit var mainActivity: MainActivity
+    lateinit var mainFragment: MainFragment
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         fragmentChatMainBinding = FragmentChatMainBinding.inflate(layoutInflater)
         mainActivity = activity as MainActivity
+        mainFragment = MainFragment()
 
         fragmentChatMainBinding.run {
             floatingButtonChatMain.run {
@@ -199,7 +206,6 @@ class ChatMainFragment : Fragment() {
             holder.rowChatMainLastChat.text = "채팅$position"
         }
     }
-
 }
 
 //리사이클러뷰 row 사이 여백 추가
