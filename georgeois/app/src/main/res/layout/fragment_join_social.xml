@@ -56,7 +56,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/space"
-                    android:hint="이름을 입력해주세요"
                     android:inputType="text" />
 
             </com.google.android.material.textfield.TextInputLayout>
@@ -88,7 +87,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/space"
-                        android:hint="닉네임을 입력해주세요"
                         android:inputType="text" />
 
                 </com.google.android.material.textfield.TextInputLayout>
@@ -196,7 +194,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/space"
-                    android:hint="이메일 입력해주세요"
                     android:inputType="textEmailAddress" />
 
             </com.google.android.material.textfield.TextInputLayout>
