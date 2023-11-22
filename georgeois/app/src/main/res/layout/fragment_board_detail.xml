@@ -211,50 +211,46 @@
                     android:text="(3)" />
             </LinearLayout>
 
-            <View
-                android:id="@+id/divider"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginBottom="@dimen/margin_12dp"
-                android:background="?android:attr/listDivider" />
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="70dp"
                 android:orientation="horizontal">
 
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/textInputLayout_boardDetail_comment"
-                    style="@style/Theme.Georgeois.Text"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/textInputLayout_boardDetail_inputMessage"
+                    android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:hint="댓글"
-                    android:textSize="@dimen/font_size_18sp"
-                    app:boxBackgroundColor="#00FFFFFF"
-
-                    app:boxBackgroundMode="filled"
-                    app:cursorErrorColor="@color/accentRed">
+                    android:background="@null"
+                    android:transitionGroup="true"
+                    app:boxStrokeWidth="0dp"
+                    app:boxStrokeWidthFocused="0dp">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/textInputEditText_boardDetail_comment"
-                        style="@style/Theme.Georgeois.Text"
+                        android:id="@+id/textInputEditText_boardDetail_inputMessage"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:backgroundTint="#00FFFFFF"
-                        android:hint="댓글을 입력하세요"
-                        android:textSize="@dimen/font_size_16sp" />
-
-
+                        android:background="@drawable/border_chat_main_recyclerview"
+                        android:fontFamily="@font/space"
+                        android:inputType="textMultiLine|textNoSuggestions"
+                        android:maxLength="50" />
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <ImageButton
-                    android:id="@+id/imageButton_boardDetail_commentSend"
-                    app:tint="@color/white"
-                    android:background="@color/colorPrimary"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:id="@+id/linearLayout_boardDetail_send"
+                    android:layout_width="@dimen/image_size_board_profile"
                     android:layout_height="match_parent"
-                    android:src="@drawable/ic_send_24px" />
+                    android:layout_gravity="center_vertical">
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_send_24px"
+                        app:tint="@color/colorPrimary" />
+                </LinearLayout>
+
             </LinearLayout>
 
             <androidx.recyclerview.widget.RecyclerView

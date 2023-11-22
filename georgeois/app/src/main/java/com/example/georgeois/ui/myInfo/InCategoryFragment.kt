@@ -22,8 +22,8 @@ import com.example.georgeois.databinding.LayoutAddCategoryBinding
 import com.example.georgeois.databinding.LayoutEditBudgetBinding
 import com.example.georgeois.databinding.RowCategoryBinding
 import com.example.georgeois.databinding.RowChatMainBinding
-import com.example.georgeois.ui.chat.SpaceItemDecoration
 import com.example.georgeois.ui.main.MainActivity
+import com.example.georgeois.utill.SpaceItemDecoration
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.math.BigInteger
 import kotlin.concurrent.thread
