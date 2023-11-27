@@ -57,4 +57,9 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:32.6.0"))
     implementation("com.google.firebase:firebase-analytics")
     implementation 'com.google.firebase:firebase-firestore:24.8.1'
+    //파이어베이스 auth
+    implementation 'com.google.firebase:firebase-auth-ktx'
+    // 레트로핏2
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
 }
