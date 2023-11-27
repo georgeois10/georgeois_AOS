@@ -53,7 +53,7 @@ class LoginResetPasswordFragment : Fragment() {
                 val password = textInputEditTextLoginResetPasswordPw.text.toString()
                 val confirmPassword = textInputEditTextLoginResetPasswordConfirmPw.text.toString()
 
-                val passwordConfirmValidate = CheckValidation().validateConfirmPassword(password, confirmPassword)
+                val passwordConfirmValidate = CheckValidation.validateConfirmPassword(password, confirmPassword)
 
                 validateMessageHandler(
                     passwordConfirmValidate,
@@ -77,7 +77,7 @@ class LoginResetPasswordFragment : Fragment() {
         val password = loginResetPasswordBinding.textInputEditTextLoginResetPasswordPw.text.toString()
         val confirmPassword = loginResetPasswordBinding.textInputEditTextLoginResetPasswordConfirmPw.text.toString()
 
-        val confirmPasswordValidateResult = CheckValidation().validateConfirmPassword(password, confirmPassword)
+        val confirmPasswordValidateResult = CheckValidation.validateConfirmPassword(password, confirmPassword)
 
         validateMessageHandler(
             confirmPasswordValidateResult,
@@ -90,7 +90,7 @@ class LoginResetPasswordFragment : Fragment() {
     private fun checkPasswordValidate() {
         val password = loginResetPasswordBinding.textInputEditTextLoginResetPasswordPw.text.toString()
 
-        val passwordValidateResult = CheckValidation().validatePassword(password)
+        val passwordValidateResult = CheckValidation.validatePassword(password)
 
         // 비밀번호 error, hint 처리
         validateMessageHandler(
