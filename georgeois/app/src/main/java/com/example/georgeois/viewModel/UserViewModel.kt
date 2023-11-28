@@ -11,16 +11,23 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
-import java.sql.Timestamp
+import org.json.JSONObject
+import java.text.SimpleDateFormat
+import java.util.Locale
+import java.util.TimeZone
 
 /**
  * CoroutineScope(Dispatchers.IO) 로 처리를 했지만 메모리 릭 가능성 존재
  * androidx.lifecycle:lifecycle-viewmodel-ktx 사용 할 지 검토 필요
  */
 class UserViewModel : ViewModel() {
-    private val _isIdAvailable = MutableLiveData<Boolean>(false)
-    val isIdAvailable: MutableLiveData<Boolean> = _isIdAvailable
 
+
+    // --------- 로그인 ----------
+    private val _user = MutableLiveData<User?>()
+    val user: MutableLiveData<User?> = _user
+
+    // --------- 회원가입 ---------
     private val _idFieldState = MutableLiveData<FieldState<String>>()
     val idFieldState: MutableLiveData<FieldState<String>> = _idFieldState
 
@@ -42,30 +49,87 @@ class UserViewModel : ViewModel() {
     private val _failedFieldState = MutableLiveData<FieldState<String>>()
     val failedFieldState: MutableLiveData<FieldState<String>> = _failedFieldState
 
-//    init {
-//        _user.value = User(
-//            0,
-//            'x',
-//            "",
-//            "",
-//            "",
-//            "",
-//            "",
-//            "",
-//            0,
-//            "",
-//            "",
-//            "",
-//            "",
-//            0,
-//            false,
-//            false,
-//            Timestamp(System.currentTimeMillis()),
-//            "",
-//            Timestamp(System.currentTimeMillis()),
-//            "",
-//        )
-//    }
+
+
+    // --------- 로그인 ----------
+    /**
+     * 코드 수정할 예정
+     */
+    fun login(id: String, pw: String) {
+        CoroutineScope(Dispatchers.Main).launch {
+            val result = UserRepository.login(id, pw)
+            val userMap = result["user"]
+
+            if (userMap.isNullOrEmpty()) {
+                _user.postValue(null)
+                return@launch
+            }
+
+            val json = JSONObject(userMap)
+
+            val cre_date_string = json.getString("cre_date")
+            val mod_date_string = json.getString("mod_date")
+
+            val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+
+            val cre_date = dateFormat.parse(cre_date_string)
+            val mod_date = dateFormat.parse(mod_date_string)
+
+
+            val user = User(
+                json.getInt("u_idx"),
+                json.getString("u_auth").toCharArray().get(0),
+                json.getString("u_id"),
+                json.getString("u_pw"),
+                json.getString("u_nm"),
+                json.getString("u_nicknm"),
+                json.getString("u_pnumber"),
+                json.getString("u_gender").toCharArray().get(0),
+                json.getInt("u_birth"),
+                json.getString("u_email"),
+                json.getString("u_profilepath"),
+                json.getString("u_in_ctgy"),
+                json.getString("u_out_ctgy"),
+                json.getInt("u_budget"),
+                json.getDouble("u_alarm_yn").toInt() == 1,
+                json.getDouble("del_yn").toInt() == 1,
+                cre_date!!,
+                json.getString("cre_user"),
+                mod_date!!,
+                json.getString("mod_user"),
+            )
+            _user.postValue(user)
+
+//            Log.d("mytag", user.toString())
+
+//            val cre_date = Date(0L)
+//            val mod_date = Date(0L)
+//
+//            val user = User(
+//                userMap["u_idx"] as Int,
+//                userMap["u_auth"] as Char,
+//                userMap["u_id"] as String,
+//                userMap["u_pw"] as String,
+//                userMap["u_nm"] as String,
+//                userMap["u_nicknm"] as String,
+//                userMap["u_pnumber"] as String,
+//                userMap["u_gender"] as Char,
+//                userMap["u_birth"] as Int,
+//                userMap["u_email"] as String,
+//                userMap["u_profilepath"] as String,
+//                userMap["u_in_ctgy"] as String,
+//                userMap["u_out_ctgy"] as String,
+//                userMap["u_budget"] as Int,
+//                userMap["u_alarm_yn"] as Boolean,
+//                userMap["del_yn"] as Boolean,
+//                cre_date,
+//                userMap["cre_user"] as String,
+//                mod_date,
+//                userMap["mod_user"] as String,
+//            )
+            this.cancel()
+        }
+    }
 
     fun checkIdDuplication(id: String) {
 
@@ -194,28 +258,28 @@ class UserViewModel : ViewModel() {
         if (!checkAllFieldStateAvailable())
             return
 
-        val user = User(
-            -1,
-            auth!!,
-            checkedId!!,
-            checkedPw!!,
-            checkedNm!!,
-            checkedNickNm!!,
-            "",
-            selectedGender!!,
-            selectedBirthYear!!,
-            checkedEmail,
-            "",
-            "",
-            "",
-            0,
-            false,
-            false,
-            Timestamp(System.currentTimeMillis()),
-            checkedId!!,
-            Timestamp(System.currentTimeMillis()),
-            checkedId!!,
-        )
+//        val user = User(
+//            -1,
+//            auth!!,
+//            checkedId!!,
+//            checkedPw!!,
+//            checkedNm!!,
+//            checkedNickNm!!,
+//            "",
+//            selectedGender!!,
+//            selectedBirthYear!!,
+//            checkedEmail,
+//            "",
+//            "",
+//            "",
+//            0,
+//            0,
+//            0,
+//            Timestamp(System.currentTimeMillis()),
+//            checkedId!!,
+//            Timestamp(System.currentTimeMillis()),
+//            checkedId!!,
+//        )
 
         // 모든 Field가 유효성 검사 통과 시
         CoroutineScope(Dispatchers.IO).launch {

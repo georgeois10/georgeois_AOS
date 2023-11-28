@@ -1,6 +1,7 @@
 package com.example.georgeois.dataclass
 
-import java.sql.Timestamp
+import java.util.Date
+
 
 data class User(
     val u_idx: Int,
@@ -20,8 +21,8 @@ data class User(
     val u_alarm_yn: Boolean,
     val del_yn: Boolean,
     // Timestamp or Date
-    val cre_date: Timestamp,
+    val cre_date: Date,
     val cre_user: String,
-    val mod_date: Timestamp,
+    val mod_date: Date,
     val mod_user: String,
 )
