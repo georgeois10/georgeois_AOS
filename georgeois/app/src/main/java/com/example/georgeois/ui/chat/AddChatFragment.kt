@@ -14,6 +14,8 @@ import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
 import com.example.georgeois.R
 import com.example.georgeois.databinding.FragmentAddChatBinding
+import com.example.georgeois.dataclass.ChatRoomInfo
+import com.example.georgeois.repository.ChatRepository
 import com.example.georgeois.ui.main.MainActivity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.math.BigInteger
@@ -149,7 +151,13 @@ class AddChatFragment : Fragment() {
                                     setMessage("입력한 정보를 통해 채팅방을 생성하시겠습니까?\n방이름 = $roomName\n예산 = ${budget}원\n성별 = $roomGender\n출생년도 = ${roomStartYear}년 ~ ${roomEndYear}년")
                                     setNegativeButton("취소",null)
                                     setPositiveButton("확인"){ dialogInterface: DialogInterface, i: Int ->
-
+                                        val chatBirth = "${roomStartYear}년~${roomEndYear}년"
+                                        val userList = ArrayList<String>()
+                                        userList.add("A")
+                                        val chatRoomInfo = ChatRoomInfo(chatBirth,roomBudget,roomGender,"A",roomName,userList)
+                                        ChatRepository.addNewChatRoom(chatRoomInfo){
+                                            mainActivity.removeFragment(MainActivity.ADD_CHAT_FRAGMENT)
+                                        }
                                     }
                                 }
                                 builder.show()
