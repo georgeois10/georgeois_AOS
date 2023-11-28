@@ -46,32 +46,39 @@ class JoinMainFragment : Fragment() {
         userViewModel.run {
 
             // 아이디 hint, Error message update
-            userViewModel.idFieldState.observe(requireActivity()) {
+            idFieldState.observe(requireActivity()) {
                 updateValidateMessage(joinMainBinding.textInputLayoutJoinMainId, it)
             }
 
             // 비밀번호 hint, Error meesage update
-            userViewModel.pwFieldState.observe(requireActivity()) {
+            pwFieldState.observe(requireActivity()) {
                 updateValidateMessage(joinMainBinding.textInputLayoutJoinMainPw, it)
             }
 
             // 비밀번호 hint, Error meesage update
-            userViewModel.confirmPwFieldState.observe(requireActivity()) {
+            confirmPwFieldState.observe(requireActivity()) {
                 updateValidateMessage(joinMainBinding.textInputLayoutJoinMainConfirmPw, it)
             }
 
             // 이름 Error meesage update
-            userViewModel.nmFieldState.observe(requireActivity()) {
+            nmFieldState.observe(requireActivity()) {
                 updateValidateMessage(joinMainBinding.textInputLayoutJoinMainNm, it)
             }
 
             // 닉네임 hint, Error meesage update
-            userViewModel.nickNmFieldState.observe(requireActivity()) {
+            nickNmFieldState.observe(requireActivity()) {
                 updateValidateMessage(joinMainBinding.textInputLayoutJoinMainNickNm, it)
             }
 
+            // 이메일 Error meesage update
+            emailFieldState.observe(requireActivity()) {
+                updateValidateMessage(joinMainBinding.textInputLayoutJoinMainEmail, it)
+            }
+        }
+
+        authViewModel.run {
             // 휴대폰 인증번호 전송 요청에 따른 Toast 메시지 update
-            authViewModel.phoneNumberFieldState.observe(requireActivity()) {
+            phoneNumberFieldState.observe(requireActivity()) {
                 when(it) {
                     is FieldState.Fail -> {
                         Toast.makeText(requireContext(), "${it.message}", Toast.LENGTH_SHORT).show()
@@ -86,15 +93,12 @@ class JoinMainFragment : Fragment() {
             }
 
             // 휴대폰 인증 hint, Error message update
-            authViewModel.isPassed.observe(requireActivity()) {
+            isPassed.observe(requireActivity()) {
                 updateValidateMessage(joinMainBinding.textInputLayoutJoinMainVerificationNumber, it)
             }
-
-            // 이메일 Error meesage update
-            userViewModel.emailFieldState.observe(requireActivity()) {
-                updateValidateMessage(joinMainBinding.textInputLayoutJoinMainEmail, it)
-            }
         }
+
+
 
         joinMainBinding.run {
 
@@ -154,7 +158,8 @@ class JoinMainFragment : Fragment() {
             buttonJoinMainSendVerificationNumber.setOnClickListener {
                 val phoneNumber = "+1650-555-5555"
 //                val phoneNumber = textInputEditTextJoinMainPNumber.text.toString()
-                authViewModel.sendVerificationNumber(phoneNumber)
+//                authViewModel.sendVerificationNumber("+82$phoneNumber")
+                authViewModel.sendVerificationNumber("$phoneNumber", requireActivity())
 
 //                Toast.makeText(requireContext(), "인증번호가 전송되었습니다.", Toast.LENGTH_SHORT).show()
                 

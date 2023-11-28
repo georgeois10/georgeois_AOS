@@ -6,13 +6,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.lifecycle.ViewModelProvider
 import com.example.georgeois.databinding.FragmentLoginMainBinding
 import com.example.georgeois.ui.main.MainActivity
+import com.example.georgeois.viewModel.UserViewModel
 
 
 class LoginMainFragment : Fragment() {
     lateinit var loginMainBinding: FragmentLoginMainBinding
     lateinit var mainActivity: MainActivity
+
+    private lateinit var userViewModel: UserViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -21,10 +25,20 @@ class LoginMainFragment : Fragment() {
         loginMainBinding = FragmentLoginMainBinding.inflate(inflater)
         mainActivity = activity as MainActivity
 
+        userViewModel = ViewModelProvider(this)[UserViewModel::class.java]
+
         loginMainBinding.run {
             // 로그인 클릭
             buttonLoginMainLogin.setOnClickListener {
-                mainActivity.replaceFragment(MainActivity.MAIN_FRAGMENT,true,null)
+                val id = textInputEditTextLoginMainId.text.toString()
+                val pw = textInputEditTextLoginMainPw.text.toString()
+                userViewModel.login(id, pw)
+
+                userViewModel.user.observe(requireActivity()) {
+                    if (it != null) {
+                        mainActivity.replaceFragment(MainActivity.MAIN_FRAGMENT,true,null)
+                    }
+                }
             }
 
             // 아이디 찾기
