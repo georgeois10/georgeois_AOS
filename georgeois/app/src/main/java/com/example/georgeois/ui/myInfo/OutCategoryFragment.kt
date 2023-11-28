@@ -19,8 +19,8 @@ import com.example.georgeois.R
 import com.example.georgeois.databinding.FragmentOutCategoryBinding
 import com.example.georgeois.databinding.LayoutAddCategoryBinding
 import com.example.georgeois.databinding.RowCategoryBinding
-import com.example.georgeois.ui.chat.SpaceItemDecoration
 import com.example.georgeois.ui.main.MainActivity
+import com.example.georgeois.utill.SpaceItemDecoration
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlin.concurrent.thread
 

@@ -95,11 +95,25 @@
                 android:textStyle="bold"
                 android:textSize="@dimen/font_size_18sp"
                 android:text="로그인" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center">
+
+                <CheckBox
+                    android:id="@+id/checkBox_loginMain_autoLogin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="자동로그인"
+                    android:fontFamily="@font/space"
+                    android:textSize="@dimen/font_size_18sp"/>
+            </LinearLayout>
+
             <LinearLayout
                 android:layout_gravity="center"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin_12dp"
                 android:orientation="horizontal">
 
                 <TextView

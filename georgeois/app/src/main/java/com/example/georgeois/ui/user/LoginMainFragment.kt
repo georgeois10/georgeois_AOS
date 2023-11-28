@@ -40,6 +40,12 @@ class LoginMainFragment : Fragment() {
                 mainActivity.replaceFragment(MainActivity.JOIN_MAIN_FRAGMENT,true,null)
             }
 
+            // 자동로그인 checkBox
+            checkBoxLoginMainAutoLogin.setOnCheckedChangeListener { _, isChecked ->
+                if (isChecked) {
+                    Toast.makeText(requireContext(), "체크됨", Toast.LENGTH_SHORT).show()
+                }
+            }
             // 카카오 로그인
             linearLayoutLoginMainKakaoLogin.setOnClickListener {
                 Toast.makeText(requireContext(),"카카오 로그인 클릭",Toast.LENGTH_SHORT).show()

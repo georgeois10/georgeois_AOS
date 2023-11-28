@@ -29,6 +29,7 @@ import com.example.georgeois.databinding.RowChatMainBinding
 import com.example.georgeois.dataclass.ChatList
 import com.example.georgeois.ui.main.MainActivity
 import com.example.georgeois.ui.main.MainFragment
+import com.example.georgeois.utill.SpaceItemDecoration
 import com.example.georgeois.viewModel.ChatViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -264,14 +265,3 @@ class ChatMainFragment : Fragment() {
     }
 }
 
-//리사이클러뷰 row 사이 여백 추가
-class SpaceItemDecoration(private val bottomSpace: Int) : RecyclerView.ItemDecoration() {
-    override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
-        super.getItemOffsets(outRect, view, parent, state)
-
-        // 마지막 아이템이 아닐 경우에만 바텀 여백을 추가
-        if (parent.getChildAdapterPosition(view) != parent.adapter?.itemCount?.minus(1)) {
-            outRect.bottom = bottomSpace
-        }
-    }
-}

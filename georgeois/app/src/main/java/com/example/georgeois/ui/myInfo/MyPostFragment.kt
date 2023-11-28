@@ -13,7 +13,6 @@ import com.example.georgeois.R
 import com.example.georgeois.databinding.FragmentMyPostBinding
 import com.example.georgeois.databinding.RowBoardMainBinding
 import com.example.georgeois.databinding.RowChatMainBinding
-import com.example.georgeois.ui.chat.SpaceItemDecoration
 import com.example.georgeois.ui.main.MainActivity
 
 class MyPostFragment : Fragment() {

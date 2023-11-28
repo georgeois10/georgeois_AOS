@@ -62,7 +62,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/space"
-                        android:hint="아이디를 입력해주세요"
                         android:inputType="text" />
 
                 </com.google.android.material.textfield.TextInputLayout>
@@ -103,9 +102,17 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/space"
-                    android:hint="비밀번호"
                     android:inputType="textPassword" />
             </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:id="@+id/textView_joinMain_confirmPw"
+                style="@style/Theme.Georgeois.Text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_12dp"
+                android:text="비밀번호 확인"
+                android:textSize="@dimen/font_size_18sp" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/textInputLayout_joinMain_confirmPw"
@@ -118,7 +125,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/space"
-                    android:hint="비밀번호 확인"
                     android:inputType="textPassword" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -136,6 +142,7 @@
                 android:id="@+id/textInputLayout_joinMain_nm"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                app:helperTextTextColor="@color/accentGreen"
                 android:layout_marginTop="@dimen/margin_4dp"
                 app:endIconMode="clear_text">
 
@@ -144,7 +151,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/space"
-                    android:hint="이름을 입력해주세요"
                     android:inputType="text" />
 
             </com.google.android.material.textfield.TextInputLayout>
@@ -177,7 +183,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/space"
-                        android:hint="닉네임을 입력해주세요"
                         android:inputType="text" />
 
                 </com.google.android.material.textfield.TextInputLayout>
@@ -222,7 +227,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/space"
-                        android:hint="'-'이 없이 입력해주세요"
                         android:inputType="numberDecimal" />
 
 
@@ -240,6 +244,27 @@
                     android:textStyle="bold" />
 
             </LinearLayout>
+            <TextView
+                android:id="@+id/textView_joinMain_pNumberHint"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="@dimen/padding_size_15dp"
+                android:layout_weight="1"
+                android:drawableStart="@drawable/ic_help_24px"
+                android:fontFamily="@font/space"
+                android:gravity="center"
+                android:text="  - 를 제외하고 입력해주세요."
+                android:textColor="@color/accentRed"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/textView_joinMain_VerificationNumber"
+                style="@style/Theme.Georgeois.Text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="인증 번호"
+                android:textSize="@dimen/font_size_18sp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -259,7 +284,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/space"
-                        android:hint="인증번호를 입력해주세요"
                         android:inputType="numberDecimal" />
 
                 </com.google.android.material.textfield.TextInputLayout>
@@ -367,7 +391,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/space"
-                    android:hint="이메일 입력해주세요"
                     android:inputType="textEmailAddress" />
 
             </com.google.android.material.textfield.TextInputLayout>

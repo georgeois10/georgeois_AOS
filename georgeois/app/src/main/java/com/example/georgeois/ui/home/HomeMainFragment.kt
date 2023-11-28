@@ -11,6 +11,7 @@ import com.example.georgeois.databinding.FragmentHomeMainBinding
 import com.example.georgeois.databinding.RowHomeMainBinding
 import com.example.georgeois.ui.main.MainActivity
 import com.example.georgeois.utill.DialogAccountDetail
+import com.example.georgeois.utill.MoneyType
 
 
 class HomeMainFragment : Fragment() {
@@ -58,6 +59,14 @@ class HomeMainFragment : Fragment() {
                 mainActivity.replaceFragment(MainActivity.HOME_REGISTER_FRAGMENT,true,null)
             }
 
+            var inMoney = textViewHomeMainInMoney.text
+            val moneyType = MoneyType()
+            inMoney = moneyType.moneyText(inMoney.toString())
+            textViewHomeMainInMoney.text = inMoney
+
+            var outMoney = textViewHomeMainOutMoney.text
+            outMoney = moneyType.moneyText(outMoney.toString())
+            textViewHomeMainOutMoney.text = outMoney
 
         }
         return fragmentHomeMainBinding.root

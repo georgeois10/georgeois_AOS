@@ -1,11 +1,14 @@
 package com.example.georgeois.ui.main
 
+import android.content.Context
 import android.graphics.Rect
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.FragmentTransaction
 import com.example.georgeois.R
 import com.example.georgeois.databinding.FragmentMainBinding
@@ -17,6 +20,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 
 
 class MainFragment : Fragment() {
+    private lateinit var callback : OnBackPressedCallback
+    var backPressedTime : Long = 0
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val contentView = view.findViewById<View>(R.id.linearLayout_main)
@@ -135,6 +140,33 @@ class MainFragment : Fragment() {
             "myInfo" -> fragmentMainBinding.bottomNavigationViewMainFragment.selectedItemId = R.id.navigation_myInfo
             else -> fragmentMainBinding.bottomNavigationViewMainFragment.selectedItemId = R.id.navigation_home
         }
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        callback = object : OnBackPressedCallback(true){
+            override fun handleOnBackPressed() {
+                when(oldBottom){
+                    "home" -> {
+                        if(System.currentTimeMillis() - backPressedTime < 2500){
+                            activity?.finish()
+                            return
+                        }
+                        Toast.makeText(activity,"한 번 더 누르면 앱이 종료됩니다.", Toast.LENGTH_SHORT).show()
+                        backPressedTime = System.currentTimeMillis()
+                    }
+                    else ->{
+                        fragmentMainBinding.bottomNavigationViewMainFragment.selectedItemId = R.id.navigation_home
+                    }
+                }
+
+            }
+        }
+        activity?.onBackPressedDispatcher!!.addCallback(this,callback)
+    }
+    override fun onDetach() {
+        super.onDetach()
+        callback.remove()
     }
 
 
