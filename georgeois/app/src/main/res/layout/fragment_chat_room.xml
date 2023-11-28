@@ -42,13 +42,13 @@
         <androidx.appcompat.widget.LinearLayoutCompat
             android:id="@+id/linearLayoutCompat"
             android:layout_width="match_parent"
-            android:layout_height="70dp"
+            android:layout_height="wrap_content"
             android:orientation="horizontal">
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/textInputLayout_chat_room_input_message"
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:layout_weight="1"
                 android:background="@null"
@@ -61,7 +61,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@drawable/border_chat_main_recyclerview"
-                    android:fontFamily="@font/space"
                     android:inputType="textMultiLine|textNoSuggestions"
                     android:maxLength="300" />
             </com.google.android.material.textfield.TextInputLayout>
@@ -76,7 +75,8 @@
                     android:id="@+id/imageView"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
-                    android:layout_gravity="center"
+                    android:layout_gravity="bottom"
+                    android:layout_marginBottom="20dp"
                     android:src="@drawable/ic_send_24px"
                     app:tint="@color/colorPrimary" />
             </LinearLayout>

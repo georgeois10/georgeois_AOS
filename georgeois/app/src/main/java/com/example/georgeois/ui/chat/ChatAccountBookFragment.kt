@@ -91,7 +91,7 @@ class ChatAccountBookFragment : Fragment() {
                     layoutManager = LinearLayoutManager(context)
                     adapter = ChatAccountBookUserConsumptionRecyclerView()
                     val spacingInPixels = resources.getDimensionPixelSize(R.dimen.margin_10dp)
-                    addItemDecoration(SpaceItemDecorationAll(spacingInPixels))
+                    addItemDecoration(SpaceItemDecoration(spacingInPixels))
                 }
 
                 val builder = MaterialAlertDialogBuilder(mainActivity, R.style.DialogTheme).apply {
@@ -222,13 +222,4 @@ class ChatAccountBookFragment : Fragment() {
         return customTitle
     }
 
-}
-class SpaceItemDecorationAll(private val bottomSpace: Int) : RecyclerView.ItemDecoration() {
-    override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
-        super.getItemOffsets(outRect, view, parent, state)
-        outRect.bottom = bottomSpace
-        outRect.left = bottomSpace
-        outRect.right = bottomSpace
-
-    }
 }
