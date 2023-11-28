@@ -55,15 +55,14 @@ object CheckValidation {
      * 위 경우를 제외한 다른 모든 문자 제외
      */
     fun validatePhoneNumber(phoneNumber: String) : Boolean {
-        return phoneNumber.matches("^(?=.*[0-9])[0-9]{1,15}$".toRegex())
+        return phoneNumber.matches("^(?=.*[0-9])[0-9]{5,15}$".toRegex())
+//        return Patterns.PHONE.matcher(phoneNumber).matches()
     }
 
+
     fun validateEmail(targetString: String): Boolean {
-        // 이메일 형식이 아닐 경우
-        if (Patterns.EMAIL_ADDRESS.matcher(targetString).matches()) {
-            return true
-        }
-        return false
+        return Patterns.EMAIL_ADDRESS.matcher(targetString).matches()
+
     }
 
 }
