@@ -29,6 +29,8 @@ import com.example.georgeois.viewModel.ChatViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import de.hdodenhof.circleimageview.CircleImageView
 import java.text.NumberFormat
+import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 
 class ChatRoomFragment : Fragment() {
@@ -38,6 +40,8 @@ class ChatRoomFragment : Fragment() {
     lateinit var chatViewModel: ChatViewModel
     var userList = mutableListOf<String>()
     var chatList = mutableListOf<ChatingContent>()
+    var currnetChatRoomId = ""
+    var chatRoomOwner = ""
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -68,11 +72,20 @@ class ChatRoomFragment : Fragment() {
             chatContent.observe(mainActivity){
                 chatList = it
                 fragmentChatRoomBinding.recyclerViewChatRoom.adapter?.notifyDataSetChanged()
+                fragmentChatRoomBinding.recyclerViewChatRoom.scrollToPosition(chatList.size-1)
+            }
+            chatRoomId.observe(mainActivity){
+                currnetChatRoomId = chatRoomId.value.toString()
+                Log.d("aaaa","id = ${currnetChatRoomId}")
+            }
+            chatOwnerNickname.observe(mainActivity){
+                chatRoomOwner = it
+                fragmentChatRoomBinding.recyclerViewChatRoomUserList.adapter?.notifyDataSetChanged()
             }
         }
 
         fragmentChatRoomBinding.run {
-            chatViewModel.getChatRoom()
+
             toolbarChatRoom.run {
                 setNavigationIcon(R.drawable.ic_arrow_back_24px)
                 setNavigationOnClickListener {
@@ -114,7 +127,21 @@ class ChatRoomFragment : Fragment() {
             linearLayoutChatRoomSend.setOnClickListener {
                 val content = textInputEditTextChatRoomInputMessage.text.toString()
                 if(content != ""){
-                    Log.d("aaaa","$content")
+                    val inputText = textInputEditTextChatRoomInputMessage.text.toString()
+
+                    val currentTimeMillis = System.currentTimeMillis()
+                    val date = Date(currentTimeMillis)
+                    // 시간을 원하는 형식의 문자열로 변환
+                    val dateFormat = SimpleDateFormat("yyyy-MM-dd / HH:mm:ss", Locale.getDefault())
+                    val currnetTime = dateFormat.format(date)
+
+                    val userNickname = "A"
+
+                    textInputEditTextChatRoomInputMessage.setText("")
+
+                    val chatingContent = ChatingContent(inputText,currnetTime,userNickname)
+
+                    chatViewModel.refreshChatting(currnetChatRoomId,chatingContent)
                 }
             }
 
@@ -205,7 +232,7 @@ class ChatRoomFragment : Fragment() {
                 holder.textViewRowChatRoomMeOpponentChatMoment.visibility = View.VISIBLE
 
                 holder.textViewRowChatRoomMeOpponentContent.text = "${chatList[position].chatContent}"
-                holder.textViewRowChatRoomMeOpponentChatMoment.text = "${chatList[position].chatTime}"
+                holder.textViewRowChatRoomMeOpponentChatMoment.text = "${chatList[position].chatTime.substring(0,18)}"
                 holder.textViewRowChatRoomMeOpponentNickname.text = "${chatList[position].chatUserNickname}"
             }
             else{
@@ -218,7 +245,7 @@ class ChatRoomFragment : Fragment() {
                 holder.textViewRowChatRoomMeOpponentChatMoment.visibility = View.GONE
 
                 holder.textViewRowChatRoomMeMyContent.text = "${chatList[position].chatContent}"
-                holder.textViewRowChatRoomMeTime.text = "${chatList[position].chatTime}"
+                holder.textViewRowChatRoomMeTime.text = "${chatList[position].chatTime.substring(0,18)}"
             }
         }
     }
@@ -270,20 +297,32 @@ class ChatRoomFragment : Fragment() {
             return userList.size
         }
         override fun onBindViewHolder(holder: ViewHolderClass, position: Int) {
-            if(position == 0) {
+            if(userList[position] == "A"){
                 holder.textViewChatRoomUserNickname.text = "${userList[position]}"
                 holder.imageViewChatRoomUserImage.setImageResource(R.drawable.ic_person_24px)
             }
             else{
-                holder.textViewChatRoomUserNickname.text = "${userList[position]}"
-                holder.imageViewChatRoomUserImage.setImageResource(R.drawable.ic_person_24px)
-                holder.buttonChatRoomUserExit.text = "추방"
-                //holder.buttonChatRoomUserExit.visibility = View.GONE
+                if (chatRoomOwner == "A") {
+                    holder.textViewChatRoomUserNickname.text = "${userList[position]}"
+                    holder.imageViewChatRoomUserImage.setImageResource(R.drawable.ic_person_24px)
+                    holder.buttonChatRoomUserExit.text = "추방"
+                }
+                else{
+                    holder.textViewChatRoomUserNickname.text = "${userList[position]}"
+                    holder.imageViewChatRoomUserImage.setImageResource(R.drawable.ic_person_24px)
+                    holder.buttonChatRoomUserExit.visibility = View.GONE
+                }
             }
         }
     }
     fun formatNumberWithCommas(number: Int): String {
         val formatter = NumberFormat.getNumberInstance(Locale.US)
         return formatter.format(number)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        currnetChatRoomId = arguments?.getString("roomId").toString()
+        chatViewModel.getChatRoom(currnetChatRoomId,"A")
     }
 }

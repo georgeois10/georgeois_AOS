@@ -16,17 +16,24 @@ import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.content.res.ResourcesCompat
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
+import androidx.recyclerview.widget.AsyncListDiffer
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.georgeois.R
 import com.example.georgeois.databinding.FragmentChatMainBinding
 import com.example.georgeois.databinding.FragmentMainBinding
 import com.example.georgeois.databinding.RowChatMainBinding
+import com.example.georgeois.dataclass.ChatList
 import com.example.georgeois.ui.main.MainActivity
 import com.example.georgeois.ui.main.MainFragment
+import com.example.georgeois.viewModel.ChatViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.search.SearchBar
+import kotlinx.coroutines.launch
 import kotlin.concurrent.thread
 
 class ChatMainFragment : Fragment() {
@@ -34,14 +41,51 @@ class ChatMainFragment : Fragment() {
     lateinit var callback: OnBackPressedCallback
     lateinit var fragmentChatMainBinding: FragmentChatMainBinding
     lateinit var mainActivity: MainActivity
-    lateinit var mainFragment: MainFragment
+    lateinit var chatViewModel: ChatViewModel
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        chatViewModel = ViewModelProvider(this)[ChatViewModel::class.java]
+        chatViewModel.getMyChatRoomList("A")
+    }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        // onViewCreated에서 데이터 로딩 및 UI 갱신 수행
+        chatViewModel = ViewModelProvider(this)[ChatViewModel::class.java]
+        chatViewModel.run {
+            chatRoomList.observe(viewLifecycleOwner) { chatList ->
+                // 데이터가 변경될 때마다 submitList를 호출하여 리사이클러뷰 갱신
+                (fragmentChatMainBinding.recyclerViewChatMain.adapter as? ChatMainRecyclerView)?.submitList(chatList)
+                // 데이터 로딩이 완료되면 로딩 화면을 숨김
+                fragmentChatMainBinding.progressBarChatMain.visibility = View.GONE
+            }
+
+            // 데이터 로딩 시작 시 로딩 화면을 보임
+            fragmentChatMainBinding.progressBarChatMain.visibility = View.VISIBLE
+
+            // 데이터를 비동기적으로 가져오도록 수정
+            viewModelScope.launch {
+                getMyChatRoomList("A")
+            }
+        }
+
+        // 기타 초기화 코드 추가 가능
+    }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         fragmentChatMainBinding = FragmentChatMainBinding.inflate(layoutInflater)
         mainActivity = activity as MainActivity
-        mainFragment = MainFragment()
+
+//        chatViewModel = ViewModelProvider(this)[ChatViewModel::class.java]
+//        chatViewModel.run {
+//            chatRoomList.observe(mainActivity){
+//                chatList = it
+//                fragmentChatMainBinding.recyclerViewChatMain.adapter?.notifyDataSetChanged()
+//            }
+//            getMyChatRoomList("A")
+//        }
 
         fragmentChatMainBinding.run {
             floatingButtonChatMain.run {
@@ -110,6 +154,21 @@ class ChatMainFragment : Fragment() {
         return fragmentChatMainBinding.root
     }
     inner class ChatMainRecyclerView : RecyclerView.Adapter<ChatMainRecyclerView.ViewHolderClass>() {
+
+        // diffCallback 정의
+        private val diffCallback = object : DiffUtil.ItemCallback<ChatList>() {
+            override fun areItemsTheSame(oldItem: ChatList, newItem: ChatList): Boolean {
+                return oldItem.chatRoomId == newItem.chatRoomId
+            }
+
+            override fun areContentsTheSame(oldItem: ChatList, newItem: ChatList): Boolean {
+                return oldItem == newItem
+            }
+        }
+
+        // AsyncListDiffer 초기화
+        private val differ = AsyncListDiffer(this, diffCallback)
+
         inner class ViewHolderClass(rowChatMainBinding: RowChatMainBinding) :
             RecyclerView.ViewHolder(rowChatMainBinding.root), View.OnClickListener {
 
@@ -117,44 +176,36 @@ class ChatMainFragment : Fragment() {
             var rowChatMainLastChat: TextView
 
             init {
-                // 사용하고자 하는 View를 변수에 담아준다.
                 rowChatMainTitle = rowChatMainBinding.rowChatMainTitle
                 rowChatMainLastChat = rowChatMainBinding.rowChatMainLastChat
+                rowChatMainBinding.root.setOnClickListener(this)
             }
 
             override fun onClick(v: View?) {
-                mainActivity.replaceFragment(MainActivity.CHAT_ROOM_FRAGMENT,true,null)
+                val newBundle = Bundle()
+                newBundle.putString("roomId", differ.currentList[adapterPosition].chatRoomId)
+                mainActivity.replaceFragment(MainActivity.CHAT_ROOM_FRAGMENT, true, newBundle)
             }
         }
 
-        //viewHolder의 객체를 생성해서 반환한다
-        //전체 행의 개수가 아닌 필요한 만큼만 행으로 사용할 view를 만들고 viewHolder도 생성한다
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderClass {
-            //viewBining
-            val rowChatMainBinding = RowChatMainBinding.inflate(layoutInflater)
-            //viewHolder
-            val viewHolderClass = ViewHolderClass(rowChatMainBinding)
-
-            // 클릭 이벤트를 설정해준다.
-            rowChatMainBinding.root.setOnClickListener(viewHolderClass)
-
-            val params = RecyclerView.LayoutParams(
-                //가로길이
-                RecyclerView.LayoutParams.MATCH_PARENT,
-                RecyclerView.LayoutParams.WRAP_CONTENT
-            )
-            rowChatMainBinding.root.layoutParams = params
-
-            return viewHolderClass
+            val rowChatMainBinding = RowChatMainBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            return ViewHolderClass(rowChatMainBinding)
         }
 
-        //전체 행의 개수를 반환
         override fun getItemCount(): Int {
-            return 10
+            return differ.currentList.size
         }
+
         override fun onBindViewHolder(holder: ViewHolderClass, position: Int) {
-            holder.rowChatMainTitle.text = "거지방$position"
-            holder.rowChatMainLastChat.text = "채팅$position"
+            val chatList = differ.currentList[position]
+            holder.rowChatMainTitle.text = chatList.chatRoomName
+            holder.rowChatMainLastChat.text = chatList.chatLastChatting
+        }
+
+        // 리스트 갱신을 위한 submitList 함수
+        fun submitList(newList: List<ChatList>) {
+            differ.submitList(newList)
         }
     }
 
@@ -205,6 +256,11 @@ class ChatMainFragment : Fragment() {
             holder.rowChatMainTitle.text = "거지방$position"
             holder.rowChatMainLastChat.text = "채팅$position"
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+//        chatViewModel.getMyChatRoomList("A")
     }
 }
 
