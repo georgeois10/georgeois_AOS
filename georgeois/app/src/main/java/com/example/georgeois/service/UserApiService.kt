@@ -1,11 +1,11 @@
 package com.example.georgeois.service
 
-import com.example.georgeois.dataclass.User
+import com.example.georgeois.dataclass.JoinUser
 import okhttp3.ResponseBody
 import retrofit2.Call
-import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.Field
+import retrofit2.http.FieldMap
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.POST
@@ -24,9 +24,11 @@ interface UserApiService {
     @POST("login.php")
     fun login(@Field("id") id: String, @Field("pw") pw: String) : Call<Map<String, Map<String, Any>>>
 
-    @GET("checkUserIdDuplication.php")
-    fun test() : Call<Map<Any, Any>>
+    @POST("joinUser.php")
+    fun join(@Body joinUser: JoinUser) : Call<ResponseBody>
 
-    @POST("join.php")
-    fun joinUser(@Body user: User) : Response<Int>
+//    @FormUrlEncoded
+//    @POST("joinUser.php")
+//    fun join(@FieldMap joinUser: Map<String, String>) : Call<ResponseBody>
+
 }

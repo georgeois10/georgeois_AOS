@@ -1,20 +1,28 @@
 package com.example.georgeois.viewModel
 
+import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.georgeois.dataclass.JoinUser
 import com.example.georgeois.resource.FieldState
 import com.example.georgeois.dataclass.User
 import com.example.georgeois.repository.UserRepository
 import com.example.georgeois.utill.CheckValidation
+import com.google.gson.JsonParser
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import okhttp3.ResponseBody
 import org.json.JSONObject
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.await
 import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
-import java.util.TimeZone
 
 /**
  * CoroutineScope(Dispatchers.IO) 로 처리를 했지만 메모리 릭 가능성 존재
@@ -43,13 +51,28 @@ class UserViewModel : ViewModel() {
     private val _nickNmFieldState = MutableLiveData<FieldState<String>>()
     val nickNmFieldState: MutableLiveData<FieldState<String>> = _nickNmFieldState
 
+    //-------------
+    private val _phoneNumberFieldState = MutableLiveData<FieldState<Boolean>>()
+    val phoneNumberFieldState: MutableLiveData<FieldState<Boolean>> = _phoneNumberFieldState
+
+    private val _genderFieldState = MutableLiveData<FieldState<Boolean>>()
+    val genderFieldState: MutableLiveData<FieldState<Boolean>> = _genderFieldState
+
+    private val _birthYearFieldState = MutableLiveData<FieldState<Boolean>>()
+    val birthYearFieldState: MutableLiveData<FieldState<Boolean>> = _birthYearFieldState
+    //-------------
+
     private val _emailFieldState = MutableLiveData<FieldState<String>>()
     val emailFieldState: MutableLiveData<FieldState<String>> = _emailFieldState
 
-    private val _failedFieldState = MutableLiveData<FieldState<String>>()
-    val failedFieldState: MutableLiveData<FieldState<String>> = _failedFieldState
+    private val _joinFieldState = MutableLiveData<FieldState<String>>()
+    val joinFieldState: MutableLiveData<FieldState<String>> = _joinFieldState
 
 
+    init {
+        _genderFieldState.value = FieldState.Fail("")
+        _birthYearFieldState.value = FieldState.Fail("")
+    }
 
     // --------- 로그인 ----------
     /**
@@ -70,11 +93,16 @@ class UserViewModel : ViewModel() {
             val cre_date_string = json.getString("cre_date")
             val mod_date_string = json.getString("mod_date")
 
+            var mod_date: Date? = null
+
+
             val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
 
             val cre_date = dateFormat.parse(cre_date_string)
-            val mod_date = dateFormat.parse(mod_date_string)
 
+            if (mod_date_string != "null") {
+                mod_date = dateFormat.parse(mod_date_string)
+            }
 
             val user = User(
                 json.getInt("u_idx"),
@@ -93,44 +121,24 @@ class UserViewModel : ViewModel() {
                 json.getInt("u_budget"),
                 json.getDouble("u_alarm_yn").toInt() == 1,
                 json.getDouble("del_yn").toInt() == 1,
-                cre_date!!,
+                cre_date,
                 json.getString("cre_user"),
-                mod_date!!,
+                mod_date,
                 json.getString("mod_user"),
             )
             _user.postValue(user)
 
-//            Log.d("mytag", user.toString())
-
-//            val cre_date = Date(0L)
-//            val mod_date = Date(0L)
-//
-//            val user = User(
-//                userMap["u_idx"] as Int,
-//                userMap["u_auth"] as Char,
-//                userMap["u_id"] as String,
-//                userMap["u_pw"] as String,
-//                userMap["u_nm"] as String,
-//                userMap["u_nicknm"] as String,
-//                userMap["u_pnumber"] as String,
-//                userMap["u_gender"] as Char,
-//                userMap["u_birth"] as Int,
-//                userMap["u_email"] as String,
-//                userMap["u_profilepath"] as String,
-//                userMap["u_in_ctgy"] as String,
-//                userMap["u_out_ctgy"] as String,
-//                userMap["u_budget"] as Int,
-//                userMap["u_alarm_yn"] as Boolean,
-//                userMap["del_yn"] as Boolean,
-//                cre_date,
-//                userMap["cre_user"] as String,
-//                mod_date,
-//                userMap["mod_user"] as String,
-//            )
             this.cancel()
         }
     }
 
+
+    // ------------ 회원 가입 ------------
+    fun setProfilePath(uri: Uri?) {
+        if (uri != null) {
+            profile = uri.toString()
+        }
+    }
     fun checkIdDuplication(id: String) {
 
         // 유효성 검사 통과 실패 시
@@ -230,9 +238,10 @@ class UserViewModel : ViewModel() {
 
             this.cancel()
         }
+    }
 
-
-
+    fun checkPhoneNumberValidate(phoneNumber: String) {
+        checkedPhoneNumber = phoneNumber
     }
 
     fun checkEmailValidate(email: String) {
@@ -240,72 +249,124 @@ class UserViewModel : ViewModel() {
             _emailFieldState.value = FieldState.Fail("유효한 이메일 형식이 아닙니다.")
             return
         }
-
-        _emailFieldState.value = FieldState.Success("")
         checkedEmail = email
+        _emailFieldState.value = FieldState.Success("")
     }
 
     fun setBirthYear(year: Int?) {
+        if (year == null) {
+            _birthYearFieldState.value = FieldState.Fail("출생년도를 선택해 주세요.")
+            return
+        }
         selectedBirthYear = year
+        _birthYearFieldState.value = FieldState.Success(true)
+
     }
 
     fun setGender(gender: Char) {
         selectedGender = gender
+        _genderFieldState.value = FieldState.Success(true)
     }
 
-    fun localJoin(user: User) {
+    fun localJoin(auth: Char) {
         // 유효성 검사에 통과하지 못한 Field가 있는지 확인
         if (!checkAllFieldStateAvailable())
             return
 
-//        val user = User(
-//            -1,
-//            auth!!,
-//            checkedId!!,
-//            checkedPw!!,
-//            checkedNm!!,
-//            checkedNickNm!!,
-//            "",
-//            selectedGender!!,
-//            selectedBirthYear!!,
-//            checkedEmail,
-//            "",
-//            "",
-//            "",
-//            0,
-//            0,
-//            0,
-//            Timestamp(System.currentTimeMillis()),
-//            checkedId!!,
-//            Timestamp(System.currentTimeMillis()),
-//            checkedId!!,
+//        val joinUser = mutableMapOf<String, String>(
+//            "auth" to auth.toString(),
+//            "profile" to profile,
+//            "id" to checkedId!!,
+//            "pw" to checkedPw!!,
+//            "nm" to checkedNm!!,
+//            "nicknm" to checkedNickNm!!,
+//            "pnumber" to checkedPhoneNumber!!,
+//            "gender" to selectedGender!!.toString(),
+//            "birth" to selectedBirthYear!!.toString(),
+//            "email" to checkedEmail
 //        )
+
+        val joinUser = JoinUser(
+            auth.toString(),
+            profile,
+            checkedId!!,
+            checkedPw!!,
+            checkedNm!!,
+            checkedNickNm!!,
+            checkedPhoneNumber!!,
+            selectedGender!!.toString(),
+            selectedBirthYear!!,
+            checkedEmail
+        )
+
 
         // 모든 Field가 유효성 검사 통과 시
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val result = UserRepository.requestJoin(user)
+                val result = UserRepository.join(joinUser)
+
+                result.enqueue(object : Callback<ResponseBody> {
+                    override fun onResponse(
+                        call: Call<ResponseBody>,
+                        response: Response<ResponseBody>
+                    ) {
+                        // 응답 실패 시
+                        if (!(response.isSuccessful)) {
+                            Log.d("UserViewModel.localJoin", "서버 응답 실패 - ${response.message()}")
+                            _joinFieldState.postValue(FieldState.Error("연결에 실패하였습니다."))
+                            return
+                        }
+
+                        // 응답 성공 시
+                        val responseBody = response.body()?.string()
+                        val isSuccess = responseBody?.let { JSONObject(it) }
+
+                        // 가입 성공
+                        if(isSuccess?.get("result") == true) {
+                            Log.d("mytag- 성공", "${response.body()?.string()}")
+                            _joinFieldState.postValue(FieldState.Success("회원가입 되었습니다.\n로그인을 진행해 주세요."))
+                            return
+                        }
+
+                        // 가입 실패
+                        // reponse.body().string() 이 {"reuslt" : false} 상태
+                        _joinFieldState.postValue(FieldState.Fail("가입에 실패하였습니다. 다시 시도해주세요."))
+
+                    }
+
+                    override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                        Log.d("UserViewModel.localJoin", "서버 연결 실패 - ${t.printStackTrace()}")
+                        _joinFieldState.postValue(FieldState.Error("연결에 실패하였습니다."))
+                    }
+
+                })
 
             } catch (e: Exception) {
                 Log.e("UserViewModel.localJoin", "${e.printStackTrace()}")
+                _joinFieldState.postValue(FieldState.Error("가입 중 오류가 발생했습니다."))
             }
+
+            this.cancel()
         }
     }
 
+    // 모든 LiveData 의 value 가 유효성 검사 통과했는지 확인
     private fun checkAllFieldStateAvailable(): Boolean {
+        // 모든 가입 필드 허용되었는지 확인하기 위한 변수 (이메일은 선택사항)
         val fieldStateList = arrayListOf(
             _idFieldState.value,
             _pwFieldState.value,
             _confirmPwFieldState.value,
             _nmFieldState.value,
             _nickNmFieldState.value,
-            _emailFieldState.value
+            _genderFieldState.value,
+            _birthYearFieldState.value,
         )
 
         fieldStateList.map { fieldState ->
             if (fieldState !is FieldState.Success) {
                 // 유효성 검사 통과 실패
-
+                Log.d("mytag-field", fieldState?.message.toString())
                 return false
             }
         }
@@ -314,12 +375,13 @@ class UserViewModel : ViewModel() {
     }
 
     private companion object {
-        var auth: Char? = null
+        var profile: String = ""
         var checkedId: String? = null
         var checkedPw: String? = null
         var isPwConfirmPassed: Boolean = false
         var checkedNm: String? = null
         var checkedNickNm: String? = null
+        var checkedPhoneNumber: String? = null
         var selectedGender: Char? = null
         var selectedBirthYear: Int? = null
         var checkedEmail: String = ""

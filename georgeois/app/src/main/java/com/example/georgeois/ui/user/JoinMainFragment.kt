@@ -1,7 +1,6 @@
 package com.example.georgeois.ui.user
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -30,6 +29,8 @@ class JoinMainFragment : Fragment() {
     private val imageLoadLauncher =
         registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
             joinMainBinding.circleImageViewJoinMainProfile.setImageURI(uri)
+            userViewModel = ViewModelProvider(this)[UserViewModel::class.java]
+            userViewModel.setProfilePath(uri)
         }
 
     override fun onCreateView(
@@ -73,6 +74,22 @@ class JoinMainFragment : Fragment() {
             // 이메일 Error meesage update
             emailFieldState.observe(requireActivity()) {
                 updateValidateMessage(joinMainBinding.textInputLayoutJoinMainEmail, it)
+            }
+
+            joinFieldState.observe(requireActivity()) {
+                when (it) {
+                    is FieldState.Success -> {
+
+                    }
+
+                    is FieldState.Fail -> {
+
+                    }
+
+                    is FieldState.Error -> {
+
+                    }
+                }
             }
         }
 
@@ -154,14 +171,17 @@ class JoinMainFragment : Fragment() {
                 userViewModel.checkNickNmValidate(nickNm)
             }
 
+            // TODO : 인증번호 발송 구현
             // 전화번호로 인증 문자 전송 버튼 클릭
             buttonJoinMainSendVerificationNumber.setOnClickListener {
-                val phoneNumber = "+1650-555-5555"
-//                val phoneNumber = textInputEditTextJoinMainPNumber.text.toString()
+//                val phoneNumber = "+1650-555-5555"
+                val phoneNumber = textInputEditTextJoinMainPNumber.text.toString()
 //                authViewModel.sendVerificationNumber("+82$phoneNumber")
-                authViewModel.sendVerificationNumber("$phoneNumber", requireActivity())
+//                authViewModel.sendVerificationNumber("$phoneNumber", requireActivity())
 
 //                Toast.makeText(requireContext(), "인증번호가 전송되었습니다.", Toast.LENGTH_SHORT).show()
+
+                userViewModel.checkPhoneNumberValidate(phoneNumber)
                 
             }
 
@@ -202,10 +222,11 @@ class JoinMainFragment : Fragment() {
                 // TODO : 회원가입 기능 구현
 
                 joinMainBinding.textInputEditTextJoinMainNm.text
-
+                val auth = 'L'
+                userViewModel.localJoin(auth)
                 // 회원가입 성공 후 LoginMainFragment로 이동
-                mainActivity.removeFragment(MainActivity.JOIN_MAIN_FRAGMENT)
-                mainActivity.replaceFragment(MainActivity.LOGIN_MAIN_FRAGMENT,false,null)
+//                mainActivity.removeFragment(MainActivity.JOIN_MAIN_FRAGMENT)
+//                mainActivity.replaceFragment(MainActivity.LOGIN_MAIN_FRAGMENT,false,null)
             }
         }
 
