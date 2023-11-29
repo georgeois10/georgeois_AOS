@@ -23,6 +23,6 @@ data class User(
     // Timestamp or Date
     val cre_date: Date,
     val cre_user: String,
-    val mod_date: Date,
+    val mod_date: Date?,
     val mod_user: String,
 )
