@@ -36,6 +36,7 @@ class AddChatFragment : Fragment() {
         for (i in 2023 downTo 1960){
             yearList.add(i)
         }
+        val userNickname = arguments?.getString("userNickname")!!
 
         fragmentAddChatBinding.run {
             toolbarAddChat.run {
@@ -153,8 +154,8 @@ class AddChatFragment : Fragment() {
                                     setPositiveButton("확인"){ dialogInterface: DialogInterface, i: Int ->
                                         val chatBirth = "${roomStartYear}년~${roomEndYear}년"
                                         val userList = ArrayList<String>()
-                                        userList.add("A")
-                                        val chatRoomInfo = ChatRoomInfo(chatBirth,roomBudget,roomGender,"A",roomName,userList)
+                                        userList.add(userNickname)
+                                        val chatRoomInfo = ChatRoomInfo(chatBirth,roomBudget,roomGender,userNickname,roomName,userList)
                                         ChatRepository.addNewChatRoom(chatRoomInfo){
                                             mainActivity.removeFragment(MainActivity.ADD_CHAT_FRAGMENT)
                                         }

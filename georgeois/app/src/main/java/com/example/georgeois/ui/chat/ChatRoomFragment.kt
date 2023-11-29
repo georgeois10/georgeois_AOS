@@ -42,6 +42,7 @@ class ChatRoomFragment : Fragment() {
     var chatList = mutableListOf<ChatingContent>()
     var currnetChatRoomId = ""
     var chatRoomOwner = ""
+    var userNickname = ""
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -135,8 +136,6 @@ class ChatRoomFragment : Fragment() {
                     val dateFormat = SimpleDateFormat("yyyy-MM-dd / HH:mm:ss", Locale.getDefault())
                     val currnetTime = dateFormat.format(date)
 
-                    val userNickname = "A"
-
                     textInputEditTextChatRoomInputMessage.setText("")
 
                     val chatingContent = ChatingContent(inputText,currnetTime,userNickname)
@@ -222,7 +221,7 @@ class ChatRoomFragment : Fragment() {
 
         override fun onBindViewHolder(holder: ViewHolderClass, position: Int) {
             holder.textViewRowChatRoomMeOutNoti.visibility = View.GONE
-            if (chatList[position].chatUserNickname != "A") {
+            if (chatList[position].chatUserNickname != userNickname) {
                 holder.textViewRowChatRoomMeMyContent.visibility = View.GONE
                 holder.textViewRowChatRoomMeTime.visibility = View.GONE
 
@@ -297,12 +296,12 @@ class ChatRoomFragment : Fragment() {
             return userList.size
         }
         override fun onBindViewHolder(holder: ViewHolderClass, position: Int) {
-            if(userList[position] == "A"){
+            if(userList[position] == userNickname){
                 holder.textViewChatRoomUserNickname.text = "${userList[position]}"
                 holder.imageViewChatRoomUserImage.setImageResource(R.drawable.ic_person_24px)
             }
             else{
-                if (chatRoomOwner == "A") {
+                if (chatRoomOwner == userNickname) {
                     holder.textViewChatRoomUserNickname.text = "${userList[position]}"
                     holder.imageViewChatRoomUserImage.setImageResource(R.drawable.ic_person_24px)
                     holder.buttonChatRoomUserExit.text = "추방"
@@ -323,6 +322,7 @@ class ChatRoomFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         currnetChatRoomId = arguments?.getString("roomId").toString()
-        chatViewModel.getChatRoom(currnetChatRoomId,"A")
+        userNickname = arguments?.getString("userNickname").toString()
+        chatViewModel.getChatRoom(currnetChatRoomId,userNickname)
     }
 }

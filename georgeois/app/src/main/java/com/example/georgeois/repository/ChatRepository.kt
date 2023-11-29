@@ -5,6 +5,7 @@ import com.example.georgeois.dataclass.ChatRoomInfo
 import com.example.georgeois.dataclass.ChatingContent
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.QuerySnapshot
@@ -55,8 +56,7 @@ class ChatRepository {
 
             // "chattingContent" 하위 컬렉션에 새로운 데이터 추가
             chatRoomRef.collection("chattingContent")
-                .add(
-                    mapOf(
+                .add(mapOf(
                         "chatContent" to chatContent.chatContent,
                         "chatTime" to chatContent.chatTime,
                         "userNickname" to chatContent.chatUserNickname
@@ -75,13 +75,47 @@ class ChatRepository {
         }
 
         //채팅방 가져오기
-        suspend fun getAllChattingRoom(userNickname: String): QuerySnapshot {
+        suspend fun getChattingRoom(userNickname: String): QuerySnapshot {
             val db = FirebaseFirestore.getInstance()
-
             try {
                 // whereArrayContains를 사용하여 chatUserList에 userNickname이 포함된 문서 가져오기
                 return db.collection("ChatRoom")
                     .whereArrayContains("chatUserList", userNickname)
+                    .get()
+                    .await()
+            } catch (e: Exception) {
+                // 오류 처리
+                Log.e("Error", "Error fetching chat room list: ${e.message}")
+                throw e
+            }
+        }
+
+        //검색한 오픈채팅방
+        suspend fun getSearchChattingRoom(content: String): List<DocumentSnapshot> {
+            val db = FirebaseFirestore.getInstance()
+            try {
+                val querySnapshot = db.collection("ChatRoom")
+                    .get()
+                    .await()
+
+                // 결과를 필터링하여 부분적으로 일치하는 경우만 반환
+                return querySnapshot.documents.filter { document ->
+                    val chatRoomName = document.getString("chatRoomName")
+                    chatRoomName?.replace(" ","")!!.contains(content) == true
+                }
+            } catch (e: Exception) {
+                // 오류 처리
+                Log.e("Error", "Error fetching chat room list: ${e.message}")
+                throw e
+            }
+        }
+
+        //모든 채팅방
+        suspend fun getAllChattingRoom():QuerySnapshot{
+            val db = FirebaseFirestore.getInstance()
+            try {
+                // whereArrayContains를 사용하여 chatUserList에 userNickname이 포함된 문서 가져오기
+                return db.collection("ChatRoom")
                     .get()
                     .await()
             } catch (e: Exception) {

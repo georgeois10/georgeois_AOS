@@ -73,7 +73,7 @@ class UserViewModel : ViewModel() {
             val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
 
             val cre_date = dateFormat.parse(cre_date_string)
-            val mod_date = dateFormat.parse(mod_date_string)
+//            val mod_date = dateFormat.parse(mod_date_string)
 
 
             val user = User(
@@ -95,7 +95,7 @@ class UserViewModel : ViewModel() {
                 json.getDouble("del_yn").toInt() == 1,
                 cre_date!!,
                 json.getString("cre_user"),
-                mod_date!!,
+                null,
                 json.getString("mod_user"),
             )
             _user.postValue(user)
