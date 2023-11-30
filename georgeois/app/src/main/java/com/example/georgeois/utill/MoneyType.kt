@@ -2,6 +2,7 @@ package com.example.georgeois.utill
 
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.widget.TextView
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
@@ -29,7 +30,7 @@ class MoneyType {
 // 금액 textWatcher
 class MoneyTextWatcher(private val textInputEditText: TextInputEditText) : TextWatcher {
     private val numberFormat = NumberFormat.getInstance(Locale.getDefault())
-
+    var formattedText: String = ""
     override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
         // 이 메서드는 텍스트 변경 전에 호출됩니다.
     }
@@ -38,11 +39,12 @@ class MoneyTextWatcher(private val textInputEditText: TextInputEditText) : TextW
         // 이 메서드는 텍스트가 변경될 때 호출됩니다.
         val text = s.toString().replace(",", "").trim()
         val parsed = if (text.isNotEmpty()) text.toDouble() else 0.0
-        val formatted = numberFormat.format(parsed)
-
+        formattedText = numberFormat.format(parsed)
+// 로그 추가
+        Log.d("MoneyTextWatcher", "onTextChanged: $formattedText")
         textInputEditText.removeTextChangedListener(this)
-        textInputEditText.setText(formatted)
-        textInputEditText.setSelection(formatted.length)
+        textInputEditText.setText(formattedText)
+        textInputEditText.setSelection(formattedText.length)
         textInputEditText.addTextChangedListener(this)
     }
 
