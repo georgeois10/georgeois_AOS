@@ -50,7 +50,7 @@ class HomeMainFragment : Fragment() {
             recyclerViewHomeMain.adapter = adapter
 
             // 분석
-            buttonHomeMainAnalysis.setOnClickListener {
+            linearLayoutHomeMainAnalysis.setOnClickListener {
                 mainActivity.replaceFragment(MainActivity.HOME_ANALYSIS_FRAGMENT,true,null)
             }
 

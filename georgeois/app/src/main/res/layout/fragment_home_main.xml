@@ -33,80 +33,84 @@
                     android:orientation="vertical"
                     android:padding="@dimen/padding_size_15dp">
                     <LinearLayout
+                        android:id="@+id/linearLayout_homeMain_analysis"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        tools:ignore="UselessParent">
+                        tools:ignore="InvalidId,UselessParent">
 
                         <com.google.android.material.card.MaterialCardView
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:background="@drawable/border_my_info_main"
                             android:backgroundTint="#00000000">
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:orientation="vertical"
+                                android:orientation="horizontal"
                                 android:padding="@dimen/padding_size_15dp">
+
                                 <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:orientation="vertical">
+                                    <LinearLayout
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="horizontal">
+                                        <TextView
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:textColor="@color/accentGreen"
+                                            android:fontFamily="@font/space"
+                                            android:textSize="@dimen/font_size_16sp"
+                                            android:text="현재달 수입 : " />
+                                        <TextView
+                                            android:id="@+id/textView_homeMain_inMoney"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:textColor="@color/accentGreen"
+                                            android:fontFamily="@font/space"
+                                            android:textSize="@dimen/font_size_16sp"
+                                            android:text="100000">
+                                        </TextView>
+                                    </LinearLayout>
+                                    <LinearLayout
+                                        android:layout_marginTop="@dimen/margin_10dp"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="horizontal">
+                                        <TextView
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:fontFamily="@font/space"
+                                            android:textColor="@color/accentRed"
+                                            android:textSize="@dimen/font_size_16sp"
+                                            android:text="현재달 지출 : " />
+                                        <TextView
+                                            android:id="@+id/textView_homeMain_outMoney"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:fontFamily="@font/space"
+                                            android:textColor="@color/accentRed"
+                                            android:textSize="@dimen/font_size_16sp"
+                                            android:text="100000">
+                                        </TextView>
+                                    </LinearLayout>
+
+                                </LinearLayout>
+                                <ImageView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:orientation="horizontal">
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:textColor="@color/accentGreen"
-                                        android:fontFamily="@font/space"
-                                        android:textSize="@dimen/font_size_16sp"
-                                        android:text="현재달 수입 : " />
-                                    <TextView
-                                        android:id="@+id/textView_homeMain_inMoney"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:textColor="@color/accentGreen"
-                                        android:fontFamily="@font/space"
-                                        android:textSize="@dimen/font_size_16sp"
-                                        android:text="100000">
-                                    </TextView>
-                                </LinearLayout>
-                                <LinearLayout
-                                    android:layout_marginTop="@dimen/margin_10dp"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:orientation="horizontal">
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:fontFamily="@font/space"
-                                        android:textColor="@color/accentRed"
-                                        android:textSize="@dimen/font_size_16sp"
-                                        android:text="현재달 지출 : " />
-                                    <TextView
-                                        android:id="@+id/textView_homeMain_outMoney"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:fontFamily="@font/space"
-                                        android:textColor="@color/accentRed"
-                                        android:textSize="@dimen/font_size_16sp"
-                                        android:text="100000">
-                                    </TextView>
-                                </LinearLayout>
+                                    android:src="@drawable/ic_chevron_right_24px"
+                                    android:layout_gravity="center"
+                                    android:layout_weight="1">
+
+                                </ImageView>
                             </LinearLayout>
                         </com.google.android.material.card.MaterialCardView>
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:gravity="end|bottom">
-                            <Button
-                                android:id="@+id/button_homeMain_analysis"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="bottom|end"
-                                android:fontFamily="@font/space"
-                                android:text="분석"
-                                android:textStyle="bold"
-                                android:textSize="@dimen/font_size_18sp" />
-                        </LinearLayout>
+
 
                     </LinearLayout>
                     <CalendarView
