@@ -13,6 +13,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.annotation.LayoutRes
 import androidx.annotation.RequiresApi
@@ -23,7 +24,9 @@ import com.example.georgeois.R
 import com.example.georgeois.databinding.FragmentHomeRegisterBinding
 import com.example.georgeois.databinding.ItemSpinnerHomeRegisterBinding
 import com.example.georgeois.dataclass.InAccountBookClass
+import com.example.georgeois.dataclass.OutAccountBookClass
 import com.example.georgeois.repository.InAccountBookRepository
+import com.example.georgeois.repository.OutAccountBookRepository
 import com.example.georgeois.ui.main.MainActivity
 import com.example.georgeois.utill.MoneyTextWatcher
 import com.example.georgeois.viewModel.UserViewModel
@@ -31,12 +34,8 @@ import com.google.android.material.chip.Chip
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 import java.lang.Exception
-import java.text.SimpleDateFormat
-import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.util.Calendar
-import java.util.Date
 
 class HomeRegisterFragment : Fragment() {
     lateinit var fragmentHomeRegisterBinding: FragmentHomeRegisterBinding
@@ -55,7 +54,7 @@ class HomeRegisterFragment : Fragment() {
     var uAmount = 0
     var uContent = ""
     var uDate = ""
-    var uProperty = ""
+    var uProperty = 'H'
     var uBudregiYn = false
     var inCategory = ""
     var outCategory = ""
@@ -119,7 +118,7 @@ class HomeRegisterFragment : Fragment() {
                 buttonHomeRegisterIn.setBackgroundColor(resources.getColor(R.color.accentGray))
                 outCategory()
                 // 자산 설정
-                assetSetting()
+                propertySetting()
             }
 
             // 날짜 설정
@@ -173,30 +172,19 @@ class HomeRegisterFragment : Fragment() {
     fun dateSetting() {
 
         fragmentHomeRegisterBinding.run {
-            // 현재 날짜 및 시간
             val currentDateTime = LocalDateTime.now()
             val currentDate = currentDateTime.format(DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH:mm"))
             uDate = currentDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:00.000"))
             val dateTimePicker = DateTimePicker(requireContext())
             textViewHomeRegisterDate.text = currentDate
-            Log.e("php_일반", uDate)
 
             textViewHomeRegisterDate.setOnClickListener {
                 dateTimePicker.setDateTimeListener(object : DateTimePicker.DateTimeListener {
                     override fun onDateTimeSelected(dateTime: String) {
-                        // 선택된 날짜와 시간을 TextView에 설정
-                        val inputFormatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH:mm")
-                        var temp = LocalDateTime.parse(dateTime,inputFormatter).toString()
                         textViewHomeRegisterDate.text = dateTime
-                        val outputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:00.000")
-                        uDate = temp.format(outputFormatter)
-                        uDate = uDate.replace("T", " ").let {
-                            if (it.length == 16) "$it:00.000" else it
-                        }
-                        Log.e("php_선택", uDate)
+                        uDate = dateTimePicker.updateDate(dateTime)
                     }
                 })
-                // 날짜 및 시간 선택 다이얼로그 보이기
                 dateTimePicker.showDateTimePicker()
             }
         }
@@ -204,7 +192,7 @@ class HomeRegisterFragment : Fragment() {
 
 
     // 자산 설정
-    fun assetSetting(){
+    fun propertySetting(){
         fragmentHomeRegisterBinding.run {
             // 자산 하나만 선택
             val chips = fragmentHomeRegisterBinding.chipGroupHomeRegister.children.toList()
@@ -215,10 +203,17 @@ class HomeRegisterFragment : Fragment() {
                         if (isChecked) {
                             previousCheckedChip?.isChecked = false
                             previousCheckedChip = chip
-                            uProperty = chip.text.toString()
+                            uProperty = when(chip.text.toString()){
+                                "현금"-> 'H'
+                                "체크카드" -> 'C'
+                                "신용카드" -> 'S'
+                                else -> 'H'
+                            }
                         }
                         else{
-                            previousCheckedChip = null
+                            if (chips.none { it is Chip && it.isChecked }) {
+                                chip.isChecked = true
+                            }
                         }
                     }
                 }
@@ -231,42 +226,67 @@ class HomeRegisterFragment : Fragment() {
     @RequiresApi(Build.VERSION_CODES.O)
     fun save() {
         fragmentHomeRegisterBinding.run {
-            val formattedText = moneyTextWatcher.formattedText.replace(",","")
-            uAmount = formattedText.toInt()
-            uContent = textInputEditTextHomeRegisterContent.text.toString()
-            uBudregiYn = checkBoxHomeRegisterNoBudget.isChecked
-            Log.e("php_입력", uDate)
-            try {
-                when(isCategory){
-                    "in" -> {
-                        val insertAccountBook = InAccountBookClass(
-                            uIdx,
-                            uId,
-                            uNicknm,
-                            uAmount,
-                            uContent,
-                            uCategory,
-                            uDate,
-                            "none",
-                            uBudregiYn
-                        )
-                        InAccountBookRepository.insertInAccountBook(insertAccountBook)
-                    }
-                    "out" -> {
+            val amountText = textInputEditTextHomeRegisterMoney.text?.toString()
+            val contentText = textInputEditTextHomeRegisterContent.text?.toString()
 
+            if (!amountText.isNullOrBlank() && !contentText.isNullOrBlank()) {
+                val formattedText = moneyTextWatcher.formattedText.replace(",", "")
+                uAmount = formattedText.toInt()
+                uContent = contentText
+                uBudregiYn = checkBoxHomeRegisterNoBudget.isChecked
+                Log.e("php_입력", uDate)
+                try {
+                    when (isCategory) {
+                        "in" -> {
+                            val insertAccountBook = InAccountBookClass(
+                                uIdx,
+                                uId,
+                                uNicknm,
+                                uAmount,
+                                uContent,
+                                uCategory,
+                                uDate,
+                                "none",
+                                uBudregiYn
+                            )
+                            InAccountBookRepository.insertInAccountBook(insertAccountBook)
+                        }
+                        "out" -> {
+
+                            val outAccountBookClass = OutAccountBookClass(
+                                uIdx,
+                                uId,
+                                uNicknm,
+                                uAmount,
+                                uContent,
+                                uCategory,
+                                uDate,
+                                "none",
+                                uBudregiYn,
+                                uProperty
+                            )
+                            OutAccountBookRepository.insertOutAccountBook(outAccountBookClass)
+                        }
                     }
+
+                    mainActivity.removeFragment(MainActivity.HOME_REGISTER_FRAGMENT)
+                    Snackbar.make(requireView(), "저장했습니다.", Snackbar.LENGTH_SHORT).show()
+                } catch (e: Exception) {
+                    Log.e("php", "데이터 저장 오류: ${e.message}")
+                    Snackbar.make(requireView(), "저장에 실패했습니다.", Snackbar.LENGTH_SHORT).show()
                 }
-
-
-
-                mainActivity.removeFragment(MainActivity.HOME_REGISTER_FRAGMENT)
-                Snackbar.make(requireView(), "저장했습니다.", Snackbar.LENGTH_SHORT).show()
-            }catch (e: Exception) {
-                Log.e("php", "데이터 저장 오류: ${e.message}")
-                Snackbar.make(requireView(), "저장에 실패했습니다.", Snackbar.LENGTH_SHORT).show()
+            } else {
+                // amount 또는 content가 빈 경우
+                var toastText = if(amountText.isNullOrBlank()){
+                    "금액"
+                }else{
+                    "내용"
+                }
+                Toast.makeText(requireContext(), "${toastText}을 입력하세요.", Toast.LENGTH_SHORT).show()
             }
         }
     }
+
 
 
 }

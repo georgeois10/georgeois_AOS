@@ -1,17 +1,15 @@
 package com.example.georgeois.repository
 
 import android.util.Log
-import com.example.georgeois.dataclass.InAccountBookClass
 import com.example.georgeois.dataclass.OutAccountBookClass
 import com.example.georgeois.module.RetrofitModule
-import com.example.georgeois.service.InAccountBookService
 import com.example.georgeois.service.OutAccountBookService
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class outAccountBookRepository {
+class OutAccountBookRepository {
     companion object {
         private val retrofit = RetrofitModule.retrofit().create(OutAccountBookService::class.java)
 

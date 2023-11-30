@@ -7,6 +7,7 @@ data class OutAccountBookClass(
     val oAmount: Int,
     val oContent: String,
     val oCategory: String,
+    val oDate : String,
     val oImgpath: String,
     val oBudregiYn: Boolean,
     val oProperty: Char
