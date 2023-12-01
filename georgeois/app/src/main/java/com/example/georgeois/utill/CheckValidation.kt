@@ -59,6 +59,15 @@ object CheckValidation {
 //        return Patterns.PHONE.matcher(phoneNumber).matches()
     }
 
+    /**
+     * 1. 숫자로 이루어진 6자리
+     *
+     * 위 경우를 제외한 다른 모든 문자 제외
+     */
+    fun validateVerifyCode(code: String) : Boolean {
+        return code.matches("^[0-9]{6}$".toRegex())
+    }
+
 
     fun validateEmail(targetString: String): Boolean {
         return Patterns.EMAIL_ADDRESS.matcher(targetString).matches()

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="60dp"
+    android:layout_height="70dp"
     android:background="@drawable/border_chat_main_recyclerview"
     android:orientation="vertical"
     android:padding="10dp">
@@ -10,6 +10,7 @@
         android:id="@+id/row_chat_main_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_weight="1"
         android:text="TextView"
         android:textSize="@dimen/font_size_18sp"
         android:theme="@style/Theme.Georgeois.Text" />
@@ -19,6 +20,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
+        android:layout_weight="1"
         android:text="TextView"
         android:textSize="@dimen/font_size_16sp"
         android:theme="@style/Theme.Georgeois.Text" />

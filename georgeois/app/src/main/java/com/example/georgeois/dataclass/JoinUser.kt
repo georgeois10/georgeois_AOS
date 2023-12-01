@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 
 data class JoinUser(
 //    @SerializedName("auth")
-    val auth: String,
+    val auth: Char,
 //    @SerializedName("profile")
     val profile: String,
 //    @SerializedName("id")
@@ -19,7 +19,7 @@ data class JoinUser(
 //    @SerializedName("pnumber")
     val pnumber: String,
 //    @SerializedName("gender")
-    val gender: String,
+    val gender: Char,
 //    @SerializedName("birth")
     val birth: Int,
 //    @SerializedName("email")

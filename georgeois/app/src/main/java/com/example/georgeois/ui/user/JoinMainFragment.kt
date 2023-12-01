@@ -79,17 +79,24 @@ class JoinMainFragment : Fragment() {
             joinFieldState.observe(requireActivity()) {
                 when (it) {
                     is FieldState.Success -> {
-
+                        // 회원가입 성공 후 LoginMainFragment로 이동
+                        Toast.makeText(requireContext(), "${it.data}", Toast.LENGTH_SHORT).show()
+                        mainActivity.removeFragment(MainActivity.JOIN_MAIN_FRAGMENT)
+                        mainActivity.replaceFragment(MainActivity.LOGIN_MAIN_FRAGMENT,false,null)
                     }
 
                     is FieldState.Fail -> {
-
+                        Toast.makeText(requireContext(), "${it.message}", Toast.LENGTH_SHORT).show()
                     }
 
                     is FieldState.Error -> {
-
+                        Toast.makeText(requireContext(), "${it.message}", Toast.LENGTH_SHORT).show()
                     }
                 }
+            }
+
+            unCheckedField.observe(requireActivity()) {
+                Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -97,12 +104,12 @@ class JoinMainFragment : Fragment() {
             // 휴대폰 인증번호 전송 요청에 따른 Toast 메시지 update
             phoneNumberFieldState.observe(requireActivity()) {
                 when(it) {
-                    is FieldState.Fail -> {
-                        Toast.makeText(requireContext(), "${it.message}", Toast.LENGTH_SHORT).show()
-                    }
-
                     is FieldState.Success -> {
                         Toast.makeText(requireContext(), "${it.data}", Toast.LENGTH_SHORT).show()
+                    }
+
+                    is FieldState.Fail -> {
+                        Toast.makeText(requireContext(), "${it.message}", Toast.LENGTH_SHORT).show()
                     }
 
                     else -> Unit
@@ -110,8 +117,34 @@ class JoinMainFragment : Fragment() {
             }
 
             // 휴대폰 인증 hint, Error message update
-            isPassed.observe(requireActivity()) {
-                updateValidateMessage(joinMainBinding.textInputLayoutJoinMainVerificationNumber, it)
+            confirmCodeFieldState.observe(requireActivity()) {
+//                updateValidateMessage(joinMainBinding.textInputLayoutJoinMainVerificationNumber, it)
+
+                val textInputLayout = joinMainBinding.textInputLayoutJoinMainVerificationNumber
+                when (it) {
+                    is FieldState.Success -> {
+                        val helperMessage = it.data.toString()
+                        textInputLayout.error = null
+                        textInputLayout.isErrorEnabled = false
+                        textInputLayout.helperText = helperMessage
+
+                        // 핸드폰 인증 성공
+                        // UserViewModel로 전화번호 전송
+                        val phoneNumber = joinMainBinding.textInputEditTextJoinMainPNumber.text.toString()
+                        userViewModel.setCheckPhoneNumber(phoneNumber)
+                    }
+
+                    is FieldState.Fail -> {
+                        val errorMessage = it.message.toString()
+                        textInputLayout.requestFocus()
+                        textInputLayout.isErrorEnabled = true
+                        textInputLayout.error = errorMessage
+                    }
+
+                    is FieldState.Error -> {
+                        Toast.makeText(requireContext(), "오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
         }
 
@@ -132,6 +165,11 @@ class JoinMainFragment : Fragment() {
             circleImageViewJoinMainProfile.setOnClickListener {
                 imageLoadLauncher.launch("image/*")
             }
+            
+            // 아이디 내용 변경 시 아이디 중복 확인 통과한 거 통과 실패로 변경
+            textInputEditTextJoinMainId.addTextChangedListener(CommonTextWatcher {
+                userViewModel.idChanged()
+            })
 
 
             // 아이디 중복확인 클릭
@@ -165,33 +203,35 @@ class JoinMainFragment : Fragment() {
                 userViewModel.checkNmValidate(name)
             })
 
+            // 닉네임 내용 변경 시 닉네임 중복 확인 통과한 거 통과 실패로 변경
+            textInputEditTextJoinMainNickNm.addTextChangedListener(CommonTextWatcher {
+                userViewModel.nicknameChanged()
+            })
+
             // 닉네임 중복 확인 클릭
             buttonJoinMainCheckNickNmDuplication.setOnClickListener {
                 val nickNm = textInputEditTextJoinMainNickNm.text.toString()
                 userViewModel.checkNickNmValidate(nickNm)
             }
 
-            // TODO : 인증번호 발송 구현
+            // 전화번호 텍스트 변경
+            textInputEditTextJoinMainPNumber.addTextChangedListener(CommonTextWatcher {
+                userViewModel.phoneNumberChanged()
+            })
+
             // 전화번호로 인증 문자 전송 버튼 클릭
             buttonJoinMainSendVerificationNumber.setOnClickListener {
-//                val phoneNumber = "+1650-555-5555"
                 val phoneNumber = textInputEditTextJoinMainPNumber.text.toString()
-//                authViewModel.sendVerificationNumber("+82$phoneNumber")
-//                authViewModel.sendVerificationNumber("$phoneNumber", requireActivity())
 
-//                Toast.makeText(requireContext(), "인증번호가 전송되었습니다.", Toast.LENGTH_SHORT).show()
-
-                userViewModel.checkPhoneNumberValidate(phoneNumber)
-                
+                authViewModel.sendVerificationNumber("$phoneNumber", requireActivity())
             }
 
             // 인증번호 확인 클릭
             buttonJoinMainCheckVerificationNumber.setOnClickListener {
                 // TODO : 인증번호 확인 기능 구현
                 val code = textInputEditTextJoinMainVerificationNumber.text.toString()
-                if (code.isNotEmpty()) {
-                    authViewModel.checkVerificationNumber(code)
-                }
+
+                authViewModel.checkVerificationNumber(code)
 
             }
 
@@ -219,14 +259,9 @@ class JoinMainFragment : Fragment() {
 
             // 회원가입 클릭
             buttonJoinMainJoin.setOnClickListener {
-                // TODO : 회원가입 기능 구현
-
-                joinMainBinding.textInputEditTextJoinMainNm.text
+                textInputEditTextJoinMainNm.text
                 val auth = 'L'
                 userViewModel.localJoin(auth)
-                // 회원가입 성공 후 LoginMainFragment로 이동
-//                mainActivity.removeFragment(MainActivity.JOIN_MAIN_FRAGMENT)
-//                mainActivity.replaceFragment(MainActivity.LOGIN_MAIN_FRAGMENT,false,null)
             }
         }
 
@@ -244,24 +279,24 @@ class JoinMainFragment : Fragment() {
      * [FieldState.Fail.message] 에 ErrorMessage 설정
      * [FieldState.Error.message] 에 Error 메시지 설정
      */
-    private fun updateValidateMessage(textInputLayout: TextInputLayout, idFieldState: FieldState<String>) {
+    private fun updateValidateMessage(textInputLayout: TextInputLayout, fieldState: FieldState<String>) {
 
-        when (idFieldState) {
+        when (fieldState) {
             is FieldState.Success -> {
-                val helperMessage = idFieldState.data.toString()
+                val helperMessage = fieldState.data.toString()
                 textInputLayout.error = null
                 textInputLayout.isErrorEnabled = false
                 textInputLayout.helperText = helperMessage
             }
 
             is FieldState.Fail -> {
-                val errorMessage = idFieldState.message.toString()
+                val errorMessage = fieldState.message.toString()
                 textInputLayout.isErrorEnabled = true
                 textInputLayout.error = errorMessage
             }
 
             is FieldState.Error -> {
-                Toast.makeText(requireContext(), "${idFieldState.message}.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "${fieldState.message}.", Toast.LENGTH_SHORT).show()
             }
         }
     }

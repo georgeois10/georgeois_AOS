@@ -25,7 +25,14 @@ class LoginMainFragment : Fragment() {
         loginMainBinding = FragmentLoginMainBinding.inflate(inflater)
         mainActivity = activity as MainActivity
 
-        userViewModel = ViewModelProvider(this)[UserViewModel::class.java]
+        userViewModel = ViewModelProvider(mainActivity)[UserViewModel::class.java]
+        userViewModel.run {
+            user.observe(mainActivity){
+                if (it != null) {
+                    mainActivity.replaceFragment(MainActivity.MAIN_FRAGMENT,true,null)
+                }
+            }
+        }
 
         loginMainBinding.run {
             // 로그인 클릭
@@ -33,12 +40,6 @@ class LoginMainFragment : Fragment() {
                 val id = textInputEditTextLoginMainId.text.toString()
                 val pw = textInputEditTextLoginMainPw.text.toString()
                 userViewModel.login(id, pw)
-
-                userViewModel.user.observe(requireActivity()) {
-                    if (it != null) {
-                        mainActivity.replaceFragment(MainActivity.MAIN_FRAGMENT,true,null)
-                    }
-                }
             }
 
             // 아이디 찾기

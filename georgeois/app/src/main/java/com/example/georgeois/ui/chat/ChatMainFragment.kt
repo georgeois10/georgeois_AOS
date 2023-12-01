@@ -27,13 +27,16 @@ import com.example.georgeois.databinding.FragmentChatMainBinding
 import com.example.georgeois.databinding.FragmentMainBinding
 import com.example.georgeois.databinding.RowChatMainBinding
 import com.example.georgeois.dataclass.ChatList
+import com.example.georgeois.repository.ChatRepository
 import com.example.georgeois.ui.main.MainActivity
 import com.example.georgeois.ui.main.MainFragment
 import com.example.georgeois.utill.SpaceItemDecoration
 import com.example.georgeois.viewModel.ChatViewModel
+import com.example.georgeois.viewModel.UserViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.search.SearchBar
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlin.concurrent.thread
 
@@ -43,16 +46,24 @@ class ChatMainFragment : Fragment() {
     lateinit var fragmentChatMainBinding: FragmentChatMainBinding
     lateinit var mainActivity: MainActivity
     lateinit var chatViewModel: ChatViewModel
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        chatViewModel = ViewModelProvider(this)[ChatViewModel::class.java]
-        chatViewModel.getMyChatRoomList("A")
-    }
+    lateinit var userViewModel: UserViewModel
+    var chatListSearch = mutableListOf<ChatList>()
+    var userNickname = ""
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         // onViewCreated에서 데이터 로딩 및 UI 갱신 수행
         chatViewModel = ViewModelProvider(this)[ChatViewModel::class.java]
+        mainActivity = activity as MainActivity
+        userViewModel = ViewModelProvider(mainActivity)[UserViewModel::class.java]
+        userViewModel.run {
+            user.observe(requireActivity()){
+                userNickname = it!!.u_nickNm
+            }
+        }
+        chatViewModel.getMyChatRoomList(userNickname)
+
         chatViewModel.run {
             chatRoomList.observe(viewLifecycleOwner) { chatList ->
                 // 데이터가 변경될 때마다 submitList를 호출하여 리사이클러뷰 갱신
@@ -60,13 +71,17 @@ class ChatMainFragment : Fragment() {
                 // 데이터 로딩이 완료되면 로딩 화면을 숨김
                 fragmentChatMainBinding.progressBarChatMain.visibility = View.GONE
             }
+            chatRoomListSearch.observe(mainActivity){
+                // 어댑터에 데이터 갱신 알림
+                (fragmentChatMainBinding.recyclerViewChatMainSearchList.adapter as? ChatMainSearchRecyclerView)?.submitList(it)
+            }
 
             // 데이터 로딩 시작 시 로딩 화면을 보임
             fragmentChatMainBinding.progressBarChatMain.visibility = View.VISIBLE
 
             // 데이터를 비동기적으로 가져오도록 수정
             viewModelScope.launch {
-                getMyChatRoomList("A")
+                getMyChatRoomList(userNickname)
             }
         }
 
@@ -79,15 +94,6 @@ class ChatMainFragment : Fragment() {
         fragmentChatMainBinding = FragmentChatMainBinding.inflate(layoutInflater)
         mainActivity = activity as MainActivity
 
-//        chatViewModel = ViewModelProvider(this)[ChatViewModel::class.java]
-//        chatViewModel.run {
-//            chatRoomList.observe(mainActivity){
-//                chatList = it
-//                fragmentChatMainBinding.recyclerViewChatMain.adapter?.notifyDataSetChanged()
-//            }
-//            getMyChatRoomList("A")
-//        }
-
         fragmentChatMainBinding.run {
             floatingButtonChatMain.run {
                 // 플로팅 액션 버튼 아이콘의 색상을 변경
@@ -95,7 +101,10 @@ class ChatMainFragment : Fragment() {
                 fab.setColorFilter(ContextCompat.getColor(mainActivity, R.color.white), PorterDuff.Mode.SRC_IN)
 
                 setOnClickListener {
-                    mainActivity.replaceFragment(MainActivity.ADD_CHAT_FRAGMENT,true,null)
+                    val bundle = Bundle()
+                    bundle.putString("userNickname","${userNickname}")
+                    Log.d("aaaa","${userNickname}")
+                    mainActivity.replaceFragment(MainActivity.ADD_CHAT_FRAGMENT,true,bundle)
                 }
             }
             searchBarChatMain.run{
@@ -110,6 +119,9 @@ class ChatMainFragment : Fragment() {
                     if(newState == com.google.android.material.search.SearchView.TransitionState.SHOWING){
                         nestedScrollViewChatMain.isNestedScrollingEnabled = false
                         floatingButtonChatMain.visibility = View.GONE
+
+                        chatViewModel.getAllChattingRoom()
+
                         editText.post {
                             editText.requestFocus()
                             val imm = mainActivity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -123,9 +135,20 @@ class ChatMainFragment : Fragment() {
                     }
                 }
 
+                //검색 버튼 눌렀을 때
                 editText.setOnEditorActionListener { textView, i, keyEvent ->
-                    size = 5
-                    recyclerViewChatMainSearchList.adapter?.notifyDataSetChanged()
+                    val searchContent = textView.text.toString().replace(" ","").trim()
+                    if (searchContent.isNotEmpty()) {
+                        try {
+                            chatViewModel.getSearchChattingRoom(searchContent)
+                        } catch (e: Exception) {
+                            // 오류 처리
+                            Log.e("Error", "Error searching chat rooms: ${e.message}")
+                        }
+                    }
+                    else{
+                        chatViewModel.getAllChattingRoom()
+                    }
                     // 키보드 숨기기
                     val imm = textView.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                     imm.hideSoftInputFromWindow(textView.windowToken, 0)
@@ -185,6 +208,8 @@ class ChatMainFragment : Fragment() {
             override fun onClick(v: View?) {
                 val newBundle = Bundle()
                 newBundle.putString("roomId", differ.currentList[adapterPosition].chatRoomId)
+                newBundle.putString("userNickname",userNickname)
+                Log.d("aaaa","roomId = ${differ.currentList[adapterPosition].chatRoomId}")
                 mainActivity.replaceFragment(MainActivity.CHAT_ROOM_FRAGMENT, true, newBundle)
             }
         }
@@ -211,6 +236,21 @@ class ChatMainFragment : Fragment() {
     }
 
     inner class ChatMainSearchRecyclerView : RecyclerView.Adapter<ChatMainSearchRecyclerView.ViewHolderClass>() {
+
+        // diffCallback 정의
+        private val diffCallback = object : DiffUtil.ItemCallback<ChatList>() {
+            override fun areItemsTheSame(oldItem: ChatList, newItem: ChatList): Boolean {
+                return oldItem.chatRoomId == newItem.chatRoomId
+            }
+
+            override fun areContentsTheSame(oldItem: ChatList, newItem: ChatList): Boolean {
+                return oldItem == newItem
+            }
+        }
+
+        // AsyncListDiffer 초기화
+        private val differ = AsyncListDiffer(this, diffCallback)
+
         inner class ViewHolderClass(rowChatMainBinding: RowChatMainBinding) :
             RecyclerView.ViewHolder(rowChatMainBinding.root), View.OnClickListener {
 
@@ -224,7 +264,8 @@ class ChatMainFragment : Fragment() {
             }
 
             override fun onClick(v: View?) {
-                mainActivity.replaceFragment(MainActivity.CHAT_ROOM_FRAGMENT,true,null)
+                val roomId = differ.currentList[adapterPosition].chatRoomId
+
             }
         }
 
@@ -251,11 +292,18 @@ class ChatMainFragment : Fragment() {
 
         //전체 행의 개수를 반환
         override fun getItemCount(): Int {
-            return size
+            return differ.currentList.size
         }
+
         override fun onBindViewHolder(holder: ViewHolderClass, position: Int) {
-            holder.rowChatMainTitle.text = "거지방$position"
-            holder.rowChatMainLastChat.text = "채팅$position"
+            val chatList = differ.currentList[position]
+            holder.rowChatMainTitle.text = "${chatList.chatRoomName}"
+            holder.rowChatMainLastChat.text = "${chatList.chatLastChatting}"
+        }
+
+        // 리스트 갱신을 위한 submitList 함수
+        fun submitList(newList: List<ChatList>) {
+            differ.submitList(newList)
         }
     }
 
