@@ -2,7 +2,6 @@ package com.example.georgeois.viewModel
 
 import android.net.Uri
 import android.util.Log
-import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -29,7 +28,6 @@ import java.util.Locale
  * androidx.lifecycle:lifecycle-viewmodel-ktx 사용 할 지 검토 필요
  */
 class UserViewModel : ViewModel() {
-
 
     // --------- 로그인 ----------
     private val _user = MutableLiveData<User?>()
