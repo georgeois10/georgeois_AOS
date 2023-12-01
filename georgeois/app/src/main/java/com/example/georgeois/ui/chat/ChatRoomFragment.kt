@@ -69,9 +69,13 @@ class ChatRoomFragment : Fragment() {
             chatUserList.observe(mainActivity){
                 userList = it
                 fragmentChatRoomBinding.recyclerViewChatRoomUserList.adapter?.notifyDataSetChanged()
+
             }
             chatContent.observe(mainActivity){
                 chatList = it
+                for(i in chatList){
+
+                }
                 fragmentChatRoomBinding.recyclerViewChatRoom.adapter?.notifyDataSetChanged()
                 fragmentChatRoomBinding.recyclerViewChatRoom.scrollToPosition(chatList.size-1)
             }

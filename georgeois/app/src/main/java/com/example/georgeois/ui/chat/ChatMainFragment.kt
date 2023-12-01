@@ -1,6 +1,8 @@
 package com.example.georgeois.ui.chat
 
 import android.content.Context
+import android.content.DialogInterface
+import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.Rect
 import android.os.Bundle
@@ -12,6 +14,7 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getSystemService
@@ -27,6 +30,8 @@ import com.example.georgeois.databinding.FragmentChatMainBinding
 import com.example.georgeois.databinding.FragmentMainBinding
 import com.example.georgeois.databinding.RowChatMainBinding
 import com.example.georgeois.dataclass.ChatList
+import com.example.georgeois.dataclass.ChatRoomInfo
+import com.example.georgeois.dataclass.ChatRoomInfoSearch
 import com.example.georgeois.repository.ChatRepository
 import com.example.georgeois.ui.main.MainActivity
 import com.example.georgeois.ui.main.MainFragment
@@ -34,6 +39,7 @@ import com.example.georgeois.utill.SpaceItemDecoration
 import com.example.georgeois.viewModel.ChatViewModel
 import com.example.georgeois.viewModel.UserViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.search.SearchBar
 import kotlinx.coroutines.CoroutineScope
@@ -47,7 +53,6 @@ class ChatMainFragment : Fragment() {
     lateinit var mainActivity: MainActivity
     lateinit var chatViewModel: ChatViewModel
     lateinit var userViewModel: UserViewModel
-    var chatListSearch = mutableListOf<ChatList>()
     var userNickname = ""
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -63,7 +68,6 @@ class ChatMainFragment : Fragment() {
             }
         }
         chatViewModel.getMyChatRoomList(userNickname)
-
         chatViewModel.run {
             chatRoomList.observe(viewLifecycleOwner) { chatList ->
                 // 데이터가 변경될 때마다 submitList를 호출하여 리사이클러뷰 갱신
@@ -74,6 +78,28 @@ class ChatMainFragment : Fragment() {
             chatRoomListSearch.observe(mainActivity){
                 // 어댑터에 데이터 갱신 알림
                 (fragmentChatMainBinding.recyclerViewChatMainSearchList.adapter as? ChatMainSearchRecyclerView)?.submitList(it)
+            }
+            chatRoomInfoSearch.observe(viewLifecycleOwner) {
+                val builder =
+                    MaterialAlertDialogBuilder(mainActivity, R.style.DialogTheme).apply {
+                        val customTitle =
+                            setCustomTitle("${it.chatRoomName}")
+                        setCustomTitle(customTitle)
+                        setMessage(
+                            "출생년도 : ${it.chatRoomBirth}\n" +
+                                    "예산 : ${it.chatRoomBudget}원\n" +
+                                    "성별 : ${it.chatRoomGender}\n" +
+                                    "현재인원 : ${it.chatRoomCount}/10\n" +
+                                    "참여하시겠습니까?"
+                        )
+                        setNegativeButton("취소", null)
+                        setPositiveButton("참여") { dialogInterface: DialogInterface, i: Int ->
+                            chatViewModel.addNewMember(it.chatRoomId,userNickname)
+                            Toast.makeText(context, "${it.chatRoomName}에 참여하였습니다.", Toast.LENGTH_SHORT).show()
+                            chatViewModel.getMyChatRoomList(userNickname)
+                        }
+                    }
+                builder.show()
             }
 
             // 데이터 로딩 시작 시 로딩 화면을 보임
@@ -265,7 +291,8 @@ class ChatMainFragment : Fragment() {
 
             override fun onClick(v: View?) {
                 val roomId = differ.currentList[adapterPosition].chatRoomId
-
+                Log.d("aaaa","roomId = $roomId")
+                chatViewModel.getChatRoomInfo(roomId)
             }
         }
 
@@ -310,6 +337,16 @@ class ChatMainFragment : Fragment() {
     override fun onResume() {
         super.onResume()
 //        chatViewModel.getMyChatRoomList("A")
+    }
+    fun setCustomTitle(title: String): TextView {
+        val customTitle = TextView(context).apply {
+            text = title  // 타이틀 텍스트 설정
+            textSize = 25f  // 텍스트 사이즈 설정
+            typeface = ResourcesCompat.getFont(context, R.font.space)  // 글꼴 스타일 설정
+            setTextColor(Color.BLACK)  // 텍스트 색상 설정
+            setPadding(100, 100, 0, 20)  // 패딩 설정 (단위: px)
+        }
+        return customTitle
     }
 }
 

@@ -22,3 +22,12 @@ data class ChatList(
     val chatLastChatting: String,
     val chatRoomId: String
 )
+
+data class ChatRoomInfoSearch(
+    var chatRoomName:String,
+    var chatRoomBirth : String,
+    var chatRoomBudget : Int,
+    var chatRoomCount : Int,
+    var chatRoomGender : String,
+    var chatRoomId : String
+)

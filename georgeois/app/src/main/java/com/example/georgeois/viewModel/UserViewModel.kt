@@ -22,7 +22,6 @@ import java.util.TimeZone
  */
 class UserViewModel : ViewModel() {
 
-
     // --------- 로그인 ----------
     private val _user = MutableLiveData<User?>()
     val user: MutableLiveData<User?> = _user
@@ -74,7 +73,6 @@ class UserViewModel : ViewModel() {
 
             val cre_date = dateFormat.parse(cre_date_string)
 //            val mod_date = dateFormat.parse(mod_date_string)
-
 
             val user = User(
                 json.getInt("u_idx"),
