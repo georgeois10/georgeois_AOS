@@ -93,4 +93,9 @@
         <item name="android:gravity">center_vertical</item>
     </style>
 
+    <style name="Theme.Georgeois.Calendar" parent="Widget.Material3.MaterialCalendar">
+        <item name="background">@color/accentGray</item>
+
+    </style>
+
 </resources>

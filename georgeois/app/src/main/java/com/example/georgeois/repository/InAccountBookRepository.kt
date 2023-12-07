@@ -8,6 +8,7 @@ import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import retrofit2.await
 
 class InAccountBookRepository {
     companion object {
@@ -35,6 +36,13 @@ class InAccountBookRepository {
             })
             return result
         }
+
+
+        // 이 함수를 호출하는 부분
+        suspend fun selectAllInAccountBook(idx:Int) : Map<String, Map<String, Any>>  {
+           return retrofit.selectInAccountBook(idx).await()
+        }
+
 
     }
 }
