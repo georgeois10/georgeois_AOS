@@ -1,8 +1,13 @@
 package com.example.georgeois.ui.chat
 
 import android.content.Context
+import android.content.DialogInterface
+import android.graphics.Color
 import android.graphics.Rect
+import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.Gravity
 import androidx.fragment.app.Fragment
@@ -14,6 +19,9 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
+import androidx.annotation.RequiresApi
+import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -43,7 +51,9 @@ class ChatRoomFragment : Fragment() {
     var currnetChatRoomId = ""
     var chatRoomOwner = ""
     var userNickname = ""
+    private var isUserBeingRemoved = false
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -53,35 +63,40 @@ class ChatRoomFragment : Fragment() {
 
         chatViewModel = ViewModelProvider(this)[ChatViewModel::class.java]
         chatViewModel.run {
-            chatRoomName.observe(mainActivity){
+            chatRoomName.observe(viewLifecycleOwner){
                 fragmentChatRoomBinding.toolbarChatRoom.title = it
                 fragmentChatRoomBinding.textViewChatRoomTitle.text = it
             }
-            chatGender.observe(mainActivity){
+            chatGender.observe(viewLifecycleOwner){
                 fragmentChatRoomBinding.textViewChatRoomGender.text = it
             }
-            chatBirth.observe(mainActivity){
+            chatBirth.observe(viewLifecycleOwner){
                 fragmentChatRoomBinding.textViewChatRoomBirth.text = it
             }
-            chatBudget.observe(mainActivity){
+            chatBudget.observe(viewLifecycleOwner){
                 fragmentChatRoomBinding.textViewChatRoomBudget.text = "${formatNumberWithCommas(it)}원"
             }
-            chatUserList.observe(mainActivity){
+            chatUserList.observe(viewLifecycleOwner){
                 userList = it
-                fragmentChatRoomBinding.recyclerViewChatRoomUserList.adapter?.notifyDataSetChanged()
+                var isHereMe = userNickname in userList
 
+                if(isHereMe){
+                    fragmentChatRoomBinding.recyclerViewChatRoomUserList.adapter?.notifyDataSetChanged()
+                }
+                else{
+                    Toast.makeText(mainActivity, "채팅방에서 추방되었습니다.", Toast.LENGTH_SHORT).show()
+                    mainActivity.removeFragment(MainActivity.CHAT_ROOM_FRAGMENT)
+
+                }
             }
             chatContent.observe(mainActivity){
                 chatList = it
-                for(i in chatList){
-
-                }
                 fragmentChatRoomBinding.recyclerViewChatRoom.adapter?.notifyDataSetChanged()
                 fragmentChatRoomBinding.recyclerViewChatRoom.scrollToPosition(chatList.size-1)
             }
             chatRoomId.observe(mainActivity){
                 currnetChatRoomId = chatRoomId.value.toString()
-                Log.d("aaaa","id = ${currnetChatRoomId}")
+
             }
             chatOwnerNickname.observe(mainActivity){
                 chatRoomOwner = it
@@ -224,8 +239,9 @@ class ChatRoomFragment : Fragment() {
         }
 
         override fun onBindViewHolder(holder: ViewHolderClass, position: Int) {
-            holder.textViewRowChatRoomMeOutNoti.visibility = View.GONE
-            if (chatList[position].chatUserNickname != userNickname) {
+            if (chatList[position].chatUserNickname != userNickname
+                && chatList[position].chatUserNickname != "Notification from the Admin") {
+                holder.textViewRowChatRoomMeOutNoti.visibility = View.GONE
                 holder.textViewRowChatRoomMeMyContent.visibility = View.GONE
                 holder.textViewRowChatRoomMeTime.visibility = View.GONE
 
@@ -238,7 +254,18 @@ class ChatRoomFragment : Fragment() {
                 holder.textViewRowChatRoomMeOpponentChatMoment.text = "${chatList[position].chatTime.substring(0,18)}"
                 holder.textViewRowChatRoomMeOpponentNickname.text = "${chatList[position].chatUserNickname}"
             }
-            else{
+            else if(chatList[position].chatUserNickname == "Notification from the Admin"){
+                holder.textViewRowChatRoomMeOutNoti.visibility = View.VISIBLE
+                holder.textViewRowChatRoomMeMyContent.visibility = View.GONE
+                holder.textViewRowChatRoomMeTime.visibility = View.GONE
+                holder.imageViewRowChatRoomMeOpponentImage.visibility = View.GONE
+                holder.textViewRowChatRoomMeOpponentNickname.visibility = View.GONE
+                holder.textViewRowChatRoomMeOpponentContent.visibility = View.GONE
+                holder.textViewRowChatRoomMeOpponentChatMoment.visibility = View.GONE
+                holder.textViewRowChatRoomMeOutNoti.text = "${chatList[position].chatContent}"
+            }
+            else if(chatList[position].chatUserNickname == userNickname){
+                holder.textViewRowChatRoomMeOutNoti.visibility = View.GONE
                 holder.textViewRowChatRoomMeMyContent.visibility = View.VISIBLE
                 holder.textViewRowChatRoomMeTime.visibility = View.VISIBLE
 
@@ -255,6 +282,7 @@ class ChatRoomFragment : Fragment() {
 
     //참여 유저 리사이클러뷰
     inner class ChatRoomUserRecyclerView : RecyclerView.Adapter<ChatRoomUserRecyclerView.ViewHolderClass>() {
+        @RequiresApi(Build.VERSION_CODES.O)
         inner class ViewHolderClass(rowChatRoomUserBinding: RowChatRoomUserBinding) :
             RecyclerView.ViewHolder(rowChatRoomUserBinding.root), View.OnClickListener {
 
@@ -267,15 +295,60 @@ class ChatRoomFragment : Fragment() {
                 textViewChatRoomUserNickname = rowChatRoomUserBinding.textViewChatRoomUserNickname
                 imageViewChatRoomUserImage = rowChatRoomUserBinding.imageViewChatRoomUserImage
                 buttonChatRoomUserExit = rowChatRoomUserBinding.buttonChatRoomUserExit
+                buttonChatRoomUserExit.setOnClickListener {
+                    if(userNickname == chatRoomOwner){
+                        if(userList[adapterPosition] == userNickname){
+                            val builder = MaterialAlertDialogBuilder(mainActivity, R.style.DialogTheme).apply {
+                                val customTitle = setCustomTitle("채팅방 나가기")
+                                setCustomTitle(customTitle)
+                                setMessage("현재 채팅방에서 나가시겠습니까?")
+                                setNegativeButton("취소",null)
+                                setPositiveButton("나가기") { dialogInterface: DialogInterface, i: Int ->
+                                    chatViewModel.exitMember(userList[adapterPosition], currnetChatRoomId, true,true)
+                                    chatViewModel.getMyChatRoomList(userNickname)
+                                    mainActivity.removeFragment(MainActivity.CHAT_ROOM_FRAGMENT)
+                                }
+                            }
+                            builder.show()
+                        }
+                        else{
+                            val builder = MaterialAlertDialogBuilder(mainActivity, R.style.DialogTheme).apply {
+                                val customTitle = setCustomTitle("추방")
+                                setCustomTitle(customTitle)
+                                setMessage("${userList[adapterPosition]}님을 현재 채팅방에서 추방 시키겠습니까?")
+                                setNegativeButton("취소",null)
+                                setPositiveButton("추방") { dialogInterface: DialogInterface, i: Int ->
+                                    chatViewModel.exitMember(userList[adapterPosition], currnetChatRoomId, false,false)
+                                    chatViewModel.getMyChatRoomList(userNickname)
+                                }
+                            }
+                            builder.show()
+                        }
+                    }
+                    else{
+                        val builder = MaterialAlertDialogBuilder(mainActivity, R.style.DialogTheme).apply {
+                            val customTitle = setCustomTitle("채팅방 나가기")
+                            setCustomTitle(customTitle)
+                            setMessage("현재 채팅방에서 나가시겠습니까?")
+                            setNegativeButton("취소",null)
+                            setPositiveButton("나가기") { dialogInterface: DialogInterface, i: Int ->
+                                chatViewModel.exitMember(userList[adapterPosition], currnetChatRoomId, true, false)
+                                chatViewModel.getMyChatRoomList(userNickname)
+                                mainActivity.removeFragment(MainActivity.CHAT_ROOM_FRAGMENT)
+                            }
+                        }
+                        builder.show()
+                    }
+                }
             }
 
             override fun onClick(v: View?) {
-                mainActivity.replaceFragment(MainActivity.CHAT_ROOM_FRAGMENT,true,null)
             }
         }
 
         //viewHolder의 객체를 생성해서 반환한다
         //전체 행의 개수가 아닌 필요한 만큼만 행으로 사용할 view를 만들고 viewHolder도 생성한다
+        @RequiresApi(Build.VERSION_CODES.O)
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderClass {
             //viewBining
             val rowChatRoomUserBinding = RowChatRoomUserBinding.inflate(layoutInflater)
@@ -299,10 +372,14 @@ class ChatRoomFragment : Fragment() {
         override fun getItemCount(): Int {
             return userList.size
         }
+        @RequiresApi(Build.VERSION_CODES.O)
         override fun onBindViewHolder(holder: ViewHolderClass, position: Int) {
             if(userList[position] == userNickname){
                 holder.textViewChatRoomUserNickname.text = "${userList[position]}"
                 holder.imageViewChatRoomUserImage.setImageResource(R.drawable.ic_person_24px)
+                holder.buttonChatRoomUserExit.visibility = View.VISIBLE
+                holder.buttonChatRoomUserExit.text = "나가기"
+
             }
             else{
                 if (chatRoomOwner == userNickname) {
@@ -323,10 +400,22 @@ class ChatRoomFragment : Fragment() {
         return formatter.format(number)
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onResume() {
         super.onResume()
         currnetChatRoomId = arguments?.getString("roomId").toString()
         userNickname = arguments?.getString("userNickname").toString()
         chatViewModel.getChatRoom(currnetChatRoomId,userNickname)
     }
+    fun setCustomTitle(title: String): TextView {
+        val customTitle = TextView(context).apply {
+            text = title  // 타이틀 텍스트 설정
+            textSize = 25f  // 텍스트 사이즈 설정
+            typeface = ResourcesCompat.getFont(context, R.font.space)  // 글꼴 스타일 설정
+            setTextColor(Color.BLACK)  // 텍스트 색상 설정
+            setPadding(100, 100, 0, 20)  // 패딩 설정 (단위: px)
+        }
+        return customTitle
+    }
+
 }
