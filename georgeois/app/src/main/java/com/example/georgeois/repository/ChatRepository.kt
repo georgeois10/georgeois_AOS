@@ -6,6 +6,7 @@ import androidx.annotation.RequiresApi
 import com.example.georgeois.dataclass.ChatRoomInfo
 import com.example.georgeois.dataclass.ChatingContent
 import com.google.android.gms.tasks.Task
+import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue
@@ -14,13 +15,18 @@ import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.QuerySnapshot
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.Date
 import java.util.Locale
+import kotlin.coroutines.coroutineContext
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
@@ -62,7 +68,34 @@ class ChatRepository {
                     // chatUserList에 userNickname 추가
                     db.collection("ChatRoom").document(roomId)
                         .update("chatUserList", FieldValue.arrayUnion(userNickname))
-                        .await()
+                        .addOnCompleteListener { userUpdateTask ->
+                            if (userUpdateTask.isSuccessful) {
+                                // chatUserList 업데이트 성공 시 chattingContent 추가
+                                val currentTimeMillis = System.currentTimeMillis()
+                                val date = Date(currentTimeMillis)
+                                val dateFormat = SimpleDateFormat("yyyy-MM-dd / HH:mm:ss", Locale.getDefault())
+                                val currentTime = dateFormat.format(date)
+
+                                db.collection("ChatRoom").document(roomId)
+                                    .collection("chattingContent")
+                                    .add(
+                                        mapOf(
+                                            "chatContent" to "${userNickname}님이 참여하였습니다.🎺🎺🎺",
+                                            "chatTime" to currentTime,
+                                            "userNickname" to "Notification from the Admin"
+                                        )
+                                    )
+                                    .addOnCompleteListener { contentAddTask ->
+                                        if (contentAddTask.isSuccessful) {
+                                        } else {
+                                            // chattingContent 추가 실패
+                                        }
+                                    }
+                            } else {
+                                // chatUserList 업데이트 실패
+                            }
+                        }
+
                 } else {
                     // 방이 존재하지 않는 경우에 대한 처리
                     // 예를 들어, 사용자에게 알림 등을 보낼 수 있음
@@ -101,31 +134,8 @@ class ChatRepository {
                 }
         }
 
-        fun observeChattingUpdates(chatRoomId: String, callback: (List<ChatingContent>) -> Unit) {
-            val db = FirebaseFirestore.getInstance()
-            val chatRoomRef = db.collection("ChatRoom").document(chatRoomId)
-
-            chatRoomRef.collection("chattingContent")
-                .addSnapshotListener { snapshot, e ->
-                    if (e != null) {
-                        // 오류 처리
-                        return@addSnapshotListener
-                    }
-
-                    val chattingContents = mutableListOf<ChatingContent>()
-
-                    for (doc in snapshot!!.documents) {
-                        val content = doc.toObject(ChatingContent::class.java)
-                        content?.let { chattingContents.add(it) }
-                    }
-
-                    // 새로운 채팅 내용을 전달
-                    callback(chattingContents)
-                }
-        }
-
         //채팅방 가져오기
-        suspend fun getChattingRoom(userNickname: String): QuerySnapshot {
+        suspend fun getChattingRoom(userNickname: String, roomId : String): QuerySnapshot {
             val db = FirebaseFirestore.getInstance()
             try {
                 // whereArrayContains를 사용하여 chatUserList에 userNickname이 포함된 문서 가져오기
@@ -137,6 +147,44 @@ class ChatRepository {
                 // 오류 처리
                 Log.e("Error", "Error fetching chat room list: ${e.message}")
                 throw e
+            }
+        }
+
+        //채팅방 들어갈 때 정보 가져오기
+        suspend fun getRoomInfo(
+            roomId: String,
+            callback: (Exception?, DocumentSnapshot?) -> Unit
+        ): DocumentSnapshot? {
+            val db = FirebaseFirestore.getInstance()
+
+            return try {
+                // 해당 문서를 가져옴
+                val documentSnapshot = db.collection("ChatRoom")
+                    .document(roomId)
+                    .get()
+                    .await()
+
+                // addSnapshotListener를 사용하여 chatUserList의 실시간 업데이트 감시
+                val listenerRegistration = db.collection("ChatRoom")
+                    .document(roomId)
+                    .addSnapshotListener { snapshot, e ->
+                        if (e != null) {
+                            callback(e, snapshot)
+                            return@addSnapshotListener
+                        }
+
+                        // 변경된 데이터 처리 후, 콜백 호출
+                        callback(null, snapshot)
+                    }
+
+                // 필요에 따라 리스너를 언제든지 해제할 수 있음
+                // listenerRegistration.remove()
+
+                documentSnapshot // 필요에 따라 반환값을 조정
+            } catch (e: Exception) {
+                // 오류 처리
+                callback(e, null)
+                null
             }
         }
 
@@ -190,74 +238,164 @@ class ChatRepository {
             chatRoomRef.collection("chattingContent")
                 .addSnapshotListener { snapshot, e ->
                     if (e != null) {
-                        // 오류 처리
-                        callback(e, chatContentList)
+                        // 에러가 발생한 경우
                         return@addSnapshotListener
                     }
 
-                    chatContentList.clear()
+                    if (snapshot != null && !snapshot.isEmpty) {
+                        // 컬렉션이 존재하고 비어있지 않은 경우
 
-                    for (chatDocument in snapshot!!) {
-                        val chatContent = chatDocument.getString("chatContent")!!
-                        val chatTime = chatDocument.getString("chatTime")!!
-                        val chatUserNickname = chatDocument.getString("userNickname")!!
+                        chatContentList.clear()
+                        // Process each document in the snapshot and add it to chatContentList
+                        for (document in snapshot.documents) {
+                            val chatContent = document.getString("chatContent") ?: ""
+                            val chatUserNickname = document.getString("userNickname") ?: ""
+                            val chatTime = document.getString("chatTime") ?: ""
 
-                        val chatting = ChatingContent(chatContent, chatTime, chatUserNickname)
+                            // Create ChatingContent object and add it to the list
+                            val chatingContent = ChatingContent(chatContent, chatTime, chatUserNickname)
+                            chatContentList.add(chatingContent)
+                        }
 
-                        chatContentList.add(chatting)
+                        val sortedList = chatContentList.sortedBy { it.chatTime }.toMutableList()
+//                        for(i in sortedList){
+//                            Log.d("aaaa","${i.chatTime}")
+//                            Log.d("aaaa","${i.chatContent}")
+//                        }
+//                        val sortedList = chatContentList.sortedBy { chatContent ->
+//                            SimpleDateFormat("yyyy-MM-dd / HH:mm:ss", Locale.getDefault())
+//                                .parse(chatContent.chatTime) ?: Date(0)
+//                        }.toMutableList()
+
+                        callback(null, sortedList)
+                    } else {
+                        // 컬렉션이 존재하지 않거나 비어있는 경우
+
+                        callback(null, mutableListOf()) // 빈 리스트 전달 또는 적절한 처리 수행
                     }
-
-                    // 콜백 함수 호출 시 chatContentList를 함께 전달
-                    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd / HH:mm:ss")
-
-                    val sortedList = chatContentList.sortedBy { LocalDateTime.parse(it.chatTime, formatter) }.toMutableList()
-                    for(i in sortedList){
-                        Log.d("bbbb","${i.chatContent}")
-                        Log.d("bbbb","${i.chatUserNickname}")
-                        Log.d("bbbb","${i.chatTime}")
-                        Log.d("bbbb","+++++++++++++++++++++++++=============================+++++++++++++++++++++")
-                    }
-                    callback(null, sortedList)
                 }
         }
+        suspend fun getLastChatting(roomId: String) : String{
 
-        //마지막 채팅 가져오기
-        suspend fun getLastChatting(roomId: String): MutableList<ChatingContent> =
-            suspendCoroutine { continuation ->
-                val db = FirebaseFirestore.getInstance()
-                val chatContentList = mutableListOf<ChatingContent>()
+            val db = FirebaseFirestore.getInstance()
+            val chatContentList = mutableListOf<ChatingContent>()
+            var sortedList = mutableListOf<ChatingContent>()
+            val snapshot = db.collection("ChatRoom")
+                .document(roomId)
+                .collection("chattingContent")
+                .get()
+                .await()
 
-                val chatRoomRef = db.collection("ChatRoom").document(roomId)
+                    for (document in snapshot) {
+                        val chatContent = document.getString("chatContent") ?: ""
+                        val chatUserNickname = document.getString("userNickname") ?: ""
+                        val chatTime = document.getString("chatTime") ?: ""
 
-                // "chattingContent" 하위 컬렉션에서 데이터 가져오기
-                chatRoomRef.collection("chattingContent").get()
-                    .addOnCompleteListener { subTask ->
-                        if (subTask.isSuccessful) {
-                            for (chatDocument in subTask.result!!) {
-                                val chatContent = chatDocument.getString("chatContent")!!
-                                val chatTime = chatDocument.getString("chatTime")!!
-                                val chatUserNickname = chatDocument.getString("userNickname")!!
+                        val chatingContent = ChatingContent(chatContent, chatTime,chatUserNickname)
+                        chatContentList.add(chatingContent)
+                    }
+            sortedList = chatContentList.sortedBy { it.chatTime }.toMutableList()
 
-                                val chatting = ChatingContent(
-                                    chatContent,
-                                    chatTime,
-                                    chatUserNickname
+
+//            sortedList = chatContentList.sortedBy { chatContent ->
+//                SimpleDateFormat("yyyy-MM-dd / HH:mm:ss", Locale.getDefault())
+//                    .parse(chatContent.chatTime) ?: Date(0)
+//            }.toMutableList()
+
+            if(sortedList.isEmpty()){
+
+                return ""
+            }
+            else {
+
+                return sortedList.last().chatContent
+            }
+        }
+
+        fun exitMember(userNickname: String,roomId: String, isSelf : Boolean, isOwner : Boolean){
+            val db = FirebaseFirestore.getInstance()
+
+            // ChatRoom 컬렉션의 특정 문서에 대한 참조를 얻어옴
+            val chatRoomRef = db.collection("ChatRoom").document(roomId)
+            var chatContent = ""
+
+            val currentTimeMillis = System.currentTimeMillis()
+            val date = Date(currentTimeMillis)
+            // 시간을 원하는 형식의 문자열로 변환
+            val dateFormat = SimpleDateFormat("yyyy-MM-dd / HH:mm:ss", Locale.getDefault())
+            val currnetTime = dateFormat.format(date)
+
+            if(isSelf){
+                chatContent = "${userNickname}님이 나가셨습니다.😟"
+            }
+            else{
+                chatContent = "${userNickname}님이 추방당했습니다."
+            }
+
+
+            if(isOwner){
+                chatRoomRef.update("chatUserList", FieldValue.arrayRemove(userNickname))
+                    .addOnCompleteListener { updateTask ->
+                        if (updateTask.isSuccessful) {
+                            chatRoomRef.collection("chattingContent")
+                                .add(
+                                    mapOf(
+                                        "chatContent" to chatContent,
+                                        "chatTime" to currnetTime,
+                                        "userNickname" to "Notification from the Admin"
+                                    )
                                 )
+                                .addOnCompleteListener { task ->
+                                    if (task.isSuccessful) {
+                                        chatRoomRef.get().addOnSuccessListener {
+                                            if(it.exists()){
+                                                val chatUserList = it.get("chatUserList") as ArrayList<String>
+                                                val nextOwner = chatUserList[0]
+                                                val updates = hashMapOf<String, Any>(
+                                                    "chatOwnerNickname" to nextOwner
+                                                )
+                                                chatRoomRef.update(updates).addOnSuccessListener {
+                                                    chatRoomRef.collection("chattingContent")
+                                                        .add(
+                                                            mapOf(
+                                                                "chatContent" to "${nextOwner}님이 방장이 되었습니다.🙏",
+                                                                "chatTime" to currnetTime,
+                                                                "userNickname" to "Notification from the Admin"
+                                                            )
+                                                        )
+                                                        .addOnCompleteListener{
 
-                                // chatMessage를 chatContentList에 추가
-                                chatContentList.add(chatting)
-                            }
-                            // 콜백 함수 호출 시 chatContentList를 반환
-                            chatContentList.sortBy { it.chatTime }
-                            continuation.resume(chatContentList)
-                        } else {
-                            // 실패한 경우 오류 처리
-                            chatContentList.clear()
-                            continuation.resumeWithException(
-                                subTask.exception ?: Exception("Task failed")
-                            )
+                                                        }
+                                                }
+                                            }
+                                        }
+                                    }
+                                    else { }
+                                }
                         }
                     }
+
             }
+            else {
+                chatRoomRef.update("chatUserList", FieldValue.arrayRemove(userNickname))
+                    .addOnCompleteListener { updateTask ->
+                        if (updateTask.isSuccessful) {
+                            chatRoomRef.collection("chattingContent")
+                                .add(
+                                    mapOf(
+                                        "chatContent" to chatContent,
+                                        "chatTime" to currnetTime,
+                                        "userNickname" to "Notification from the Admin"
+                                    )
+                                )
+                                .addOnCompleteListener { task ->
+                                    if (task.isSuccessful) { }
+                                    else { }
+                                }
+                        }
+                    }
+
+            }
+        }
     }
 }
