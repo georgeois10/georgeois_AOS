@@ -1,6 +1,7 @@
 package com.example.georgeois.repository
 
 import android.util.Log
+import com.example.georgeois.dataclass.InAccountBookClass
 import com.example.georgeois.dataclass.OutAccountBookClass
 import com.example.georgeois.module.RetrofitModule
 import com.example.georgeois.service.OutAccountBookService
@@ -8,6 +9,7 @@ import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import retrofit2.awaitResponse
 
 class OutAccountBookRepository {
     companion object {
@@ -36,5 +38,10 @@ class OutAccountBookRepository {
             return result
         }
 
+        suspend fun getOutAccountBook(idx: Int): List<OutAccountBookClass> {
+            return retrofit.selectOutAccountBook(idx).awaitResponse().body()?.get("outAccountBook") ?: emptyList()
+        }
+
     }
+
 }

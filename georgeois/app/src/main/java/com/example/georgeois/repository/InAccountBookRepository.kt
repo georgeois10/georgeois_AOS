@@ -8,7 +8,7 @@ import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.await
+import retrofit2.awaitResponse
 
 class InAccountBookRepository {
     companion object {
@@ -16,7 +16,6 @@ class InAccountBookRepository {
 
         fun insertInAccountBook(inAccountBook:InAccountBookClass):Call<ResponseBody>{
             val result = retrofit.insertInAccountBook(inAccountBook)
-
             result.enqueue(object : Callback<ResponseBody> {
                 override fun onResponse(
                     call: Call<ResponseBody>,
@@ -36,12 +35,10 @@ class InAccountBookRepository {
             })
             return result
         }
-
-
-        // 이 함수를 호출하는 부분
-        suspend fun selectAllInAccountBook(idx:Int) : Map<String, Map<String, Any>>  {
-           return retrofit.selectInAccountBook(idx).await()
+        suspend fun getInAccountBook(idx: Int): List<InAccountBookClass> {
+            return retrofit.selectInAccountBook(idx).awaitResponse().body()?.get("inAccountBook") ?: emptyList()
         }
+
 
 
     }

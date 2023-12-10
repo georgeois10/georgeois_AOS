@@ -2,6 +2,7 @@ import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Context
 import android.os.Build
+import android.util.Log
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import java.time.LocalDateTime
@@ -61,14 +62,26 @@ class DateTimePicker(private val context: Context) {
         datePickerDialog.show()
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun updateDate(dateTime:String) : String{
-        val inputFormatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH:mm")
-        val outputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:00.000")
-        val orign = LocalDateTime.parse(dateTime,inputFormatter).toString()
-        val update = orign.format(outputFormatter)
-        return update.replace("T", " ").let {
-            if(it.length == 16) "$it:00.000" else it
+    fun updateDate(dateTime:String) : String {
+        try {
+//            val inputFormatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH:mm")
+//            val outputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:00.000")
+//            val orign = LocalDateTime.parse(dateTime, inputFormatter).toString()
+//            val update = orign.format(outputFormatter)
+//            return update.replace("T", " ").let {
+//                if (it.length == 16) "$it:00.000" else it
+//            }
+            val inputFormatter = DateTimeFormatter.ofPattern("yyyy년 M월 d일 HH:mm", Locale.KOREAN)
+            val outputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:00.000")
+
+            val parsedDateTime = LocalDateTime.parse(dateTime, inputFormatter)
+            val formattedDateTime = parsedDateTime.format(outputFormatter)
+
+            return formattedDateTime
+        } catch (e: Exception) {
+            return ""
         }
+
+
     }
 }

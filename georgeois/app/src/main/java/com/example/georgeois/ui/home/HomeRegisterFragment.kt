@@ -55,7 +55,7 @@ class HomeRegisterFragment : Fragment() {
     var uContent = ""
     var uDate = ""
     var uProperty = 'H'
-    var uBudregiYn = false
+    var uBudregiYn = 0
     var inCategory = ""
     var outCategory = ""
     var isCategory = ""
@@ -233,8 +233,7 @@ class HomeRegisterFragment : Fragment() {
                 val formattedText = moneyTextWatcher.formattedText.replace(",", "")
                 uAmount = formattedText.toInt()
                 uContent = contentText
-                uBudregiYn = checkBoxHomeRegisterNoBudget.isChecked
-                Log.e("php_입력", uDate)
+                uBudregiYn = if(checkBoxHomeRegisterNoBudget.isChecked) 1 else{0}
                 try {
                     when (isCategory) {
                         "in" -> {
