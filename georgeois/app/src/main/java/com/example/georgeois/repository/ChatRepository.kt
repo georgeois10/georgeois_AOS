@@ -55,6 +55,7 @@ class ChatRepository {
                 .add(chatRoom)
                 .addOnCompleteListener(callback)
         }
+
         suspend fun addNewMember(roomId: String, userNickname: String) {
             try {
                 // Firestore 초기화
@@ -73,7 +74,8 @@ class ChatRepository {
                                 // chatUserList 업데이트 성공 시 chattingContent 추가
                                 val currentTimeMillis = System.currentTimeMillis()
                                 val date = Date(currentTimeMillis)
-                                val dateFormat = SimpleDateFormat("yyyy-MM-dd / HH:mm:ss", Locale.getDefault())
+                                val dateFormat =
+                                    SimpleDateFormat("yyyy-MM-dd / HH:mm:ss", Locale.getDefault())
                                 val currentTime = dateFormat.format(date)
 
                                 db.collection("ChatRoom").document(roomId)
@@ -107,7 +109,11 @@ class ChatRepository {
         }
 
         //채팅 추가
-        fun addNewChatting(chatRoomId: String, chatContent: ChatingContent, callback: (Boolean) -> Unit) {
+        fun addNewChatting(
+            chatRoomId: String,
+            chatContent: ChatingContent,
+            callback: (Boolean) -> Unit
+        ) {
             val db = FirebaseFirestore.getInstance()
 
             // ChatRoom 컬렉션의 특정 문서에 대한 참조를 얻어옴
@@ -135,7 +141,7 @@ class ChatRepository {
         }
 
         //채팅방 가져오기
-        suspend fun getChattingRoom(userNickname: String, roomId : String): QuerySnapshot {
+        suspend fun getChattingRoom(userNickname: String, roomId: String): QuerySnapshot {
             val db = FirebaseFirestore.getInstance()
             try {
                 // whereArrayContains를 사용하여 chatUserList에 userNickname이 포함된 문서 가져오기
@@ -253,7 +259,8 @@ class ChatRepository {
                             val chatTime = document.getString("chatTime") ?: ""
 
                             // Create ChatingContent object and add it to the list
-                            val chatingContent = ChatingContent(chatContent, chatTime, chatUserNickname)
+                            val chatingContent =
+                                ChatingContent(chatContent, chatTime, chatUserNickname)
                             chatContentList.add(chatingContent)
                         }
 
@@ -275,7 +282,8 @@ class ChatRepository {
                     }
                 }
         }
-        suspend fun getLastChatting(roomId: String) : String{
+
+        suspend fun getLastChatting(roomId: String): String {
 
             val db = FirebaseFirestore.getInstance()
             val chatContentList = mutableListOf<ChatingContent>()
@@ -286,14 +294,14 @@ class ChatRepository {
                 .get()
                 .await()
 
-                    for (document in snapshot) {
-                        val chatContent = document.getString("chatContent") ?: ""
-                        val chatUserNickname = document.getString("userNickname") ?: ""
-                        val chatTime = document.getString("chatTime") ?: ""
+            for (document in snapshot) {
+                val chatContent = document.getString("chatContent") ?: ""
+                val chatUserNickname = document.getString("userNickname") ?: ""
+                val chatTime = document.getString("chatTime") ?: ""
 
-                        val chatingContent = ChatingContent(chatContent, chatTime,chatUserNickname)
-                        chatContentList.add(chatingContent)
-                    }
+                val chatingContent = ChatingContent(chatContent, chatTime, chatUserNickname)
+                chatContentList.add(chatingContent)
+            }
             sortedList = chatContentList.sortedBy { it.chatTime }.toMutableList()
 
 
@@ -302,17 +310,55 @@ class ChatRepository {
 //                    .parse(chatContent.chatTime) ?: Date(0)
 //            }.toMutableList()
 
-            if(sortedList.isEmpty()){
+            if (sortedList.isEmpty()) {
 
                 return ""
-            }
-            else {
+            } else {
 
                 return sortedList.last().chatContent
             }
         }
 
-        fun exitMember(userNickname: String,roomId: String, isSelf : Boolean, isOwner : Boolean){
+        suspend fun getLastChattingObserve(roomId: String, onChatContentChange: (String, String) -> Unit) {
+            val db = FirebaseFirestore.getInstance()
+            val chatContentList = mutableListOf<ChatingContent>()
+
+            // Firestore에서 데이터 변경을 실시간으로 감지하는 리스너 등록
+            db.collection("ChatRoom")
+                .document(roomId)
+                .collection("chattingContent")
+                .addSnapshotListener { snapshot, e ->
+                    if (e != null) {
+                        // 오류 처리
+                        return@addSnapshotListener
+                    }
+
+                    if (snapshot != null) {
+                        chatContentList.clear()
+
+                        for (document in snapshot.documents) {
+                            val chatContent = document.getString("chatContent") ?: ""
+                            val chatUserNickname = document.getString("userNickname") ?: ""
+                            val chatTime = document.getString("chatTime") ?: ""
+
+                            val chatingContent = ChatingContent(chatContent, chatTime, chatUserNickname)
+                            chatContentList.add(chatingContent)
+                        }
+
+                        val sortedList = chatContentList.sortedBy { it.chatTime }
+
+                        if (sortedList.isEmpty()) {
+                            onChatContentChange("", roomId)
+                        } else {
+                            Log.d("aaaa","Repo roomId = $roomId")
+                            Log.d("aaaa","Repo lastChat = ${sortedList.last().chatContent}")
+                            onChatContentChange(sortedList.last().chatContent, roomId)
+                        }
+                    }
+                }
+        }
+
+        fun exitMember(userNickname: String, roomId: String, isSelf: Boolean, isOwner: Boolean) {
             val db = FirebaseFirestore.getInstance()
 
             // ChatRoom 컬렉션의 특정 문서에 대한 참조를 얻어옴
@@ -325,15 +371,14 @@ class ChatRepository {
             val dateFormat = SimpleDateFormat("yyyy-MM-dd / HH:mm:ss", Locale.getDefault())
             val currnetTime = dateFormat.format(date)
 
-            if(isSelf){
+            if (isSelf) {
                 chatContent = "${userNickname}님이 나가셨습니다.😟"
-            }
-            else{
+            } else {
                 chatContent = "${userNickname}님이 추방당했습니다."
             }
 
 
-            if(isOwner){
+            if (isOwner) {
                 chatRoomRef.update("chatUserList", FieldValue.arrayRemove(userNickname))
                     .addOnCompleteListener { updateTask ->
                         if (updateTask.isSuccessful) {
@@ -348,8 +393,9 @@ class ChatRepository {
                                 .addOnCompleteListener { task ->
                                     if (task.isSuccessful) {
                                         chatRoomRef.get().addOnSuccessListener {
-                                            if(it.exists()){
-                                                val chatUserList = it.get("chatUserList") as ArrayList<String>
+                                            if (it.exists()) {
+                                                val chatUserList =
+                                                    it.get("chatUserList") as ArrayList<String>
                                                 val nextOwner = chatUserList[0]
                                                 val updates = hashMapOf<String, Any>(
                                                     "chatOwnerNickname" to nextOwner
@@ -363,20 +409,19 @@ class ChatRepository {
                                                                 "userNickname" to "Notification from the Admin"
                                                             )
                                                         )
-                                                        .addOnCompleteListener{
+                                                        .addOnCompleteListener {
 
                                                         }
                                                 }
                                             }
                                         }
+                                    } else {
                                     }
-                                    else { }
                                 }
                         }
                     }
 
-            }
-            else {
+            } else {
                 chatRoomRef.update("chatUserList", FieldValue.arrayRemove(userNickname))
                     .addOnCompleteListener { updateTask ->
                         if (updateTask.isSuccessful) {
@@ -389,12 +434,12 @@ class ChatRepository {
                                     )
                                 )
                                 .addOnCompleteListener { task ->
-                                    if (task.isSuccessful) { }
-                                    else { }
+                                    if (task.isSuccessful) {
+                                    } else {
+                                    }
                                 }
                         }
                     }
-
             }
         }
     }

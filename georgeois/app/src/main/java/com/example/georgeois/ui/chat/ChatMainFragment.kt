@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.DialogInterface
 import android.graphics.Color
 import android.graphics.PorterDuff
-import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -13,13 +12,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.OnBackPressedCallback
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -29,24 +25,15 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.georgeois.R
 import com.example.georgeois.databinding.FragmentChatMainBinding
-import com.example.georgeois.databinding.FragmentMainBinding
 import com.example.georgeois.databinding.RowChatMainBinding
 import com.example.georgeois.dataclass.ChatList
-import com.example.georgeois.dataclass.ChatRoomInfo
-import com.example.georgeois.dataclass.ChatRoomInfoSearch
-import com.example.georgeois.repository.ChatRepository
 import com.example.georgeois.ui.main.MainActivity
-import com.example.georgeois.ui.main.MainFragment
 import com.example.georgeois.utill.SpaceItemDecoration
 import com.example.georgeois.viewModel.ChatViewModel
 import com.example.georgeois.viewModel.UserViewModel
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.search.SearchBar
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import kotlin.concurrent.thread
 
 class ChatMainFragment : Fragment() {
     lateinit var fragmentChatMainBinding: FragmentChatMainBinding
@@ -54,6 +41,7 @@ class ChatMainFragment : Fragment() {
     lateinit var chatViewModel: ChatViewModel
     lateinit var userViewModel: UserViewModel
     var userNickname = ""
+    var checkRefreshObserve = false
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -68,7 +56,39 @@ class ChatMainFragment : Fragment() {
                 userNickname = it!!.u_nickNm
             }
         }
+
         chatViewModel.run {
+            getMyChatRoomList(userNickname){
+                if(it){
+                    getLastChattingObserve()
+                }
+            }
+
+            lastChatting.observe(mainActivity){
+                var index = 0
+                val lastChtting = it
+                for(chat in lastChtting){
+                    for(chatRoom in chatRoomList.value!!){
+                        if(chat.chatRoomId == chatRoom.chatRoomId){
+                            index = chatRoomList.value!!.indexOf(chatRoom)
+                            chatRoomList.value!![index].chatLastChatting = chat.chatLastContent
+                        }
+                    }
+                }
+                if(checkRefreshObserve == true){
+                    val chatList = chatRoomList.value!!
+                    for(chat in chatList){
+                        Log.d("bbbb","id = ${chat.chatRoomId}")
+                        Log.d("bbbb","chat = ${chat.chatLastChatting}")
+                    }
+                    (fragmentChatMainBinding.recyclerViewChatMain.adapter as? ChatMainRecyclerView)?.notifyItemChanged(index,"chatLastChatting")
+//                    (fragmentChatMainBinding.recyclerViewChatMain.adapter as? ChatMainRecyclerView)?.submitList(chatList.toMutableList())
+                }
+                else{
+                    checkRefreshObserve = true
+                }
+
+            }
             chatRoomList.observe(mainActivity) {
                 // 데이터가 변경될 때마다 submitList를 호출하여 리사이클러뷰 갱신
                 (fragmentChatMainBinding.recyclerViewChatMain.adapter as? ChatMainRecyclerView)?.submitList(it)
@@ -87,16 +107,16 @@ class ChatMainFragment : Fragment() {
                         setCustomTitle(customTitle)
                         setMessage(
                             "출생년도 : ${it.chatRoomBirth}\n" +
-                                    "예산 : ${it.chatRoomBudget}원\n" +
-                                    "성별 : ${it.chatRoomGender}\n" +
-                                    "현재인원 : ${it.chatRoomCount}/10\n" +
-                                    "참여하시겠습니까?"
+                            "예산 : ${it.chatRoomBudget}원\n" +
+                            "성별 : ${it.chatRoomGender}\n" +
+                            "현재인원 : ${it.chatRoomCount}/10\n" +
+                            "참여하시겠습니까?"
                         )
                         setNegativeButton("취소", null)
                         setPositiveButton("참여") { dialogInterface: DialogInterface, i: Int ->
                             chatViewModel.addNewMember(it.chatRoomId,userNickname)
                             Toast.makeText(context, "${it.chatRoomName}에 참여하였습니다.", Toast.LENGTH_SHORT).show()
-                            chatViewModel.getMyChatRoomList(userNickname)
+                            chatViewModel.getMyChatRoomList(userNickname){}
                         }
                     }
                 builder.show()
@@ -104,11 +124,6 @@ class ChatMainFragment : Fragment() {
 
             // 데이터 로딩 시작 시 로딩 화면을 보임
             fragmentChatMainBinding.progressBarChatMain.visibility = View.VISIBLE
-
-            // 데이터를 비동기적으로 가져오도록 수정
-            viewModelScope.launch {
-                getMyChatRoomList(userNickname)
-            }
         }
 
 
@@ -162,7 +177,7 @@ class ChatMainFragment : Fragment() {
                     else if(newState == com.google.android.material.search.SearchView.TransitionState.HIDING){
                         nestedScrollViewChatMain.isNestedScrollingEnabled = true
                         floatingButtonChatMain.visibility = View.VISIBLE
-                        chatViewModel.getMyChatRoomList(userNickname)
+                        chatViewModel.getMyChatRoomList(userNickname){}
                     }
                 }
 
@@ -217,12 +232,12 @@ class ChatMainFragment : Fragment() {
             }
 
             override fun areContentsTheSame(oldItem: ChatList, newItem: ChatList): Boolean {
-                return oldItem == newItem
+                return false
             }
         }
 
         // AsyncListDiffer 초기화
-        private val differ = AsyncListDiffer(this, diffCallback)
+        val differ = AsyncListDiffer(this, diffCallback)
 
         inner class ViewHolderClass(rowChatMainBinding: RowChatMainBinding) :
             RecyclerView.ViewHolder(rowChatMainBinding.root), View.OnClickListener {
@@ -240,7 +255,6 @@ class ChatMainFragment : Fragment() {
                 val newBundle = Bundle()
                 newBundle.putString("roomId", differ.currentList[adapterPosition].chatRoomId)
                 newBundle.putString("userNickname",userNickname)
-
                 mainActivity.replaceFragment(MainActivity.CHAT_ROOM_FRAGMENT, true, newBundle)
             }
         }
@@ -250,8 +264,26 @@ class ChatMainFragment : Fragment() {
             return ViewHolderClass(rowChatMainBinding)
         }
 
+
+
         override fun getItemCount(): Int {
             return differ.currentList.size
+        }
+
+        override fun onBindViewHolder(holder: ViewHolderClass, position: Int, payloads: MutableList<Any>) {
+            if (payloads.isNotEmpty() && payloads[0] is Bundle) {
+                val payload = payloads[0] as Bundle
+                if (payload.containsKey("chatLastChatting")) {
+                    // chatLastChatting 필드만 업데이트
+                    holder.rowChatMainLastChat.text = payload.getString("chatLastChatting")
+                    return
+                }
+            }
+
+            // 기본적인 업데이트
+            val chatList = differ.currentList[position]
+            holder.rowChatMainTitle.text = chatList.chatRoomName
+            holder.rowChatMainLastChat.text = chatList.chatLastChatting
         }
 
         override fun onBindViewHolder(holder: ViewHolderClass, position: Int) {
@@ -354,7 +386,8 @@ class ChatMainFragment : Fragment() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onResume() {
         super.onResume()
-        chatViewModel.getMyChatRoomList(userNickname)
+//        chatViewModel.getMyChatRoomList(userNickname)
+
     }
 }
 
