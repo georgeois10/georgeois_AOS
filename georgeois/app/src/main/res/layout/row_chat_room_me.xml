@@ -99,7 +99,6 @@
         android:layout_marginLeft="15dp"
         android:layout_marginTop="@dimen/padding_size_15dp"
         android:layout_marginRight="15dp"
-        android:background="@drawable/border_chat_main_recyclerview"
         android:gravity="center"
         android:padding="10dp"
         android:text="OOO님이 채팅방을 나갔습니다." />

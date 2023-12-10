@@ -1,6 +1,8 @@
 package com.example.georgeois.viewModel
 
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -11,7 +13,10 @@ import com.example.georgeois.repository.ChatRepository
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 
 
@@ -38,35 +43,42 @@ class ChatViewModel : ViewModel() {
     var chatRoomListSearch = MutableLiveData<MutableList<ChatList>>()
     //검색 채팅방 정보
     var chatRoomInfoSearch = MutableLiveData<ChatRoomInfoSearch>()
+    //마지막 채팅
+    var lastChatting = MutableLiveData<String>()
 
 
     //내가 참여한 채팅방
+    @RequiresApi(Build.VERSION_CODES.O)
     fun getMyChatRoomList(userNickname: String) {
         viewModelScope.launch {
+            val roomIdList = mutableListOf<String>()
+            val roomNameList = mutableListOf<String>()
+            val tempChatRoomList = mutableListOf<ChatList>()
             try {
-                val tempChatRoomList = mutableListOf<ChatList>()
-                // 비동기적으로 Firestore에서 데이터 가져오기
-                val snapshot = ChatRepository.getChattingRoom(userNickname)
+                val snapshot = ChatRepository.getChattingRoom(userNickname, "")
+
                 for (document in snapshot.documents) {
-                    val tempChatRoomName = document.getString("chatRoomName")!!
-                    val roomId = document.id
-
-                    val chatingContents = ChatRepository.getLastChatting(roomId)
-
-                    val tempLastChatting = if (chatingContents.isNotEmpty()) {
-                        chatingContents.last().chatContent
-                    } else {
-                        ""
-                    }
-                    val chatList = ChatList(tempChatRoomName, tempLastChatting, roomId)
-                    tempChatRoomList.add(chatList)
+                    roomNameList.add(document.getString("chatRoomName")!!)
+                    roomIdList.add(document.id)
                 }
-                // LiveData를 사용하여 UI에 데이터 업데이트
-                chatRoomList.postValue(tempChatRoomList)
+
+                for (roomId in roomIdList) {
+                    val lastChat = ChatRepository.getLastChatting(roomId)
+                        val chatList = ChatList(
+                            roomNameList[roomIdList.indexOf(roomId)],
+                            lastChat,
+                            roomId
+                        )
+                        tempChatRoomList.add(chatList)
+                    }
+
+                chatRoomList.value = (tempChatRoomList)
+
             } catch (e: Exception) {
                 // 오류 처리
                 Log.e("Error", "Error fetching chat room list: ${e.message}")
             }
+
         }
     }
 
@@ -119,30 +131,36 @@ class ChatViewModel : ViewModel() {
     }
 
     //채팅방 정보&채팅 가져오기
+    @RequiresApi(Build.VERSION_CODES.O)
     fun getChatRoom(currentChatRoomId:String, userNickname: String){
         viewModelScope.launch {
-            val snapshot = ChatRepository.getChattingRoom(userNickname)
-                for (document in snapshot.documents) {
-                    if (document.id == currentChatRoomId) {
-                        chatUserList.value = document.get("chatUserList") as ArrayList<String>
-                        chatRoomName.value = document.getString("chatRoomName")
-                        chatBirth.value = document.getString("chatBirth")
-                        chatBudget.value = document.getLong("chatBudget")!!.toInt()
-                        chatGender.value = document.getString("chatGender")
-                        chatOwnerNickname.value = document.getString("chatOwnerNickname")
-                        chatRoomId.value = document.id
+            ChatRepository.getRoomInfo(currentChatRoomId) { exception, document ->
+                if (document != null) {
+                    chatUserList.postValue(document.get("chatUserList") as ArrayList<String>)
+                    chatRoomName.value = document.getString("chatRoomName")
+                    chatBirth.value = document.getString("chatBirth")
+                    chatBudget.value = document.getLong("chatBudget")!!.toInt()
+                    chatGender.value = document.getString("chatGender")
+                    chatOwnerNickname.value = document.getString("chatOwnerNickname")
+                    chatRoomId.value = document.id
+                    ChatRepository.getChatting(currentChatRoomId){ task, chatContentList ->
+                        if (task == null) {
+                            // chatContentList를 chatContent LiveData에 할당하여 UI에 업데이트
+                            chatContent.value = chatContentList
+                        }
+                        else {
+
+                        }
                     }
                 }
-            val chatingContents = ChatRepository.getLastChatting(currentChatRoomId)
-            chatContent.value = chatingContents
+            }
         }
     }
+
 
     // 채팅방 정보 가져오기
     fun getChatRoomInfo(roomId: String) {
         viewModelScope.launch {
-            Log.d("aaaa", "Calling getChatRoomInfo with roomId: $roomId")
-
             try {
                 // 비동기적으로 Firestore에서 데이터 가져오기
                 val snapshot = ChatRepository.getAllChattingRoom()
@@ -160,6 +178,7 @@ class ChatViewModel : ViewModel() {
 
                         // UI 업데이트는 여기서 수행
                         chatRoomInfoSearch.value = chatRoomInfo
+
                         break
                     }
                 }
@@ -176,20 +195,28 @@ class ChatViewModel : ViewModel() {
         }
     }
 
-    //채팅 새로고침
-    fun refreshChatting(chatRoomId: String, chatContentInfo: ChatingContent){
-        ChatRepository.addNewChatting(chatRoomId,chatContentInfo){
-            if(it == true){
-                ChatRepository.getChatting(chatRoomId){ task, chatContentList ->
-                    if (task == null) {
-                        // chatContentList를 chatContent LiveData에 할당하여 UI에 업데이트
-                        chatContent.value = chatContentList
-                    } else {
-                    }
+    fun exitMember(userNickname: String,roomId: String, isSelf : Boolean, isOwner : Boolean){
+        viewModelScope.launch {
+            ChatRepository.exitMember(userNickname,roomId,isSelf,isOwner)
+        }
+    }
 
+    //채팅 새로고침
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun refreshChatting(chatRoomId: String, chatContentInfo: ChatingContent) {
+        viewModelScope.launch {
+            ChatRepository.addNewChatting(chatRoomId, chatContentInfo) {
+                if (it == true) {
+                    ChatRepository.getChatting(chatRoomId) { task, chatContentList ->
+                        if (task == null) {
+                            // chatContentList를 chatContent LiveData에 할당하여 UI에 업데이트
+                            chatContent.value = chatContentList
+                        } else {
+                        }
+
+                    }
                 }
             }
         }
     }
-
 }

@@ -5,6 +5,7 @@ import android.content.DialogInterface
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.Rect
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -16,6 +17,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.content.res.ResourcesCompat
@@ -47,14 +49,13 @@ import kotlinx.coroutines.launch
 import kotlin.concurrent.thread
 
 class ChatMainFragment : Fragment() {
-    var size = 10
-    lateinit var callback: OnBackPressedCallback
     lateinit var fragmentChatMainBinding: FragmentChatMainBinding
     lateinit var mainActivity: MainActivity
     lateinit var chatViewModel: ChatViewModel
     lateinit var userViewModel: UserViewModel
     var userNickname = ""
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -67,11 +68,10 @@ class ChatMainFragment : Fragment() {
                 userNickname = it!!.u_nickNm
             }
         }
-        chatViewModel.getMyChatRoomList(userNickname)
         chatViewModel.run {
-            chatRoomList.observe(viewLifecycleOwner) { chatList ->
+            chatRoomList.observe(mainActivity) {
                 // 데이터가 변경될 때마다 submitList를 호출하여 리사이클러뷰 갱신
-                (fragmentChatMainBinding.recyclerViewChatMain.adapter as? ChatMainRecyclerView)?.submitList(chatList)
+                (fragmentChatMainBinding.recyclerViewChatMain.adapter as? ChatMainRecyclerView)?.submitList(it)
                 // 데이터 로딩이 완료되면 로딩 화면을 숨김
                 fragmentChatMainBinding.progressBarChatMain.visibility = View.GONE
             }
@@ -111,14 +111,18 @@ class ChatMainFragment : Fragment() {
             }
         }
 
+
         // 기타 초기화 코드 추가 가능
     }
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         fragmentChatMainBinding = FragmentChatMainBinding.inflate(layoutInflater)
         mainActivity = activity as MainActivity
+        chatViewModel = ViewModelProvider(mainActivity)[ChatViewModel::class.java]
+
 
         fragmentChatMainBinding.run {
             floatingButtonChatMain.run {
@@ -129,7 +133,7 @@ class ChatMainFragment : Fragment() {
                 setOnClickListener {
                     val bundle = Bundle()
                     bundle.putString("userNickname","${userNickname}")
-                    Log.d("aaaa","${userNickname}")
+
                     mainActivity.replaceFragment(MainActivity.ADD_CHAT_FRAGMENT,true,bundle)
                 }
             }
@@ -158,6 +162,7 @@ class ChatMainFragment : Fragment() {
                     else if(newState == com.google.android.material.search.SearchView.TransitionState.HIDING){
                         nestedScrollViewChatMain.isNestedScrollingEnabled = true
                         floatingButtonChatMain.visibility = View.VISIBLE
+                        chatViewModel.getMyChatRoomList(userNickname)
                     }
                 }
 
@@ -235,7 +240,7 @@ class ChatMainFragment : Fragment() {
                 val newBundle = Bundle()
                 newBundle.putString("roomId", differ.currentList[adapterPosition].chatRoomId)
                 newBundle.putString("userNickname",userNickname)
-                Log.d("aaaa","roomId = ${differ.currentList[adapterPosition].chatRoomId}")
+
                 mainActivity.replaceFragment(MainActivity.CHAT_ROOM_FRAGMENT, true, newBundle)
             }
         }
@@ -251,6 +256,7 @@ class ChatMainFragment : Fragment() {
 
         override fun onBindViewHolder(holder: ViewHolderClass, position: Int) {
             val chatList = differ.currentList[position]
+
             holder.rowChatMainTitle.text = chatList.chatRoomName
             holder.rowChatMainLastChat.text = chatList.chatLastChatting
         }
@@ -291,7 +297,7 @@ class ChatMainFragment : Fragment() {
 
             override fun onClick(v: View?) {
                 val roomId = differ.currentList[adapterPosition].chatRoomId
-                Log.d("aaaa","roomId = $roomId")
+
                 chatViewModel.getChatRoomInfo(roomId)
             }
         }
@@ -334,10 +340,6 @@ class ChatMainFragment : Fragment() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-//        chatViewModel.getMyChatRoomList("A")
-    }
     fun setCustomTitle(title: String): TextView {
         val customTitle = TextView(context).apply {
             text = title  // 타이틀 텍스트 설정
@@ -347,6 +349,12 @@ class ChatMainFragment : Fragment() {
             setPadding(100, 100, 0, 20)  // 패딩 설정 (단위: px)
         }
         return customTitle
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    override fun onResume() {
+        super.onResume()
+        chatViewModel.getMyChatRoomList(userNickname)
     }
 }
 
