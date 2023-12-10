@@ -1,6 +1,9 @@
 package com.example.georgeois.ui.user
 
+import android.database.Cursor
+import android.net.Uri
 import android.os.Bundle
+import android.provider.OpenableColumns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,21 +19,24 @@ import com.example.georgeois.databinding.FragmentJoinMainBinding
 import com.example.georgeois.ui.main.MainActivity
 import com.example.georgeois.utill.CommonTextWatcher
 import com.example.georgeois.viewModel.AuthViewModel
-import com.example.georgeois.viewModel.UserViewModel
+import com.example.georgeois.viewModel.JoinViewModel
 import com.google.android.material.textfield.TextInputLayout
 import java.util.Calendar
 
 class JoinMainFragment : Fragment() {
     private lateinit var joinMainBinding: FragmentJoinMainBinding
     private lateinit var mainActivity: MainActivity
-    private lateinit var userViewModel: UserViewModel
+    private lateinit var joinViewModel: JoinViewModel
     private lateinit var authViewModel: AuthViewModel
     private var selectedYear: Int? = null
     private val imageLoadLauncher =
         registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
-            joinMainBinding.circleImageViewJoinMainProfile.setImageURI(uri)
-            userViewModel = ViewModelProvider(this)[UserViewModel::class.java]
-            userViewModel.setProfilePath(uri)
+            if (uri != null) {
+                joinMainBinding.circleImageViewJoinMainProfile.setImageURI(uri)
+                joinViewModel = ViewModelProvider(this)[JoinViewModel::class.java]
+                joinViewModel.setProfilePath(uri)
+                setImageName(uri)
+            }
         }
 
     override fun onCreateView(
@@ -41,10 +47,10 @@ class JoinMainFragment : Fragment() {
         joinMainBinding = FragmentJoinMainBinding.inflate(inflater)
         mainActivity = activity as MainActivity
 
-        userViewModel = ViewModelProvider(this)[UserViewModel::class.java]
+        joinViewModel = ViewModelProvider(this)[JoinViewModel::class.java]
         authViewModel = ViewModelProvider(this)[AuthViewModel::class.java]
 
-        userViewModel.run {
+        joinViewModel.run {
 
             // 아이디 hint, Error message update
             idFieldState.observe(requireActivity()) {
@@ -74,6 +80,11 @@ class JoinMainFragment : Fragment() {
             // 이메일 Error meesage update
             emailFieldState.observe(requireActivity()) {
                 updateValidateMessage(joinMainBinding.textInputLayoutJoinMainEmail, it)
+            }
+
+            // 예산 hint, error message update
+            budgetFieldState.observe(requireActivity()) {
+                updateValidateMessage(joinMainBinding.textInputLayoutJoinMainBudget, it)
             }
 
             joinFieldState.observe(requireActivity()) {
@@ -131,7 +142,7 @@ class JoinMainFragment : Fragment() {
                         // 핸드폰 인증 성공
                         // UserViewModel로 전화번호 전송
                         val phoneNumber = joinMainBinding.textInputEditTextJoinMainPNumber.text.toString()
-                        userViewModel.setCheckPhoneNumber(phoneNumber)
+                        joinViewModel.setCheckPhoneNumber(phoneNumber)
                     }
 
                     is FieldState.Fail -> {
@@ -168,14 +179,14 @@ class JoinMainFragment : Fragment() {
             
             // 아이디 내용 변경 시 아이디 중복 확인 통과한 거 통과 실패로 변경
             textInputEditTextJoinMainId.addTextChangedListener(CommonTextWatcher {
-                userViewModel.idChanged()
+                joinViewModel.idChanged()
             })
 
 
             // 아이디 중복확인 클릭
             buttonJoinMainCheckIdDuplication.setOnClickListener {
                 val id = textInputEditTextJoinMainId.text.toString()
-                userViewModel.checkIdDuplication(id)
+                joinViewModel.checkIdDuplication(id)
             }
 
             // 비밀번호 유효성 검사
@@ -183,40 +194,40 @@ class JoinMainFragment : Fragment() {
                 val password = textInputEditTextJoinMainPw.text.toString()
                 val confirmPassword = textInputEditTextJoinMainConfirmPw.text.toString()
 
-                userViewModel.checkPasswordValidate(password)
+                joinViewModel.checkPasswordValidate(password)
 
                 // 비밀번호 확인란에 텍스트가 존재할 때
                 if(confirmPassword.isNotEmpty()) {
-                    userViewModel.checkConfirmPasswordValidate(confirmPassword)
+                    joinViewModel.checkConfirmPasswordValidate(confirmPassword)
                 }
             })
 
             // 비밀번호 같은지 검사
             textInputEditTextJoinMainConfirmPw.addTextChangedListener(CommonTextWatcher {
                 val confirmPassword = textInputEditTextJoinMainConfirmPw.text.toString()
-                userViewModel.checkConfirmPasswordValidate(confirmPassword)
+                joinViewModel.checkConfirmPasswordValidate(confirmPassword)
             })
 
             // 이름 유효성 검사
             textInputEditTextJoinMainNm.addTextChangedListener(CommonTextWatcher {
                 val name = textInputEditTextJoinMainNm.text.toString()
-                userViewModel.checkNmValidate(name)
+                joinViewModel.checkNmValidate(name)
             })
 
             // 닉네임 내용 변경 시 닉네임 중복 확인 통과한 거 통과 실패로 변경
             textInputEditTextJoinMainNickNm.addTextChangedListener(CommonTextWatcher {
-                userViewModel.nicknameChanged()
+                joinViewModel.nicknameChanged()
             })
 
             // 닉네임 중복 확인 클릭
             buttonJoinMainCheckNickNmDuplication.setOnClickListener {
                 val nickNm = textInputEditTextJoinMainNickNm.text.toString()
-                userViewModel.checkNickNmValidate(nickNm)
+                joinViewModel.checkNickNmValidate(nickNm)
             }
 
             // 전화번호 텍스트 변경
             textInputEditTextJoinMainPNumber.addTextChangedListener(CommonTextWatcher {
-                userViewModel.phoneNumberChanged()
+                joinViewModel.phoneNumberChanged()
             })
 
             // 전화번호로 인증 문자 전송 버튼 클릭
@@ -239,11 +250,11 @@ class JoinMainFragment : Fragment() {
             radioGroupJoinMainGender.setOnCheckedChangeListener { _, checkedId ->
                 when (checkedId) {
                     radioButtonJoinMainMale.id -> {
-                        userViewModel.setGender('M')
+                        joinViewModel.setGender('M')
                     }
 
                     radioButtonJoinMainFemale.id -> {
-                        userViewModel.setGender('F')
+                        joinViewModel.setGender('F')
                     }
                 }
             }
@@ -254,14 +265,19 @@ class JoinMainFragment : Fragment() {
             // 이메일 유효성 검사
             textInputEditTextJoinMainEmail.addTextChangedListener(CommonTextWatcher {
                 val email = textInputEditTextJoinMainEmail.text.toString()
-                userViewModel.checkEmailValidate(email)
+                joinViewModel.checkEmailValidate(email)
+            })
+
+            // 예산 유효성 검사
+            textInputEditTextJoinMainBudget.addTextChangedListener(CommonTextWatcher {
+                val budget = textInputEditTextJoinMainBudget.text.toString()
+                joinViewModel.checkBudgetValidate(budget)
             })
 
             // 회원가입 클릭
             buttonJoinMainJoin.setOnClickListener {
-                textInputEditTextJoinMainNm.text
                 val auth = 'L'
-                userViewModel.localJoin(auth)
+                joinViewModel.join(auth, mainActivity)
             }
         }
 
@@ -271,8 +287,8 @@ class JoinMainFragment : Fragment() {
     /**
      * ViewMdoel의 LiveDate의 결과에 따른 TextInputLayout 의 Helper, Error Message UI 업데이트
      *
-     * helpderMeesage 색은 xml에서 @color/accentGreen 으로 지정 되어 있다.
-     * helpderMeesage 와 errorMessage 의 String 값은 [UserViewModel] 에서 [FieldState] 에서 적용됨
+     * helperMessage 색은 xml에서 @color/accentGreen 으로 지정 되어 있다.
+     * helperMessage 와 errorMessage 의 String 값은 [JoinViewModel] 에서 [FieldState] 에서 적용됨
      *
      * CASE
      * [FieldState.Success.data] 에 helperMessage 설정
@@ -312,14 +328,30 @@ class JoinMainFragment : Fragment() {
                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                     selectedYear = years[position]
                     // ViewModel에 선택된 년도 전송
-                    userViewModel.setBirthYear(selectedYear!!)
+                    joinViewModel.setBirthYear(selectedYear!!)
                 }
 
                 override fun onNothingSelected(parent: AdapterView<*>?) {
                     selectedYear = null
-                    userViewModel.setBirthYear(null)
+                    joinViewModel.setBirthYear(null)
                 }
             }
+        }
+    }
+
+    // 이미지 이름 찾아서 설정
+    private fun setImageName(uri: Uri) {
+        val cursor: Cursor? = mainActivity.contentResolver.query(uri, null, null, null, null)
+        try {
+            cursor?.let {it
+                if (it.moveToFirst()) {
+                    val imageNameIdx = it.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                    val imageName = it.getString(imageNameIdx)
+                    joinViewModel.setProfileName(imageName)
+                }
+            }
+        } finally {
+            cursor?.close()
         }
     }
 }

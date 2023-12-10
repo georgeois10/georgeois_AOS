@@ -1,24 +1,31 @@
 package com.example.georgeois.viewModel
 
-import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.georgeois.dataclass.JoinUser
+import androidx.lifecycle.viewModelScope
+import com.example.georgeois.BuildConfig
 import com.example.georgeois.resource.FieldState
 import com.example.georgeois.dataclass.User
 import com.example.georgeois.repository.UserRepository
-import com.example.georgeois.utill.CheckValidation
+import com.example.georgeois.resource.SocialLoginType
+import com.example.georgeois.ui.main.MainActivity
+import com.kakao.sdk.auth.model.OAuthToken
+import com.kakao.sdk.common.KakaoSdk
+import com.kakao.sdk.common.model.ClientError
+import com.kakao.sdk.common.model.ClientErrorCause
+import com.kakao.sdk.user.UserApiClient
+import com.navercorp.nid.NaverIdLoginSDK
+import com.navercorp.nid.oauth.NidOAuthLogin
+import com.navercorp.nid.oauth.OAuthLoginCallback
+import com.navercorp.nid.profile.NidProfileCallback
+import com.navercorp.nid.profile.data.NidProfileResponse
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
-import okhttp3.ResponseBody
 import org.json.JSONObject
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -29,43 +36,16 @@ import java.util.Locale
  */
 class UserViewModel : ViewModel() {
 
-    // --------- 로그인 ----------
+    // --------- 유저 ----------
     private val _user = MutableLiveData<User?>()
     val user: LiveData<User?> = _user
 
-    // --------- 회원가입 ---------
-    private val _idFieldState = MutableLiveData<FieldState<String>>()
-    val idFieldState: LiveData<FieldState<String>> = _idFieldState
-
-    private val _pwFieldState = MutableLiveData<FieldState<String>>()
-    val pwFieldState: LiveData<FieldState<String>> = _pwFieldState
-
-    private val _confirmPwFieldState = MutableLiveData<FieldState<String>>()
-    val confirmPwFieldState: LiveData<FieldState<String>> = _confirmPwFieldState
-
-    private val _nmFieldState = MutableLiveData<FieldState<String>>()
-    val nmFieldState: LiveData<FieldState<String>> = _nmFieldState
-
-    private val _nickNmFieldState = MutableLiveData<FieldState<String>>()
-    val nickNmFieldState: LiveData<FieldState<String>> = _nickNmFieldState
-
-    private val _isPhoneChecked = MutableLiveData<FieldState<String>>()
-
-    private val _genderFieldState = MutableLiveData<FieldState<String>>(FieldState.Fail(""))
-
-    private val _birthYearFieldState = MutableLiveData<FieldState<String>>(FieldState.Fail(""))
-
-    private val _emailFieldState = MutableLiveData<FieldState<String>>()
-    val emailFieldState: LiveData<FieldState<String>> = _emailFieldState
-
-    private val _joinFieldState = MutableLiveData<FieldState<String>>()
-    val joinFieldState: LiveData<FieldState<String>> = _joinFieldState
-
-    private val _unCheckedField = MutableLiveData<String>()
-    val unCheckedField: LiveData<String> = _unCheckedField
+    private val _loginSuccessState = MutableLiveData<FieldState<SocialLoginType?>>()
+    val loginSuccessState: LiveData<FieldState<SocialLoginType?>> = _loginSuccessState
 
 
-    // --------- 로그인 ----------
+
+    // --------- 로컬 로그인 ----------
     /**
      * 코드 수정할 예정
      */
@@ -124,258 +104,195 @@ class UserViewModel : ViewModel() {
     }
 
 
-    // ------------ 회원 가입 ------------
-    fun setProfilePath(uri: Uri?) {
-        if (uri != null) {
-            profile = uri.toString()
-        }
-    }
-    fun checkIdDuplication(id: String) {
+    // --------- 네이버 로그인 ----------
+    fun naverLogin(mainActivity: MainActivity) {
+        // TODO : 네이버 로그인 화면으로 이동 구현
+        NaverIdLoginSDK.initialize(mainActivity,
+            BuildConfig.NAVER_CLIENT_ID,
+            BuildConfig.NAVER_CLIENT_SECRET,
+            BuildConfig.NAVER_APP_NAME
+        )
 
-        // 유효성 검사 통과 실패 시
-        if (!(CheckValidation.validateId(id))) {
-            _idFieldState.value = FieldState.Fail("* 5~20자의 하나 이상의 영어 소문자, 숫자 조합이어야 합니다.")
-            return
-        }
-
-        // 검사 통과 시
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val result = UserRepository.checkIdDuplication(id)
-                if (result["result"] == true) {
-                    // Background 에서 동작 되기 때문에 postValue() 사용함.
-                    _idFieldState.postValue(FieldState.Success("* 사용 가능한 아이디입니다."))
-                    checkedId = id
-                } else {
-                    _idFieldState.postValue(FieldState.Fail("* 이미 존재하는 아이디입니다."))
-                }
-
-            } catch (e: Exception) {
-                Log.e("UserViewModel.checkIdDuplication", "${e.printStackTrace()}")
-                _idFieldState.postValue(FieldState.Error(e.message.toString()))
+        val oauthLoginCallback = object : OAuthLoginCallback {
+            override fun onSuccess() {
+                // 네이버 로그인 인증이 성공했을 때 유저 정보 가져오기
+                NidOAuthLogin().callProfileApi(nidProfileCallback)
             }
+            override fun onFailure(httpStatus: Int, message: String) {
+                val errorCode = NaverIdLoginSDK.getLastErrorCode().code
+                val errorDescription = NaverIdLoginSDK.getLastErrorDescription()
 
-            this.cancel()
+                Log.d("LoginViewModel-naverLogin-OAuthLoginCallback", "errorCode:$errorCode, errorDesc:$errorDescription")
+                _loginSuccessState.value = FieldState.Fail("$errorDescription")
+            }
+            override fun onError(errorCode: Int, message: String) {
+                onFailure(errorCode, message)
+
+                Log.d("LoginViewModel-naverLogin-OAuthLoginCallback", "errorCode:$errorCode, message:$message")
+                _loginSuccessState.value = FieldState.Error("오류가 발생했습니다. 다시 시도해주세요.")
+            }
         }
 
+        NaverIdLoginSDK.authenticate(mainActivity, oauthLoginCallback)
     }
 
-    fun checkPasswordValidate(password: String) {
-        // 유효성 검사 통과 실패 시
-        if (!(CheckValidation.validatePassword(password))) {
-            _pwFieldState.value = FieldState.Fail("* 8~16사이의 숫자, 영어 소문자, 특수문자의 조합이어야 합니다.\n* 사용 가능한 특수문자( $@!%*#?& )")
-            return
+    /**
+     * 유저 정보를 가져올때 사용될 Callback
+     * [naverLogin] 에서 OAuthLoginCallback onSuccess 일 때 사용 될 Callback
+     */
+    private val nidProfileCallback = object : NidProfileCallback<NidProfileResponse> {
+        override fun onError(errorCode: Int, message: String) {
+            Log.d("LoginViewModel-naverLogin-nidProfileCallback", "errorCode:$errorCode, message:$message")
+            _loginSuccessState.value = FieldState.Error("오류가 발생했습니다. 다시 시도해주세요.")
         }
-        
-        // 검사 통과 시
-        _pwFieldState.value = FieldState.Success("* 사용 가능한 비밀번호 입니다.")
-        checkedPw = password
-    }
 
+        override fun onFailure(httpStatus: Int, message: String) {
+            Log.d("LoginViewModel-naverLogin-nidProfileCallback", "httpStatus:$httpStatus, errorDesc:$message")
+            _loginSuccessState.value = FieldState.Fail(message)
+        }
 
-    fun checkConfirmPasswordValidate(confirmPassword: String) {
-        if (checkedPw != null) {
+        override fun onSuccess(result: NidProfileResponse) {
+            val profile = result.profile
 
-            if (!(CheckValidation.validateConfirmPassword(checkedPw!!, confirmPassword))) {
-                _confirmPwFieldState.value = FieldState.Fail("* 비밀번호가 일치하지 않습니다.")
-                isPwConfirmPassed = false
+            if (profile == null) {
+                _loginSuccessState.value = FieldState.Fail("사용자 정보를 불러올 수 없습니다.")
                 return
             }
 
-            _confirmPwFieldState.value = FieldState.Success("* 비밀번호가 일치합니다.")
-            isPwConfirmPassed = true
+            val email = profile.email
 
-        }
-    }
-
-    fun checkNmValidate(nm: String) {
-        if (!(CheckValidation.validateName(nm))) {
-            _nmFieldState.value = FieldState.Fail("* 유효하지 않은 문자가 포함되어 있습니다.")
-            return
-        }
-
-        _nmFieldState.value = FieldState.Success("")
-        checkedNm = nm
-    }
-
-
-
-    fun checkNickNmValidate(nickNm: String) {
-        if (!(CheckValidation.validateNickName(nickNm))) {
-            _nickNmFieldState.value = FieldState.Fail("* 5~20자의 하나 이상의 영어 소문자 또는 한글, 숫자 조합이어야 합니다.")
-            return
-        }
-
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val result = UserRepository.checkNickNmDuplication(nickNm)
-
-                if (result["result"] == true) {
-                    _nickNmFieldState.postValue(FieldState.Success("* 사용가능한 닉네임입니다."))
-                    checkedNickNm = nickNm
-                } else {
-                    _nickNmFieldState.postValue(FieldState.Fail("이미 존재하는 닉네임입니다."))
+            // 이미 존재하는지 검사
+            viewModelScope.launch {
+                if (email == null) {
+                    _loginSuccessState.postValue(FieldState.Error("이메일 정보를 불러올 수 없습니다."))
+                    return@launch
                 }
-            } catch (e: Exception) {
-                Log.e("UserViewModel.checkNickNmValidate", "${e.printStackTrace()}")
-                _nickNmFieldState.postValue(FieldState.Error(e.message.toString()))
-            }
 
-            this.cancel()
-        }
-    }
+                try {
+                    val isAvailable = UserRepository.checkIdDuplication(email)
 
-    fun checkEmailValidate(email: String) {
-        if (email.isNotEmpty() && !CheckValidation.validateEmail(email)) {
-            _emailFieldState.value = FieldState.Fail("유효한 이메일 형식이 아닙니다.")
-            return
-        }
-        checkedEmail = email
-        _emailFieldState.value = FieldState.Success("")
-    }
-
-    fun setCheckPhoneNumber(phoneNumber: String) {
-        checkedPhoneNumber = phoneNumber
-        _isPhoneChecked.value = FieldState.Success("")
-    }
-
-    fun setBirthYear(year: Int?) {
-        if (year == null) {
-            _birthYearFieldState.value = FieldState.Fail("출생년도를 선택해 주세요.")
-            return
-        }
-        selectedBirthYear = year
-        _birthYearFieldState.value = FieldState.Success("")
-
-    }
-
-    fun setGender(gender: Char) {
-        selectedGender = gender
-        _genderFieldState.value = FieldState.Success("")
-    }
-
-    fun phoneNumberChanged() {
-        _isPhoneChecked.value = FieldState.Fail("")
-    }
-
-    // 중복 확인 누르고 텍스트가 변경 되었을 때 FieldState.Fail 로 변경
-    fun idChanged() {
-        _idFieldState.value = FieldState.Fail("")
-    }
-
-    fun nicknameChanged() {
-        _genderFieldState.value = FieldState.Fail("")
-    }
-
-
-
-    fun localJoin(auth: Char) {
-        // 유효성 검사에 통과하지 못한 Field가 있는지 확인
-        if (!checkAllFieldStateAvailable())
-            return
-
-        val joinUser = JoinUser(
-            auth,
-            profile,
-            checkedId!!,
-            checkedPw!!,
-            checkedNm!!,
-            checkedNickNm!!,
-            checkedPhoneNumber!!,
-            selectedGender!!,
-            selectedBirthYear!!,
-            checkedEmail
-        )
-
-
-//        // 모든 Field가 유효성 검사 통과 시
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val result = UserRepository.join(joinUser)
-
-                result.enqueue(object : Callback<ResponseBody> {
-                    override fun onResponse(
-                        call: Call<ResponseBody>,
-                        response: Response<ResponseBody>
-                    ) {
-                        // 응답 실패 시
-                        if (!(response.isSuccessful)) {
-                            Log.d("UserViewModel.localJoin", "서버 응답 실패 - ${response.message()}")
-                            _joinFieldState.postValue(FieldState.Error("연결에 실패하였습니다."))
-                            return
+                    when (isAvailable["result"]) {
+                        // 계정이 존재하지 않을 때
+                        true -> _loginSuccessState.postValue(FieldState.Success(SocialLoginType.NaverUser(profile)))
+                        // 계정이 존재할 때
+                        false -> {
+                            _loginSuccessState.postValue(FieldState.Success(null))
+                            val primaryId = profile.id
+                            // TODO : 로그인 성공시 _user 에 유저 데이터 넣어줘야 함
+                            login(email, primaryId!!.substring(0, 8))
                         }
 
-                        // 응답 성공 시
-                        val responseBody = response.body()?.string()
-                        val isSuccess = responseBody?.let { JSONObject(it) }
+                        // 서버에선 true 아니면 false 만 반환하게 되어있음
+                        else -> _loginSuccessState.postValue(FieldState.Fail("데이터를 조회할 수 없습니다."))
+                    }
 
-                        // 가입 성공
-                        if(isSuccess?.get("result") == true) {
-                            _joinFieldState.postValue(FieldState.Success("회원가입 되었습니다.\n로그인을 진행해 주세요."))
-                            return
+                } catch (e: Exception) {
+                    Log.e("LoginViewModel.checkIdDuplication", "${e.printStackTrace()}")
+                    _loginSuccessState.postValue(FieldState.Error("오류가 발생했습니다. 다시 시도해주세요."))
+                }
+            }
+        }
+
+    }
+
+
+    // ------- 카카오 로그인 -------
+
+    // 카카오계정으로 로그인 공통 callback 구성
+    // 카카오톡으로 로그인 할 수 없어 카카오계정으로 로그인할 경우 사용됨
+    private val kakaoCallback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
+        if (error != null) {
+            // 카카오계정으로 로그인 실패
+            _loginSuccessState.value = FieldState.Error("로그인에 실패하였습니다.")
+        } else if (token != null) {
+            // 카카오계정으로 로그인 성공
+            getKakaoAccountInfo()
+        }
+    }
+
+    fun kakaoLogin(mainActivity: MainActivity) {
+        KakaoSdk.init(mainActivity, BuildConfig.KAKAO_NATIVE_KEY)
+
+        // 카카오톡이 설치되어 있으면 카카오톡으로 로그인, 아니면 카카오계정으로 로그인
+        if (UserApiClient.instance.isKakaoTalkLoginAvailable(mainActivity)) {
+            UserApiClient.instance.loginWithKakaoTalk(mainActivity) { token, error ->
+                if (error != null) {
+                    // 카카오톡으로 로그인 실패
+
+                    // 사용자가 카카오톡 설치 후 디바이스 권한 요청 화면에서 로그인을 취소한 경우,
+                    // 의도적인 로그인 취소로 보고 카카오계정으로 로그인 시도 없이 로그인 취소로 처리 (예: 뒤로 가기)
+                    if (error is ClientError && error.reason == ClientErrorCause.Cancelled) {
+                        return@loginWithKakaoTalk
+                    }
+
+                    // 카카오톡에 연결된 카카오계정이 없는 경우, 카카오계정으로 로그인 시도
+                    UserApiClient.instance.loginWithKakaoAccount(mainActivity, callback = kakaoCallback)
+                } else if (token != null) {
+                    // 카카오계정으로 로그인 성공
+                    getKakaoAccountInfo()
+                }
+            }
+        } else {
+            UserApiClient.instance.loginWithKakaoAccount(mainActivity, callback = kakaoCallback)
+        }
+
+    }
+
+    private fun getKakaoAccountInfo() {
+        UserApiClient.instance.me { user, error ->
+            if (error != null) {
+                Log.e("UserViewModel-getKakaoAccountInfo", "$error")
+                _loginSuccessState.value = FieldState.Error("로그인에 실패하였습니다.")
+            } else if (user != null) {
+                // 사용자 정보 요청 성공
+
+                // 카카오 계정이 이메일이 아닐때 전화번호를 id로 설정
+                val kakaoId = user.kakaoAccount?.email ?: user.kakaoAccount?.phoneNumber
+
+                // 이미 존재하는 계정인지 확인
+                viewModelScope.launch {
+                    if (kakaoId == null) {
+                        _loginSuccessState.postValue(FieldState.Error("정보를 불러올 수 없습니다."))
+                        return@launch
+                    }
+
+                    try {
+                        val isAvailable = UserRepository.checkIdDuplication(kakaoId)
+
+                        when (isAvailable["result"]) {
+                            // 계정이 존재하지 않을 때
+                            true -> _loginSuccessState.postValue(FieldState.Success(SocialLoginType.KakaoUser(user)))
+
+                            // 계정이 존재할 때
+                            false -> {
+                                _loginSuccessState.postValue(FieldState.Success(null))
+
+                                val primaryId = user.id
+                                // TODO : 로그인 성공시 _user 에 유저 데이터 넣어줘야 함
+                                login(kakaoId, primaryId.toString().substring(0, 8))
+                            }
+
+                            // 서버에선 true 아니면 false 만 반환하게 되어있음
+                            else -> _loginSuccessState.postValue(FieldState.Fail("데이터를 조회할 수 없습니다."))
                         }
 
-                        // 가입 실패 ( 응답은 성공하였지만 Insert 실패
-                        // reponse.body().string() 이 {"reuslt" : false} 상태
-                        Log.d("UserViewModel.localJoin", "회원가입 실패 - ${response.message()}")
-                        _joinFieldState.postValue(FieldState.Fail("가입에 실패하였습니다. 다시 시도해주세요."))
-
+                    } catch (e: Exception) {
+                        Log.e("LoginViewModel.checkIdDuplication", "${e.printStackTrace()}")
+                        _loginSuccessState.postValue(FieldState.Error("오류가 발생했습니다. 다시 시도해주세요."))
                     }
-
-                    override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                        Log.e("UserViewModel.localJoin", "서버 연결 실패 - ${t.printStackTrace()}")
-                        _joinFieldState.postValue(FieldState.Error("연결에 실패하였습니다."))
-                    }
-
-                })
-
-            } catch (e: Exception) {
-                Log.e("UserViewModel.localJoin", "${e.printStackTrace()}")
-                _joinFieldState.postValue(FieldState.Error("가입 중 오류가 발생했습니다."))
+                }
             }
-
-            this.cancel()
         }
     }
 
-    // 모든 LiveData 의 value 가 유효성 검사 통과했는지 확인
-    private fun checkAllFieldStateAvailable(): Boolean {
-        // 모든 가입 필드 허용되었는지 확인하기 위한 변수 (이메일은 선택사항)
-
-        val fieldStateMap = mapOf(
-            _idFieldState to "아이디",
-            _pwFieldState to "비밀번호",
-            _confirmPwFieldState to "비밀번호 확인",
-            _nmFieldState to "이름",
-            _nickNmFieldState to "닉네임",
-            _isPhoneChecked to "전화번호 본인인증",
-            _genderFieldState to "성별",
-            _birthYearFieldState to "출생년도",
-        )
-
-        fieldStateMap.keys.map {field ->
-            if (field.value !is FieldState.Success) {
-                // 유효성 검사 통과 실패
-                _unCheckedField.value = "${fieldStateMap[field]}(은)는 필수 항목 입니다."
-                field.value = FieldState.Fail("필수 항목입니다.")
-                return false
-            }
-        }
-
-        return true
-    }
-
-    private companion object {
-        var profile: String = ""
-        var checkedId: String? = null
-        var checkedPw: String? = null
-        var isPwConfirmPassed: Boolean = false
-        var checkedNm: String? = null
-        var checkedNickNm: String? = null
-        var checkedPhoneNumber: String? = null
-        var selectedGender: Char? = null
-        var selectedBirthYear: Int? = null
-        var checkedEmail: String = ""
+    /**
+     * 소셜 로그인 후 소셜 회원가입으로 이동하고
+     * 뒤로 돌아가기 클릭 시를 대비해 loginSuccessState.value = null 로 변경
+     *
+     * 이 함수를 사용하지 않으면 observer가 Success로 떠서 뒤로 돌아가도 회원가입 페이지로 이동됨
+     */
+    fun clearLoginSuccessState() {
+        _loginSuccessState.value = null
     }
 
 }
