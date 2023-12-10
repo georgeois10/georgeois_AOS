@@ -49,7 +49,7 @@ class InAccountBookRepository {
                     if (response.isSuccessful) {
                         Log.d("php delyn변경", "${response.body()?.string()}")
                     } else {
-                        Log.d("php delyn변경", "에러남${response.message()}")
+                        Log.e("php delyn변경", "에러남 ${response.code()}: ${response.message()}")
                     }
                 }
 

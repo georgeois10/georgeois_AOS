@@ -6,6 +6,8 @@ import android.view.View
 import android.widget.TextView
 import com.example.georgeois.databinding.DialogAccountDetailBinding
 import com.example.georgeois.dataclass.AccountBookClass
+import com.example.georgeois.repository.InAccountBookRepository
+import com.example.georgeois.repository.OutAccountBookRepository
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 
@@ -41,6 +43,10 @@ class DialogAccountDetail(private val context: Context, private val layoutInflat
         val dialog = builder.create()
 
         dialogAccountDetailBinding.imageButtonDialogAccountDetailDelete.setOnClickListener {
+            when(accountDetail.isInorOut) {
+                'i' -> InAccountBookRepository.deleteInAccountBook(accountDetail.idx)
+                'o' -> OutAccountBookRepository.deleteInAccountBook(accountDetail.idx)
+            }
             dialog.dismiss()
         }
         dialogAccountDetailBinding.imageButtonDialogAccountDetail.setOnClickListener {

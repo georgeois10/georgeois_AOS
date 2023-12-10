@@ -42,6 +42,27 @@ class OutAccountBookRepository {
             return retrofit.selectOutAccountBook(idx).awaitResponse().body()?.get("outAccountBook") ?: emptyList()
         }
 
+        fun deleteInAccountBook(idx:Int):Call<ResponseBody>{
+            val result = OutAccountBookRepository.retrofit.delynOutAccountBook(idx)
+            result.enqueue(object : Callback<ResponseBody>{
+                override fun onResponse(
+                    call: Call<ResponseBody>,
+                    response: Response<ResponseBody>
+                ) {
+                    if (response.isSuccessful) {
+                        Log.d("php delyn변경", "${response.body()?.string()}")
+                    } else {
+                        Log.e("php delyn변경", "에러남 ${response.code()}: ${response.message()}")
+                    }
+                }
+
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                    Log.d("php delyn변경", "실패")
+                }
+
+            })
+            return result
+        }
     }
 
 }

@@ -18,4 +18,11 @@ interface OutAccountBookService {
     @FormUrlEncoded
     @POST("selectOutAccountBook.php")
     fun selectOutAccountBook(@Field("uIdx") idx: Int): Call<Map<String, List<OutAccountBookClass>>>
+
+
+    @FormUrlEncoded
+    @POST("delynOutAccountBook.php")
+    fun delynOutAccountBook(@Field("idx") idx: Int): Call<ResponseBody>
+
+
 }

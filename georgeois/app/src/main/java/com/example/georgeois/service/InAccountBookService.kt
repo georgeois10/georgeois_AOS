@@ -20,6 +20,7 @@ interface InAccountBookService {
 
     @FormUrlEncoded
     @POST("delynInAccountBook.php")
-    fun delynInAccountBook(@Field("uIdx")idx:Int) : Call<ResponseBody>
+    fun delynInAccountBook(@Field("idx") idx: Int): Call<ResponseBody>
+
 
 }
