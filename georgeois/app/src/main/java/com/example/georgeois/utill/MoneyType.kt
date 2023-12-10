@@ -27,10 +27,11 @@ class MoneyType {
 }
 
 
-// 금액 textWatcher
 class MoneyTextWatcher(private val textInputEditText: TextInputEditText) : TextWatcher {
     private val numberFormat = NumberFormat.getInstance(Locale.getDefault())
+    private val maxValue = 1_000_000_000 // 10억
     var formattedText: String = ""
+
     override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
         // 이 메서드는 텍스트 변경 전에 호출됩니다.
     }
@@ -39,9 +40,15 @@ class MoneyTextWatcher(private val textInputEditText: TextInputEditText) : TextW
         // 이 메서드는 텍스트가 변경될 때 호출됩니다.
         val text = s.toString().replace(",", "").trim()
         val parsed = if (text.isNotEmpty()) text.toDouble() else 0.0
-        formattedText = numberFormat.format(parsed)
-// 로그 추가
+
+        // 강제로 10억으로 제한
+        val limitedValue = parsed.coerceAtMost(maxValue.toDouble())
+
+        formattedText = numberFormat.format(limitedValue)
+
+        // 로그 추가
         Log.d("MoneyTextWatcher", "onTextChanged: $formattedText")
+
         textInputEditText.removeTextChangedListener(this)
         textInputEditText.setText(formattedText)
         textInputEditText.setSelection(formattedText.length)
@@ -52,3 +59,5 @@ class MoneyTextWatcher(private val textInputEditText: TextInputEditText) : TextW
         // 이 메서드는 텍스트 변경 후에 호출됩니다.
     }
 }
+
+
