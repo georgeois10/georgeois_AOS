@@ -71,6 +71,23 @@ object CheckValidation {
 
     fun validateEmail(targetString: String): Boolean {
         return Patterns.EMAIL_ADDRESS.matcher(targetString).matches()
+    }
+
+    /**
+     * 1. 숫자만 가능
+     * 2. 0 부터 1000만원 사이의 숫자
+     */
+    fun validateBudget(budget: String) : Boolean {
+        return try {
+            if (budget.matches("^[0-9]+$".toRegex())) {
+                val budgetToInt = budget.toInt()
+                return budgetToInt in 0..10000000
+            } else {
+                return false
+            }
+        } catch (e: Exception) {
+            false
+        }
 
     }
 
