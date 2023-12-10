@@ -18,6 +18,8 @@ interface InAccountBookService {
     @POST("selectInAccountBook.php")
     fun selectInAccountBook(@Field("uIdx") idx: Int): Call<Map<String, List<InAccountBookClass>>>
 
-
+    @FormUrlEncoded
+    @POST("delynInAccountBook.php")
+    fun delynInAccountBook(@Field("uIdx")idx:Int) : Call<ResponseBody>
 
 }

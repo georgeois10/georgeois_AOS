@@ -65,10 +65,16 @@ class AccountBookViewModel : ViewModel() {
             val outAccountBookList = fetchOutData(uIdx)
             val allAccountBookList = mutableListOf<AccountBookClass>()
             for( i in inAccountBookList){
-                allAccountBookList.add(AccountBookClass('i',i.i_amount,i.i_content,i.i_category,i.i_date,i.i_imgpath,i.i_budregi_yn,null))
+                i.i_idx?.let {
+                    AccountBookClass('i',
+                        it,i.i_amount,i.i_content,i.i_category,i.i_date,i.i_imgpath,i.i_budregi_yn,null)
+                }?.let { allAccountBookList.add(it) }
             }
             for( o in outAccountBookList){
-                allAccountBookList.add(AccountBookClass('o',o.o_amount,o.o_content,o.o_category,o.o_date,o.o_imgpath,o.o_budregi_yn,o.o_property))
+                o.o_idx?.let {
+                    AccountBookClass('o',
+                        it,o.o_amount,o.o_content,o.o_category,o.o_date,o.o_imgpath,o.o_budregi_yn,o.o_property)
+                }?.let { allAccountBookList.add(it) }
             }
             val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
             allAccountBookList.sortBy { LocalDateTime.parse(it.date, formatter) }

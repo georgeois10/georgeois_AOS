@@ -137,7 +137,7 @@ class HomeMainFragment : Fragment() {
             init {
                 rowHomeMainBinding.root.setOnClickListener {
                     val dialogAccountDetail = DialogAccountDetail(requireContext(), layoutInflater)
-                    dialogAccountDetail.callFunction()
+                    dialogAccountDetail.callFunction(datefilteredList[position])
                 }
             }
         }

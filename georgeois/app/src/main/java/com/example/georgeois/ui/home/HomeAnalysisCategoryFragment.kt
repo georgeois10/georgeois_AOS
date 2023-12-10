@@ -70,7 +70,8 @@ class HomeAnalysisCategoryFragment : Fragment() {
             init {
                 rowHomeAnalysisCategoryBinding.root.setOnClickListener {
                     val dialogAccountDetail = DialogAccountDetail(requireContext(),layoutInflater)
-                    dialogAccountDetail.callFunction()
+
+                    //dialogAccountDetail.callFunction()
                 }
             }
 

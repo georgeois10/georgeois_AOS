@@ -1,6 +1,7 @@
 package com.example.georgeois.dataclass
 
 data class InAccountBookClass(
+    val i_idx : Int?,
     val u_idx: Int,
     val cre_user: String,
     val u_nicknm: String,
@@ -12,6 +13,7 @@ data class InAccountBookClass(
     val i_budregi_yn: Int
 )
 data class OutAccountBookClass(
+    val o_idx : Int?,
     val u_idx: Int,
     val cre_user: String,
     val u_nicknm: String,
@@ -25,6 +27,7 @@ data class OutAccountBookClass(
 )
 data class AccountBookClass(
     var isInorOut : Char,
+    var idx : Int,
     var amount: Int,
     val content: String,
     val category: String,

@@ -238,6 +238,7 @@ class HomeRegisterFragment : Fragment() {
                     when (isCategory) {
                         "in" -> {
                             val insertAccountBook = InAccountBookClass(
+                                null,
                                 uIdx,
                                 uId,
                                 uNicknm,
@@ -253,6 +254,7 @@ class HomeRegisterFragment : Fragment() {
                         "out" -> {
 
                             val outAccountBookClass = OutAccountBookClass(
+                                null,
                                 uIdx,
                                 uId,
                                 uNicknm,

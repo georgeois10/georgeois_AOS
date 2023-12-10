@@ -5,17 +5,32 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.TextView
 import com.example.georgeois.databinding.DialogAccountDetailBinding
+import com.example.georgeois.dataclass.AccountBookClass
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 
 class DialogAccountDetail(private val context: Context, private val layoutInflater: LayoutInflater) {
     // 호출할 다이얼로그 함수를 정의한다.
-    fun callFunction() {
+    fun callFunction(accountDetail:AccountBookClass) {
 
         val dialogAccountDetailBinding = DialogAccountDetailBinding.inflate(layoutInflater)
         val builder = MaterialAlertDialogBuilder(context)
-        builder.setView(dialogAccountDetailBinding.root)
+        dialogAccountDetailBinding.textViewDialogAccountDetailCategory.text = accountDetail.category
+        var moneyType = MoneyType()
+        var tempMoney = accountDetail.amount.toString()
+        tempMoney = moneyType.moneyText(tempMoney)
+        dialogAccountDetailBinding.textViewDialogAccountDetailAmount.text = tempMoney
+        dialogAccountDetailBinding.textViewDialogAccountDetailDate.text = accountDetail.date
+        dialogAccountDetailBinding.textViewDialogAccountDetailContent.text = accountDetail.content
+        dialogAccountDetailBinding.textViewDialogAccountDetailProperty.text = accountDetail.property.toString()
 
+        if(accountDetail.property==null) {
+            dialogAccountDetailBinding.linearLayoutDialogAccountDetailProperty.visibility = View.GONE
+        }else{
+            dialogAccountDetailBinding.linearLayoutDialogAccountDetailProperty.visibility = View.VISIBLE
+        }
+
+        builder.setView(dialogAccountDetailBinding.root)
         builder.setPositiveButton("수정") { dialog, which ->
 
         }
