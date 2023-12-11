@@ -1,5 +1,6 @@
 package com.example.georgeois.service
 
+import com.example.georgeois.dataclass.InAccountBookClass
 import com.example.georgeois.dataclass.OutAccountBookClass
 import okhttp3.ResponseBody
 import retrofit2.Call
@@ -23,6 +24,10 @@ interface OutAccountBookService {
     @FormUrlEncoded
     @POST("delynOutAccountBook.php")
     fun delynOutAccountBook(@Field("idx") idx: Int): Call<ResponseBody>
+
+    @Headers("Content-Type: application/json")
+    @POST("updateOutAccountBook.php")
+    fun updateOutAccountBook(@Body outAccountBook: OutAccountBookClass): Call<ResponseBody>
 
 
 }

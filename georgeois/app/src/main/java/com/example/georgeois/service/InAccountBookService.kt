@@ -22,5 +22,7 @@ interface InAccountBookService {
     @POST("delynInAccountBook.php")
     fun delynInAccountBook(@Field("idx") idx: Int): Call<ResponseBody>
 
-
+    @Headers("Content-Type: application/json")
+    @POST("updateInAccountBook.php")
+    fun updateInAccountBook(@Body inAccountBook:InAccountBookClass): Call<ResponseBody>
 }

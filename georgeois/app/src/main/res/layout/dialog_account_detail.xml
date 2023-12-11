@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:layout_margin="@dimen/margin_10dp"
     android:padding="@dimen/padding_size_15dp">
 
     <androidx.core.widget.NestedScrollView
@@ -22,14 +23,26 @@
                 android:layout_gravity="right"
                 app:tint="@color/accentRed" />
 
-            <TextView
-                android:id="@+id/textView_dialogAccountDetail_amount"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                style="@style/Theme.Georgeois.Text"
-                android:textSize="40sp"
-                android:gravity="center"
-                android:text="금액" />
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/textInputLayout_dialogAccountDetail_amount"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:textSize="40sp"
+                    style="@style/Theme.Georgeois.Text"
+                    app:boxBackgroundMode="none">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/textInputEditText_dialogAccountDetail_amount"
+                        style="@style/Theme.Georgeois.Text"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:inputType="number"
+                        android:textSize="40sp" />
+                </com.google.android.material.textfield.TextInputLayout>
 
             <View
                 android:layout_width="match_parent"
@@ -44,45 +57,80 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="@dimen/font_size_18sp"
                     style="@style/Theme.Georgeois.Text"
-                    android:text="카테고리" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginRight="@dimen/margin_12dp"
+                    android:gravity="center"
+                    android:text="카테고리"
+                    android:textAlignment="gravity"
+                    android:textSize="@dimen/font_size_18sp" />
 
-                <TextView
-                    android:layout_marginStart="@dimen/margin_10dp"
-                    android:id="@+id/textView_dialogAccountDetail_category"
+                <Spinner
+                    android:id="@+id/spinner_dialogAccountDetail"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="@dimen/font_size_16sp"
-                    style="@style/Theme.Georgeois.Text"
-                    android:gravity="right|center_vertical"
-                    android:text="운동" />
+                    android:layout_weight="1"
+                    android:background="@drawable/spinner_home_register_background"
+                    android:textSize="@dimen/font_size_16sp" />
             </LinearLayout>
             <LinearLayout
-                android:id="@+id/linearLayout_dialogAccountDetail_property"
                 android:layout_margin="@dimen/margin_10dp"
+                android:id="@+id/linearLayout_dialogAccountDetail_property"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
+                android:orientation="vertical">
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="@dimen/font_size_18sp"
-                    style="@style/Theme.Georgeois.Text"
-                    android:text="자산" />
-
-                <TextView
-                    android:layout_marginStart="@dimen/margin_10dp"
-                    android:id="@+id/textView_dialogAccountDetail_property"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="@dimen/font_size_16sp"
+                    android:fontFamily="@font/space"
                     style="@style/Theme.Georgeois.Text"
-                    android:gravity="right|center_vertical"
-                    android:text="현금or카드" />
+                    android:textSize="@dimen/font_size_18sp"
+                    android:text="자산" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_gravity="right">
+                    <com.google.android.material.chip.ChipGroup
+                        android:layout_gravity="right"
+                        android:id="@+id/chipGroup_dialogAccountDetail"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chip_dialogAccountDetail_cash"
+                            style="@style/Widget.MaterialComponents.Chip.Choice"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/space"
+                            android:text="현금"
+                            android:textSize="@dimen/font_size_16sp"
+                            android:checkable="true" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chip_dialogAccountDetail_cashCard"
+                            style="@style/Widget.MaterialComponents.Chip.Choice"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/space"
+                            android:text="체크카드"
+                            android:textSize="@dimen/font_size_16sp"
+                            android:checkable="true" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chip_dialogAccountDetail_creditCard"
+                            style="@style/Widget.MaterialComponents.Chip.Choice"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/space"
+                            android:text="신용카드"
+                            android:textSize="@dimen/font_size_16sp"
+                            android:checkable="true" />
+                    </com.google.android.material.chip.ChipGroup>
+                </LinearLayout>
+
+
             </LinearLayout>
             <LinearLayout
                 android:layout_margin="@dimen/margin_10dp"
@@ -124,28 +172,38 @@
                     android:text="예산에서 제외" />
             </LinearLayout>
             <LinearLayout
-                android:layout_margin="@dimen/margin_10dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="vertical">
 
                 <TextView
+                    android:layout_margin="@dimen/margin_10dp"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:textSize="@dimen/font_size_18sp"
                     style="@style/Theme.Georgeois.Text"
+                    android:gravity="center"
                     android:text="내용" />
-
-                <TextView
-                    android:layout_marginStart="@dimen/margin_10dp"
-                    android:id="@+id/textView_dialogAccountDetail_content"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/textInputLayout_dialogAccountDetail_content"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
                     android:textSize="@dimen/font_size_16sp"
                     style="@style/Theme.Georgeois.Text"
-                    android:gravity="right"
-                    android:text="붕어빵 10개 사먹는데 그럼 이건 메모가 아니라 내용인걸가?그럼 얼마만큼 유지해야하는거지 ?" />
+                    app:boxBackgroundMode="none">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/textInputEditText_dialogAccountDetail_content"
+                        style="@style/Theme.Georgeois.Text"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:maxLength="20"
+                        android:inputType="textMultiLine|textNoSuggestions"
+                        android:textSize="@dimen/font_size_16sp" />
+                </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
+
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"

@@ -1,6 +1,5 @@
 package com.example.georgeois.ui.home
 
-import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.content.res.Configuration
 import android.graphics.Color
@@ -12,7 +11,6 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -21,10 +19,9 @@ import com.example.georgeois.R
 import com.example.georgeois.databinding.FragmentHomeMainBinding
 import com.example.georgeois.databinding.RowHomeMainBinding
 import com.example.georgeois.dataclass.AccountBookClass
-import com.example.georgeois.dataclass.InAccountBookClass
-import com.example.georgeois.dataclass.OutAccountBookClass
 import com.example.georgeois.ui.main.MainActivity
 import com.example.georgeois.utill.DialogAccountDetail
+import com.example.georgeois.utill.DialogDismissListener
 import com.example.georgeois.utill.MoneyType
 import com.example.georgeois.viewModel.AccountBookViewModel
 import com.example.georgeois.viewModel.UserViewModel
@@ -33,9 +30,8 @@ import com.kizitonwose.calendar.core.DayPosition
 import com.kizitonwose.calendar.core.daysOfWeek
 import com.kizitonwose.calendar.view.MonthDayBinder
 import com.kizitonwose.calendar.view.ViewContainer
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import org.w3c.dom.Text
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.YearMonth
@@ -43,14 +39,17 @@ import java.time.format.TextStyle
 import java.util.Locale
 
 
-class HomeMainFragment : Fragment() {
+class HomeMainFragment : Fragment(), DialogDismissListener {
     private lateinit var fragmentHomeMainBinding: FragmentHomeMainBinding
     lateinit var mainActivity: MainActivity
     lateinit var userViewModel: UserViewModel
     lateinit var accountBookViewModel : AccountBookViewModel
     private val today = LocalDate.now()
     private var selectedDate = today
+
     var uIdx = 0
+    var inCategory = ""
+    var outCategory = ""
     val moneyType = MoneyType()
     val adapter = HomeMainAdapter()
     override fun onCreateView(
@@ -64,12 +63,16 @@ class HomeMainFragment : Fragment() {
 
         userViewModel.user.observe(viewLifecycleOwner) {
             uIdx = it!!.u_idx
+            inCategory = it!!.u_in_ctgy
+            outCategory = it!!.u_out_ctgy
             lifecycleScope.launch {
                 accountBookViewModel.fetchInData(uIdx)
                 accountBookViewModel.fetchOutData(uIdx)
                 accountBookViewModel.getAllAccountBookList(uIdx)
                 val month = fragmentHomeMainBinding.calendarViewHomeMain.findFirstVisibleMonth()?.yearMonth
                 accountBookViewModel.getMonthAccountBookList(uIdx, month.toString())
+                accountBookViewModel.getDayOfMonthAccountBookList(uIdx,month.toString())
+
             }
         }
         accountBookViewModel.allAccountBookList.observe(requireActivity()){ items->
@@ -87,7 +90,6 @@ class HomeMainFragment : Fragment() {
             var sumMoney = monthAccountBook.totalAmount.toString()
             sumMoney = moneyType.moneyText(sumMoney)
             fragmentHomeMainBinding.textViewHomeMainSumMoney.text = sumMoney
-
         }
 
         fragmentHomeMainBinding.run {
@@ -136,7 +138,8 @@ class HomeMainFragment : Fragment() {
             RecyclerView.ViewHolder(rowHomeMainBinding.root) {
             init {
                 rowHomeMainBinding.root.setOnClickListener {
-                    val dialogAccountDetail = DialogAccountDetail(requireContext(), layoutInflater)
+                    val dialogAccountDetail = DialogAccountDetail(requireContext(), layoutInflater,inCategory,outCategory)
+                    dialogAccountDetail.setOnDialogDismissListener(this@HomeMainFragment)
                     dialogAccountDetail.callFunction(datefilteredList[position])
                 }
             }
@@ -169,6 +172,7 @@ class HomeMainFragment : Fragment() {
                 itemDate == selectedDate
             }
         }
+
     }
 
     private fun setupMonthCalendar(
@@ -194,7 +198,7 @@ class HomeMainFragment : Fragment() {
         fragmentHomeMainBinding.calendarViewHomeMain.dayBinder = object : MonthDayBinder<DayViewContainer>{
             override fun bind(container: DayViewContainer, data: CalendarDay) {
                 container.day = data
-                bindDate(data.date,container.calendarDay,data.position == DayPosition.MonthDate)
+                bindDate(data.date,container.calendarDay,container.calendarDayIn,container.calendarDayOut,data.position == DayPosition.MonthDate)
             }
             override fun create(view: View) = DayViewContainer(view)
         }
@@ -204,47 +208,58 @@ class HomeMainFragment : Fragment() {
         fragmentHomeMainBinding.calendarViewHomeMain.setup(startMonth,endMonth,daysOfWeek.first())
         fragmentHomeMainBinding.calendarViewHomeMain.scrollToMonth(currentMonth)
     }
-    private fun bindDate(date: LocalDate, textView: TextView, isSelectable: Boolean) {
+    @SuppressLint("ResourceAsColor")
+    private fun bindDate(date: LocalDate, day: TextView, sumOfIn: TextView, sumOfOut: TextView, isSelectable: Boolean) {
         var dayOfWeek = date.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault()).take(2)
-        textView.text = date.dayOfMonth.toString()
+        day.text = date.dayOfMonth.toString()
 
-        if (isSelectable) {
+        accountBookViewModel.dayOfMonthAccountBook.observe(viewLifecycleOwner) { dayAccountBookList ->
+            var totalInAmount = 0
+            var totalOutAmount = 0
+
+            for (dayAccountBook in dayAccountBookList) {
+                if (dayAccountBook.day == date.toString()) {
+                    totalInAmount += dayAccountBook.inAmount
+                    totalOutAmount += dayAccountBook.outAmount
+                }
+            }
+            var moneyType = MoneyType()
+
+            // Rounding logic for inAmount
+            sumOfIn.text = if (totalInAmount > 0) moneyType.formatAmount(totalInAmount.toDouble()) else ""
+
+            // Rounding logic for outAmount
+            sumOfOut.text = if (totalOutAmount > 0) moneyType.formatAmount(totalOutAmount.toDouble()) else ""
+        }
+        if(isSelectable){
             when (selectedDate) {
                 date -> {
-                    textView.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorPrimary))
-                    dayOfWeek = when(dayOfWeek.take(2)){
-                        "Su" -> "일"
-                        "Mo" -> "월"
-                        "Tu" -> "화"
-                        "We" -> "수"
-                        "Th" -> "목"
-                        "Fr" -> "금"
-                        "Sa" -> "토"
-                        else -> "월"
-                    }
+                    day.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorPrimary))
                     fragmentHomeMainBinding.textViewHomeMainDate.text = "${date.dayOfMonth}일 ${dayOfWeek}요일"
                 }
                 else -> {
                     when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
                         Configuration.UI_MODE_NIGHT_YES -> {
-                            textView.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
+                            day.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
                         }
-
                         Configuration.UI_MODE_NIGHT_NO -> {
-                            textView.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
+                            day.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
                         }
-
                         Configuration.UI_MODE_NIGHT_UNDEFINED -> {
-                            textView.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
+                            day.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
                         }
                     }
-
                 }
             }
-        } else {
-            textView.setTextColor(Color.GRAY)
+        }else{
+            day.setTextColor(Color.GRAY)
         }
+
     }
+
+
+
+
     private fun dateClicked(date: LocalDate) {
         val currentSelection = selectedDate
         if (currentSelection == date) {
@@ -269,6 +284,7 @@ class HomeMainFragment : Fragment() {
         val month = fragmentHomeMainBinding.calendarViewHomeMain.findFirstVisibleMonth()?.yearMonth ?: return
         fragmentHomeMainBinding.materialToolbarHomeMain.title = "${month.year}년 ${month.month.value}월"
         accountBookViewModel.getMonthAccountBookList(uIdx,month.toString())
+        accountBookViewModel.getDayOfMonthAccountBookList(uIdx,month.toString())
     }
 
     override fun onResume() {
@@ -277,6 +293,26 @@ class HomeMainFragment : Fragment() {
         adapter.submitList(latestData)
         adapter.setSelectedDate(selectedDate)
     }
+
+
+    @SuppressLint("NotifyDataSetChanged")
+    override fun onDialogDismissed() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            adapter.notifyDataSetChanged()
+            accountBookViewModel.fetchOutData(uIdx)
+            accountBookViewModel.fetchInData(uIdx)
+            accountBookViewModel.getAllAccountBookList(uIdx)
+            val month = fragmentHomeMainBinding.calendarViewHomeMain.findFirstVisibleMonth()?.yearMonth
+            accountBookViewModel.getMonthAccountBookList(uIdx, month.toString())
+            accountBookViewModel.getDayOfMonthAccountBookList(uIdx,month.toString())
+            val latestData = accountBookViewModel.allAccountBookList.value ?: emptyList()
+            adapter.submitList(latestData)
+            adapter.setSelectedDate(selectedDate)
+        }
+    }
+
+
+
 
 
 }

@@ -61,5 +61,27 @@ class InAccountBookRepository {
             return result
         }
 
+        fun updateInAccountBook(inAccountBook: InAccountBookClass):Call<ResponseBody> {
+            val result = retrofit.updateInAccountBook(inAccountBook)
+            result.enqueue(object : Callback<ResponseBody> {
+                override fun onResponse(
+                    call: Call<ResponseBody>,
+                    response: Response<ResponseBody>
+                ) {
+                    if (response.isSuccessful) {
+                        Log.d("php update", "${response.body()?.string()}")
+                    } else {
+                        Log.e("php update", "에러남 ${response.code()}: ${response.message()}")
+                    }
+                }
+
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                    Log.d("php update", "실패")
+                }
+
+            })
+            return result
+        }
+
     }
 }

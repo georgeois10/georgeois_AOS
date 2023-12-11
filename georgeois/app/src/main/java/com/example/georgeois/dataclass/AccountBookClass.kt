@@ -28,6 +28,9 @@ data class OutAccountBookClass(
 data class AccountBookClass(
     var isInorOut : Char,
     var idx : Int,
+    var uIdx : Int,
+    var creUser: String,
+    var uNicknm: String,
     var amount: Int,
     val content: String,
     val category: String,
@@ -42,4 +45,8 @@ data class MonthAccountBookClass(
     var totalAmount:Int,
     var date: String
 )
-
+data class DayAccountBookClass(
+    var inAmount : Int,
+    var outAmount:Int,
+    var day : String
+)

@@ -41,106 +41,99 @@
                         android:orientation="horizontal"
                         tools:ignore="InvalidId,UselessParent">
 
-                        <com.google.android.material.card.MaterialCardView
+                        <LinearLayout
+                            android:background="@drawable/border_my_info_main"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:background="@drawable/border_my_info_main"
-                            android:backgroundTint="#00000000">
+                            android:orientation="horizontal"
+                            android:padding="@dimen/padding_size_15dp">
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:orientation="horizontal"
-                                android:padding="@dimen/padding_size_15dp">
-                                <LinearLayout
+                                android:layout_gravity="center"
+                                android:orientation="vertical"
+                                android:layout_weight="1">
+                                <TextView
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:layout_gravity="center"
-                                    android:orientation="vertical"
-                                    android:layout_weight="1">
-                                    <TextView
-                                        android:layout_width="match_parent"
-                                        android:layout_height="wrap_content"
-                                        android:textColor="@color/accentGreen"
-                                        android:fontFamily="@font/space"
-                                        android:textSize="@dimen/font_size_16sp"
-                                        android:gravity="center"
-                                        android:textStyle="bold"
-                                        android:text="수입" />
-                                    <TextView
-                                        android:id="@+id/textView_homeMain_inMoney"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="wrap_content"
-                                        android:textColor="@color/accentGreen"
-                                        android:fontFamily="@font/space"
-                                        android:gravity="center"
-                                        android:textSize="@dimen/font_size_16sp"
-                                        android:textStyle="bold"
-                                        android:text="100000">
-                                    </TextView>
-                                </LinearLayout>
-                                <LinearLayout
+                                    android:textColor="@color/accentGreen"
+                                    android:fontFamily="@font/space"
+                                    android:textSize="@dimen/font_size_16sp"
+                                    android:gravity="center"
+                                    android:textStyle="bold"
+                                    android:text="수입" />
+                                <TextView
+                                    android:id="@+id/textView_homeMain_inMoney"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:orientation="vertical"
-                                    android:layout_weight="1">
-                                    <TextView
-                                        android:layout_width="match_parent"
-                                        android:layout_height="wrap_content"
-                                        android:fontFamily="@font/space"
-                                        android:textColor="@color/accentRed"
-                                        android:gravity="center"
-                                        android:textSize="@dimen/font_size_16sp"
-                                        android:textStyle="bold"
-                                        android:text="지출" />
-                                    <TextView
-                                        android:id="@+id/textView_homeMain_outMoney"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="wrap_content"
-                                        android:fontFamily="@font/space"
-                                        android:textColor="@color/accentRed"
-                                        android:gravity="center"
-                                        android:textSize="@dimen/font_size_16sp"
-                                        android:textStyle="bold"
-                                        android:text="100000">
-                                    </TextView>
-                                </LinearLayout>
-                                <LinearLayout
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:orientation="vertical"
-                                    android:layout_gravity="center"
-                                    android:layout_weight="1">
-                                    <TextView
-                                        android:layout_width="match_parent"
-                                        android:layout_height="wrap_content"
-                                        android:fontFamily="@font/space"
-                                        android:gravity="center"
-                                        android:textSize="@dimen/font_size_16sp"
-                                        style="@style/Theme.Georgeois.Text"
-                                        android:textStyle="bold"
-                                        android:text="합계" />
-                                    <TextView
-                                        android:id="@+id/textView_homeMain_sumMoney"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="wrap_content"
-                                        android:fontFamily="@font/space"
-                                        android:gravity="center"
-                                        style="@style/Theme.Georgeois.Text"
-                                        android:textStyle="bold"
-                                        android:textSize="@dimen/font_size_16sp"
-                                        android:text="100000">
-                                    </TextView>
-                                </LinearLayout>
-                                <ImageView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:src="@drawable/ic_chevron_right_24px"
-                                    android:layout_gravity="center">
-                                </ImageView>
+                                    android:textColor="@color/accentGreen"
+                                    android:fontFamily="@font/space"
+                                    android:gravity="center"
+                                    android:textSize="@dimen/font_size_16sp"
+                                    android:textStyle="bold"
+                                    android:text="100000">
+                                </TextView>
                             </LinearLayout>
-
-
-                        </com.google.android.material.card.MaterialCardView>
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:layout_weight="1">
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/space"
+                                    android:textColor="@color/accentRed"
+                                    android:gravity="center"
+                                    android:textSize="@dimen/font_size_16sp"
+                                    android:textStyle="bold"
+                                    android:text="지출" />
+                                <TextView
+                                    android:id="@+id/textView_homeMain_outMoney"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/space"
+                                    android:textColor="@color/accentRed"
+                                    android:gravity="center"
+                                    android:textSize="@dimen/font_size_16sp"
+                                    android:textStyle="bold"
+                                    android:text="100000">
+                                </TextView>
+                            </LinearLayout>
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:layout_gravity="center"
+                                android:layout_weight="1">
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/space"
+                                    android:gravity="center"
+                                    android:textSize="@dimen/font_size_16sp"
+                                    style="@style/Theme.Georgeois.Text"
+                                    android:textStyle="bold"
+                                    android:text="합계" />
+                                <TextView
+                                    android:id="@+id/textView_homeMain_sumMoney"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/space"
+                                    android:gravity="center"
+                                    style="@style/Theme.Georgeois.Text"
+                                    android:textStyle="bold"
+                                    android:textSize="@dimen/font_size_16sp"
+                                    android:text="100000">
+                                </TextView>
+                            </LinearLayout>
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/ic_chevron_right_24px"
+                                android:layout_gravity="center">
+                            </ImageView>
+                        </LinearLayout>
 
 
                     </LinearLayout>
@@ -231,42 +224,30 @@
 
 
 
-                    <com.google.android.material.card.MaterialCardView
-                        android:layout_marginTop="@dimen/margin_12dp"
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginBottom="50dp"
-                        app:cardCornerRadius="5dp"
                         android:background="@drawable/border_my_info_main"
-                        android:backgroundTint="#00000000"
-                        app:cardPreventCornerOverlap="false"
-                        app:cardUseCompatPadding="true"
-                        app:contentPadding="0dp">
+                        android:layout_marginTop="@dimen/margin_10dp"
+                        android:orientation="vertical">
 
-                        <LinearLayout
+                        <TextView
+                            android:id="@+id/textView_homeMain_date"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="@dimen/margin_8dp"
+                            android:fontFamily="@font/space"
+                            android:text="17일 목요일"
+                            android:textSize="@dimen/font_size_18sp">
+
+                        </TextView>
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/recyclerView_homeMain"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:id="@+id/textView_homeMain_date"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_margin="@dimen/margin_8dp"
-                                android:fontFamily="@font/space"
-                                android:text="17일 목요일"
-                                android:textSize="@dimen/font_size_18sp">
-
-                            </TextView>
-
-                            <androidx.recyclerview.widget.RecyclerView
-                                android:id="@+id/recyclerView_homeMain"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:padding="5dp" />
-                        </LinearLayout>
-
-                    </com.google.android.material.card.MaterialCardView>
+                            android:layout_height="wrap_content"
+                            android:padding="5dp" />
+                    </LinearLayout>
 
 
                 </LinearLayout>

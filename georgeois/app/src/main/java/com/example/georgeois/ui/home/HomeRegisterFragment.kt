@@ -28,6 +28,7 @@ import com.example.georgeois.dataclass.OutAccountBookClass
 import com.example.georgeois.repository.InAccountBookRepository
 import com.example.georgeois.repository.OutAccountBookRepository
 import com.example.georgeois.ui.main.MainActivity
+import com.example.georgeois.utill.CategorySpinnerAdapter
 import com.example.georgeois.utill.MoneyTextWatcher
 import com.example.georgeois.viewModel.UserViewModel
 import com.google.android.material.chip.Chip
@@ -168,9 +169,7 @@ class HomeRegisterFragment : Fragment() {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     fun dateSetting() {
-
         fragmentHomeRegisterBinding.run {
             val currentDateTime = LocalDateTime.now()
             val currentDate = currentDateTime.format(DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH:mm"))
@@ -292,27 +291,7 @@ class HomeRegisterFragment : Fragment() {
 
 }
 
-// 카테고리 스피너 Adapter
-class CategorySpinnerAdapter(context: Context, @LayoutRes private val resId:Int, private val categoryList : List<String>):ArrayAdapter<String>(context,resId,categoryList){
-    // 드롭다운하지 않은 상태의 Spinner 항목 뷰
-    @SuppressLint("ViewHolder")
-    override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-        var itemSpinnerHomeRegisterBinding = ItemSpinnerHomeRegisterBinding.inflate(LayoutInflater.from(parent.context),parent,false)
-        itemSpinnerHomeRegisterBinding.textViewHomeRegisterSpinnerItem.text = categoryList[position]
-        return itemSpinnerHomeRegisterBinding.root
-    }
 
-    // 드롭다운된 항목들 리스트의 뷰
-    @SuppressLint("ViewHolder")
-    override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
-        var itemSpinnerHomeRegisterBinding = ItemSpinnerHomeRegisterBinding.inflate(LayoutInflater.from(parent.context),parent,false)
-        itemSpinnerHomeRegisterBinding.textViewHomeRegisterSpinnerItem.text = categoryList[position]
-        return itemSpinnerHomeRegisterBinding.root
-    }
-
-    override fun getCount() = categoryList.size
-
-}
 
 
 

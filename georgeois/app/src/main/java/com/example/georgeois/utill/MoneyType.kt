@@ -24,6 +24,23 @@ class MoneyType {
 
         return "$formattedAmount 원"
     }
+
+    fun formatAmount(amount: Double): String {
+        return when {
+            amount >= 1e8 -> {
+                val formattedValue = String.format("%.1f", amount / 1e8)
+                if (formattedValue.endsWith(".0")) "${formattedValue.substringBeforeLast('.')}억원" else "${formattedValue}억원"
+            }
+            amount >= 1e4 -> {
+                val formattedValue = String.format("%.1f", amount / 1e4)
+                if (formattedValue.endsWith(".0")) "${formattedValue.substringBeforeLast('.')}만원" else "${formattedValue}만원"
+            }
+            else -> "${amount.toInt()}원"
+        }
+    }
+
+
+
 }
 
 
