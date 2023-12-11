@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/linearLayout_calendarDay"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/textView_calendar_day"
+        style="@style/Theme.Georgeois.Text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_margin="@dimen/margin_4dp"
+        android:text="날짜"
+        android:textSize="@dimen/font_size_14sp" />
+
+    <TextView
+        android:id="@+id/textView_calendar_day_in"
+        style="@style/Theme.Georgeois.Text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_marginBottom="@dimen/margin_4dp"
+        android:textColor="@color/accentGreen"
+        android:textSize="@dimen/font_size_10sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/textView_calendar_day_out"
+        style="@style/Theme.Georgeois.Text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textColor="@color/accentRed"
+        android:textSize="@dimen/font_size_10sp"
+        android:layout_marginBottom="@dimen/margin_4dp"
+        android:textStyle="bold" />
+
+    <View
+        android:id="@+id/divider7"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="?android:attr/listDivider"
+        android:layout_marginBottom="@dimen/margin_4dp"/>
+
+
+</LinearLayout>

@@ -4,21 +4,42 @@ plugins {
     id("com.google.gms.google-services")
 }
 
+// local.properties 에서 저장된 값 불러오기
+def getLocalProperty(String propertyName) {
+    Properties properties = new Properties()
+    properties.load(project.rootProject.file('local.properties').newDataInputStream())
+    return properties.getProperty(propertyName)
+}
+
+//def kakao_native_key = getLocalProperty('kakao.native.key')
+
+
 android {
     namespace 'com.example.georgeois'
     compileSdk 34
 
     defaultConfig {
         applicationId "com.example.georgeois"
-        minSdk 24
+        minSdk 26
         targetSdk 34
         versionCode 1
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
     }
 
     buildTypes {
+        debug {
+            // 네이버 로그인 클라이어트 아이디, 비밀번호, 앱 이름
+            buildConfigField "String", "NAVER_CLIENT_ID", "\"${getLocalProperty('naver.client.id')}\""
+            buildConfigField "String", "NAVER_CLIENT_SECRET", "\"${getLocalProperty('naver.client.secret')}\""
+            buildConfigField "String", "NAVER_APP_NAME", "\"${getLocalProperty('naver.app.name')}\""
+            buildConfigField "String", "KAKAO_APP_KEY", "\"${getLocalProperty('kakao.app.key')}\""
+            buildConfigField "String", "KAKAO_NATIVE_KEY", "\"${getLocalProperty('kakao.native.key')}\""
+            manifestPlaceholders = [KAKAO_NATIVE_KEY: "\"kakao${getLocalProperty('kakao.native.key')}\""]
+
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
@@ -37,7 +58,11 @@ android {
     dataBinding{
         enabled = true
     }
+    buildFeatures {
+        buildConfig = true
+    }
 }
+
 dependencies {
 
     implementation 'androidx.core:core-ktx:1.12.0'
@@ -51,6 +76,8 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
     // 파이차트
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
+    // 캘린더 뷰
+    implementation 'com.kizitonwose.calendar:view:2.4.0'
     // 원형 이미지 뷰
     implementation 'de.hdodenhof:circleimageview:3.1.0'
     //파이어베이스 & 파이어스토어
@@ -64,4 +91,8 @@ dependencies {
     // 레트로핏2
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    // 네이버 로그인
+    implementation 'com.navercorp.nid:oauth-jdk8:5.9.0'
+    // 카카오 로그인
+    implementation "com.kakao.sdk:v2-user:2.18.0"
 }

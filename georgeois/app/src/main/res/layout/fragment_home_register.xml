@@ -90,6 +90,7 @@
 
                 </LinearLayout>
                 <LinearLayout
+                    android:id="@+id/linearLayout_homeRegister_property"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
@@ -231,6 +232,7 @@
                             android:layout_height="wrap_content"
                             android:inputType="textMultiLine"
                             android:fontFamily="@font/space"
+                            android:maxLength="20"
                             android:textSize="@dimen/font_size_16sp"/>
                     </com.google.android.material.textfield.TextInputLayout>
                 </LinearLayout>
