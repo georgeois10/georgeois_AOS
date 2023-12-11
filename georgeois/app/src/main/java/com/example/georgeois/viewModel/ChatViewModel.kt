@@ -157,23 +157,24 @@ class ChatViewModel : ViewModel() {
     fun getChatRoom(currentChatRoomId:String, userNickname: String){
         viewModelScope.launch {
             ChatRepository.getRoomInfo(currentChatRoomId) { exception, document ->
-                if (document != null) {
-                    chatUserList.postValue(document.get("chatUserList") as ArrayList<String>)
-                    chatRoomName.value = document.getString("chatRoomName")
-                    chatBirth.value = document.getString("chatBirth")
-                    chatBudget.value = document.getLong("chatBudget")!!.toInt()
-                    chatGender.value = document.getString("chatGender")
-                    chatOwnerNickname.value = document.getString("chatOwnerNickname")
-                    chatRoomId.value = document.id
-                    ChatRepository.getChatting(currentChatRoomId){ task, chatContentList ->
-                        if (task == null) {
-                            // chatContentList를 chatContent LiveData에 할당하여 UI에 업데이트
-                            chatContent.value = chatContentList
-                        }
-                        else {
-
+                try{
+                    if (document != null) {
+                        chatUserList.postValue(document.get("chatUserList") as ArrayList<String>)
+                        chatRoomName.value = document.getString("chatRoomName")
+                        chatBirth.value = document.getString("chatBirth")
+                        chatBudget.value = document.getLong("chatBudget")!!.toInt()
+                        chatGender.value = document.getString("chatGender")
+                        chatOwnerNickname.value = document.getString("chatOwnerNickname")
+                        chatRoomId.value = document.id
+                        ChatRepository.getChatting(currentChatRoomId){ task, chatContentList ->
+                            if (task == null) {
+                                // chatContentList를 chatContent LiveData에 할당하여 UI에 업데이트
+                                chatContent.value = chatContentList
+                            }
                         }
                     }
+                }catch (e:Exception){
+
                 }
             }
         }

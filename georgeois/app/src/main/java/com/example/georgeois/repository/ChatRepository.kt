@@ -396,23 +396,29 @@ class ChatRepository {
                                             if (it.exists()) {
                                                 val chatUserList =
                                                     it.get("chatUserList") as ArrayList<String>
-                                                val nextOwner = chatUserList[0]
-                                                val updates = hashMapOf<String, Any>(
-                                                    "chatOwnerNickname" to nextOwner
-                                                )
-                                                chatRoomRef.update(updates).addOnSuccessListener {
-                                                    chatRoomRef.collection("chattingContent")
-                                                        .add(
-                                                            mapOf(
-                                                                "chatContent" to "${nextOwner}님이 방장이 되었습니다.🙏",
-                                                                "chatTime" to currnetTime,
-                                                                "userNickname" to "Notification from the Admin"
-                                                            )
-                                                        )
-                                                        .addOnCompleteListener {
-
-                                                        }
+                                                if(chatUserList.size == 0){
+                                                    chatRoomRef.delete()
                                                 }
+                                                else{
+                                                    val nextOwner = chatUserList[0]
+                                                    val updates = hashMapOf<String, Any>(
+                                                        "chatOwnerNickname" to nextOwner
+                                                    )
+                                                    chatRoomRef.update(updates).addOnSuccessListener {
+                                                        chatRoomRef.collection("chattingContent")
+                                                            .add(
+                                                                mapOf(
+                                                                    "chatContent" to "${nextOwner}님이 방장이 되었습니다.🙏",
+                                                                    "chatTime" to currnetTime,
+                                                                    "userNickname" to "Notification from the Admin"
+                                                                )
+                                                            )
+                                                            .addOnCompleteListener {
+
+                                                            }
+                                                    }
+                                                }
+
                                             }
                                         }
                                     } else {
