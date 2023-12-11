@@ -20,7 +20,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.georgeois"
-        minSdk 24
+        minSdk 26
         targetSdk 34
         versionCode 1
         versionName "1.0"
@@ -76,6 +76,8 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
     // 파이차트
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
+    // 캘린더 뷰
+    implementation 'com.kizitonwose.calendar:view:2.4.0'
     // 원형 이미지 뷰
     implementation 'de.hdodenhof:circleimageview:3.1.0'
     //파이어베이스 & 파이어스토어

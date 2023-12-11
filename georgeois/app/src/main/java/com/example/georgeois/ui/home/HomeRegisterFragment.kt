@@ -1,87 +1,90 @@
 package com.example.georgeois.ui.home
 
-import android.Manifest
+import DateTimePicker
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.graphics.BitmapFactory
-import android.graphics.ImageDecoder
 import android.os.Build
 import android.os.Bundle
-import android.provider.MediaStore
-import android.text.Editable
-import android.text.TextWatcher
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.LayoutRes
 import androidx.annotation.RequiresApi
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.core.view.children
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.example.georgeois.R
 import com.example.georgeois.databinding.FragmentHomeRegisterBinding
 import com.example.georgeois.databinding.ItemSpinnerHomeRegisterBinding
+import com.example.georgeois.dataclass.InAccountBookClass
+import com.example.georgeois.dataclass.OutAccountBookClass
+import com.example.georgeois.repository.InAccountBookRepository
+import com.example.georgeois.repository.OutAccountBookRepository
 import com.example.georgeois.ui.main.MainActivity
+import com.example.georgeois.utill.CategorySpinnerAdapter
 import com.example.georgeois.utill.MoneyTextWatcher
+import com.example.georgeois.viewModel.UserViewModel
 import com.google.android.material.chip.Chip
-import com.google.android.material.datepicker.CalendarConstraints
-import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.textfield.TextInputLayout
-import java.text.NumberFormat
-import java.text.SimpleDateFormat
-import java.time.LocalDate
+import kotlinx.coroutines.launch
+import java.lang.Exception
+import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.util.Date
-import java.util.Locale
-
 
 class HomeRegisterFragment : Fragment() {
     lateinit var fragmentHomeRegisterBinding: FragmentHomeRegisterBinding
     lateinit var mainActivity: MainActivity
-    // 카테고리 list값 받아오기
-    var inCategoryList = listOf(
-        "수입 카테고리1",
-        "수입 카테고리2",
-        "수입 카테고리3",
-        "수입 카테고리4",
-        "수입 카테고리5",
-        "수입 카테고리6",
-        "수입 카테고리7",
-        "수입 카테고리8",
-        "수입 카테고리9",
-        "수입 카테고리10"
-    )
-    val outCategoryList = listOf(
-        "운동",
-        "책",
-        "지출 카테고리3",
-        "지출 카테고리4",
-        "지출 카테고리5",
-        "지출 카테고리6",
-        "지출 카테고리7",
-        "지출 카테고리8",
-        "지출 카테고리9",
-        "지출 카테고리10",
-    )
+    lateinit var inCategoryList :List<String>
+    lateinit var outCategoryList :List<String>
+    lateinit var userViewModel: UserViewModel
     lateinit var albumLauncher: ActivityResultLauncher<Intent>
-    @RequiresApi(Build.VERSION_CODES.O)
+    lateinit var moneyTextWatcher : MoneyTextWatcher
+
+    // 유저정보
+    var uIdx = 0
+    var uId = ""
+    var uNicknm = ""
+    var uCategory = ""
+    var uAmount = 0
+    var uContent = ""
+    var uDate = ""
+    var uProperty = 'H'
+    var uBudregiYn = 0
+    var inCategory = ""
+    var outCategory = ""
+    var isCategory = ""
+
     @SuppressLint("ResourceAsColor")
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         fragmentHomeRegisterBinding = FragmentHomeRegisterBinding.inflate(inflater)
         mainActivity = activity as MainActivity
+
+        // 로그인한 유저 정보 가져오기
+        userViewModel = ViewModelProvider(mainActivity)[UserViewModel::class.java]
+        userViewModel.run {
+            user.observe(requireActivity()){
+                uIdx = it!!.u_idx
+                uId = it!!.u_id
+                uNicknm = it!!.u_nickNm
+                inCategory = it!!.u_in_ctgy
+                outCategory = it!!.u_out_ctgy
+            }
+        }
+        // 카테고리 List로
+        inCategoryList = inCategory.split(",")
+        outCategoryList = outCategory.split(",")
+
         fragmentHomeRegisterBinding.run {
             // 초기 수입으로 설정
             inCategory()
@@ -95,7 +98,11 @@ class HomeRegisterFragment : Fragment() {
                 inflateMenu(R.menu.menu_save)
                 setOnMenuItemClickListener{
                     when(it.itemId){
-                        R.id.save_menu->save()
+                        R.id.save_menu->  {
+                            viewLifecycleOwner.lifecycleScope.launch {
+                                save()
+                            }
+                        }
                     }
                     true
                 }
@@ -111,14 +118,14 @@ class HomeRegisterFragment : Fragment() {
                 buttonHomeRegisterOut.setBackgroundColor(resources.getColor(R.color.accentRed))
                 buttonHomeRegisterIn.setBackgroundColor(resources.getColor(R.color.accentGray))
                 outCategory()
+                // 자산 설정
+                propertySetting()
             }
 
             // 날짜 설정
             dateSetting()
-            // 자산 설정
-            assetSetting()
-
-            textInputLayoutHomeRegisterMoney.editText?.addTextChangedListener(MoneyTextWatcher(textInputEditTextHomeRegisterMoney))
+            moneyTextWatcher = MoneyTextWatcher(textInputEditTextHomeRegisterMoney)
+            textInputLayoutHomeRegisterMoney.editText?.addTextChangedListener(moneyTextWatcher)
 
 
 
@@ -129,14 +136,15 @@ class HomeRegisterFragment : Fragment() {
     // 수입일때 카테고리
     fun inCategory(){
         fragmentHomeRegisterBinding.run {
-
+            linearLayoutHomeRegisterProperty.visibility = View.GONE
             spinnerHomeRegister.adapter = CategorySpinnerAdapter(requireContext(),R.layout.item_spinner_home_register,inCategoryList)
             spinnerHomeRegister.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-                    val value = spinnerHomeRegister.getItemAtPosition(p2).toString()
+                    uCategory = spinnerHomeRegister.getItemAtPosition(p2).toString()
+                    isCategory = "in"
                 }
                 override fun onNothingSelected(p0: AdapterView<*>?) {
-                    // 선택되지 않은 경우
+                    isCategory = "out"
                 }
             }
         }
@@ -145,108 +153,145 @@ class HomeRegisterFragment : Fragment() {
     // 지출일때 카테고리
     fun outCategory() {
         fragmentHomeRegisterBinding.run {
-
+            linearLayoutHomeRegisterProperty.visibility = View.VISIBLE
             spinnerHomeRegister.adapter = CategorySpinnerAdapter(requireContext(),R.layout.item_spinner_home_register,outCategoryList)
             spinnerHomeRegister.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-                    val value = spinnerHomeRegister.getItemAtPosition(p2).toString()
+                    uCategory = spinnerHomeRegister.getItemAtPosition(p2).toString()
+                    isCategory = "out"
                 }
                 override fun onNothingSelected(p0: AdapterView<*>?) {
-                    // 선택되지 않은 경우
+                    isCategory = "in"
+
                 }
             }
 
         }
     }
 
-    // 날짜설정
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun dateSetting(){
-
+    fun dateSetting() {
         fragmentHomeRegisterBinding.run {
-            // 오늘 날짜
-            val currentDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy년 MM월 dd일"))
+            val currentDateTime = LocalDateTime.now()
+            val currentDate = currentDateTime.format(DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH:mm"))
+            uDate = currentDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:00.000"))
+            val dateTimePicker = DateTimePicker(requireContext())
             textViewHomeRegisterDate.text = currentDate
 
-            // 날짜 클릭시 날짜 변경 다이얼로그 후 변경
-            val todayInUtcMillis = MaterialDatePicker.todayInUtcMilliseconds()
             textViewHomeRegisterDate.setOnClickListener {
-                val materialDatePicker = MaterialDatePicker.Builder.datePicker()
-                    .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
-                    .setInputMode(MaterialDatePicker.INPUT_MODE_CALENDAR)
-                    .setCalendarConstraints(CalendarConstraints.Builder().setEnd(todayInUtcMillis).build())
-                    .build()
-                materialDatePicker.addOnPositiveButtonClickListener { selection ->
-                    // 선택한 날짜를 처리
-                    val selectedDate = SimpleDateFormat("yyyy년 MM월 dd일", Locale.getDefault()).format(Date(selection))
-                    textViewHomeRegisterDate.text = selectedDate
-                }
-                materialDatePicker.show(mainActivity.supportFragmentManager, "DATE_PICKER_TAG")
+                dateTimePicker.setDateTimeListener(object : DateTimePicker.DateTimeListener {
+                    override fun onDateTimeSelected(dateTime: String) {
+                        textViewHomeRegisterDate.text = dateTime
+                        uDate = dateTimePicker.updateDate(dateTime)
+                    }
+                })
+                dateTimePicker.showDateTimePicker()
             }
         }
     }
 
+
     // 자산 설정
-    fun assetSetting(){
+    fun propertySetting(){
         fragmentHomeRegisterBinding.run {
             // 자산 하나만 선택
             val chips = fragmentHomeRegisterBinding.chipGroupHomeRegister.children.toList()
             var previousCheckedChip:Chip? = chipHomeRegisterCash
             for (chip in chips) {
                 if (chip is Chip) {
-                    chip.setOnCheckedChangeListener { buttonView, isChecked ->
+                    chip.setOnCheckedChangeListener { _, isChecked ->
                         if (isChecked) {
                             previousCheckedChip?.isChecked = false
                             previousCheckedChip = chip
+                            uProperty = when(chip.text.toString()){
+                                "현금"-> 'H'
+                                "체크카드" -> 'C'
+                                "신용카드" -> 'S'
+                                else -> 'H'
+                            }
                         }
                         else{
-                            previousCheckedChip = null
+                            if (chips.none { it is Chip && it.isChecked }) {
+                                chip.isChecked = true
+                            }
                         }
                     }
                 }
             }
-            // 하나도 선택되지 않았을때
-            // if(checkedChipId == View.NO_ID)
-            // if(previousCheckedChip==null) {
-            // Toast.makeText(requireContext(), "최소 하나의 항목을 선택하세요", Toast.LENGTH_SHORT).show()
-            //  }
         }
     }
 
 
 
-    // 입력된 거 저장
-    fun save(){
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun save() {
         fragmentHomeRegisterBinding.run {
-            mainActivity.removeFragment(MainActivity.HOME_REGISTER_FRAGMENT)
-            Snackbar.make(fragmentHomeRegisterBinding.root, "저장되었습니다.", Snackbar.LENGTH_SHORT).show()
+            val amountText = textInputEditTextHomeRegisterMoney.text?.toString()
+            val contentText = textInputEditTextHomeRegisterContent.text?.toString()
+
+            if (!amountText.isNullOrBlank() && !contentText.isNullOrBlank()) {
+                val formattedText = moneyTextWatcher.formattedText.replace(",", "")
+                uAmount = formattedText.toInt()
+                uContent = contentText
+                uBudregiYn = if(checkBoxHomeRegisterNoBudget.isChecked) 1 else{0}
+                try {
+                    when (isCategory) {
+                        "in" -> {
+                            val insertAccountBook = InAccountBookClass(
+                                null,
+                                uIdx,
+                                uId,
+                                uNicknm,
+                                uAmount,
+                                uContent,
+                                uCategory,
+                                uDate,
+                                "none",
+                                uBudregiYn
+                            )
+                            InAccountBookRepository.insertInAccountBook(insertAccountBook)
+                        }
+                        "out" -> {
+
+                            val outAccountBookClass = OutAccountBookClass(
+                                null,
+                                uIdx,
+                                uId,
+                                uNicknm,
+                                uAmount,
+                                uContent,
+                                uCategory,
+                                uDate,
+                                "none",
+                                uBudregiYn,
+                                uProperty
+                            )
+                            OutAccountBookRepository.insertOutAccountBook(outAccountBookClass)
+                        }
+                    }
+
+                    mainActivity.removeFragment(MainActivity.HOME_REGISTER_FRAGMENT)
+                    Snackbar.make(requireView(), "저장했습니다.", Snackbar.LENGTH_SHORT).show()
+                } catch (e: Exception) {
+                    Log.e("php", "데이터 저장 오류: ${e.message}")
+                    Snackbar.make(requireView(), "저장에 실패했습니다.", Snackbar.LENGTH_SHORT).show()
+                }
+            } else {
+                // amount 또는 content가 빈 경우
+                var toastText = if(amountText.isNullOrBlank()){
+                    "금액"
+                }else{
+                    "내용"
+                }
+                Toast.makeText(requireContext(), "${toastText}을 입력하세요.", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
 
-}
-
-// 카테고리 스피너 Adapter
-class CategorySpinnerAdapter(context: Context, @LayoutRes private val resId:Int, private val categoryList : List<String>):ArrayAdapter<String>(context,resId,categoryList){
-    // 드롭다운하지 않은 상태의 Spinner 항목 뷰
-    @SuppressLint("ViewHolder")
-    override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-        var itemSpinnerHomeRegisterBinding = ItemSpinnerHomeRegisterBinding.inflate(LayoutInflater.from(parent.context),parent,false)
-        itemSpinnerHomeRegisterBinding.textViewHomeRegisterSpinnerItem.text = categoryList[position]
-        return itemSpinnerHomeRegisterBinding.root
-    }
-
-    // 드롭다운된 항목들 리스트의 뷰
-    @SuppressLint("ViewHolder")
-    override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
-        var itemSpinnerHomeRegisterBinding = ItemSpinnerHomeRegisterBinding.inflate(LayoutInflater.from(parent.context),parent,false)
-        itemSpinnerHomeRegisterBinding.textViewHomeRegisterSpinnerItem.text = categoryList[position]
-        return itemSpinnerHomeRegisterBinding.root
-    }
-
-    override fun getCount() = categoryList.size
 
 }
+
+
 
 
 
