@@ -51,7 +51,7 @@ class ChatRoomFragment : Fragment() {
     var currnetChatRoomId = ""
     var chatRoomOwner = ""
     var userNickname = ""
-    private var isUserBeingRemoved = false
+    var mySelf = false
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
@@ -84,9 +84,18 @@ class ChatRoomFragment : Fragment() {
                     fragmentChatRoomBinding.recyclerViewChatRoomUserList.adapter?.notifyDataSetChanged()
                 }
                 else{
-                    Toast.makeText(mainActivity, "채팅방에서 추방되었습니다.", Toast.LENGTH_SHORT).show()
-                    mainActivity.removeFragment(MainActivity.CHAT_ROOM_FRAGMENT)
-
+//                    Toast.makeText(mainActivity, "채팅방이 존재하지 않거나 채팅방에서 추방되었습니다.", Toast.LENGTH_SHORT).show()
+                    if(!mySelf){
+                        val builder =
+                            MaterialAlertDialogBuilder(mainActivity, R.style.DialogTheme).apply {
+                                val customTitle = setCustomTitle("채팅방 접근 불가")
+                                setCustomTitle(customTitle)
+                                setMessage("채팅방이 존재하지 않거나 채팅방에서 추방되었습니다.")
+                                setNegativeButton("닫기", null)
+                            }
+                        builder.show()
+                        mainActivity.removeFragment(MainActivity.CHAT_ROOM_FRAGMENT)
+                    }
                 }
             }
             chatContent.observe(mainActivity){
@@ -304,9 +313,12 @@ class ChatRoomFragment : Fragment() {
                                 setMessage("현재 채팅방에서 나가시겠습니까?")
                                 setNegativeButton("취소",null)
                                 setPositiveButton("나가기") { dialogInterface: DialogInterface, i: Int ->
+                                    mySelf = true
                                     chatViewModel.exitMember(userList[adapterPosition], currnetChatRoomId, true,true)
-                                    chatViewModel.getMyChatRoomList(userNickname)
-                                    mainActivity.removeFragment(MainActivity.CHAT_ROOM_FRAGMENT)
+                                    chatViewModel.getMyChatRoomList(userNickname){
+                                        if(it)
+                                            mainActivity.removeFragment(MainActivity.CHAT_ROOM_FRAGMENT)
+                                    }
                                 }
                             }
                             builder.show()
@@ -319,7 +331,7 @@ class ChatRoomFragment : Fragment() {
                                 setNegativeButton("취소",null)
                                 setPositiveButton("추방") { dialogInterface: DialogInterface, i: Int ->
                                     chatViewModel.exitMember(userList[adapterPosition], currnetChatRoomId, false,false)
-                                    chatViewModel.getMyChatRoomList(userNickname)
+                                    chatViewModel.getMyChatRoomList(userNickname){}
                                 }
                             }
                             builder.show()
@@ -332,9 +344,13 @@ class ChatRoomFragment : Fragment() {
                             setMessage("현재 채팅방에서 나가시겠습니까?")
                             setNegativeButton("취소",null)
                             setPositiveButton("나가기") { dialogInterface: DialogInterface, i: Int ->
+                                mySelf = true
                                 chatViewModel.exitMember(userList[adapterPosition], currnetChatRoomId, true, false)
-                                chatViewModel.getMyChatRoomList(userNickname)
-                                mainActivity.removeFragment(MainActivity.CHAT_ROOM_FRAGMENT)
+                                chatViewModel.getMyChatRoomList(userNickname){
+                                    if(it)
+                                        mainActivity.removeFragment(MainActivity.CHAT_ROOM_FRAGMENT)
+                                }
+
                             }
                         }
                         builder.show()

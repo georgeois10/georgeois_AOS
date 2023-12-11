@@ -1,5 +1,7 @@
 package com.example.georgeois.dataclass
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import java.util.ArrayList
 
 data class ChatingContent(
@@ -19,8 +21,8 @@ data class ChatRoomInfo(
 
 data class ChatList(
     val chatRoomName: String,
-    val chatLastChatting: String,
-    val chatRoomId: String
+    var chatLastChatting: String,
+    var chatRoomId: String
 )
 
 data class ChatRoomInfoSearch(
@@ -29,5 +31,10 @@ data class ChatRoomInfoSearch(
     var chatRoomBudget : Int,
     var chatRoomCount : Int,
     var chatRoomGender : String,
+    var chatRoomId : String
+)
+
+data class LastChatting(
+    var chatLastContent : String,
     var chatRoomId : String
 )

@@ -9,15 +9,10 @@ import androidx.lifecycle.viewModelScope
 import com.example.georgeois.dataclass.ChatList
 import com.example.georgeois.dataclass.ChatRoomInfoSearch
 import com.example.georgeois.dataclass.ChatingContent
+import com.example.georgeois.dataclass.LastChatting
 import com.example.georgeois.repository.ChatRepository
-import kotlinx.coroutines.currentCoroutineContext
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
+import javax.security.auth.callback.Callback
 
 
 class ChatViewModel : ViewModel() {
@@ -44,12 +39,12 @@ class ChatViewModel : ViewModel() {
     //검색 채팅방 정보
     var chatRoomInfoSearch = MutableLiveData<ChatRoomInfoSearch>()
     //마지막 채팅
-    var lastChatting = MutableLiveData<String>()
+    var lastChatting = MutableLiveData<MutableList<LastChatting>>()
 
 
     //내가 참여한 채팅방
     @RequiresApi(Build.VERSION_CODES.O)
-    fun getMyChatRoomList(userNickname: String) {
+    fun getMyChatRoomList(userNickname: String,callback: (Boolean) -> Unit) {
         viewModelScope.launch {
             val roomIdList = mutableListOf<String>()
             val roomNameList = mutableListOf<String>()
@@ -73,12 +68,39 @@ class ChatViewModel : ViewModel() {
                     }
 
                 chatRoomList.value = (tempChatRoomList)
+                callback(true)
 
             } catch (e: Exception) {
                 // 오류 처리
                 Log.e("Error", "Error fetching chat room list: ${e.message}")
             }
 
+        }
+    }
+
+    var checkRefreshLastChat = false
+    fun getLastChattingObserve(){
+        viewModelScope.launch {
+            val chatRoomLastChat = mutableListOf<LastChatting>()
+            for(chat in chatRoomList.value!!){
+                ChatRepository.getLastChattingObserve(chat.chatRoomId){ lastChat, id ->
+                    Log.d("aaaa","VM roomId = $id")
+                    Log.d("aaaa","VM lastChat = $lastChat")
+                    chatRoomLastChat.add(LastChatting(lastChat,id))
+                    // 모든 getLastChattingObserve 콜백이 완료되었을 때 마지막에 실행
+                    if (chatRoomLastChat.size == chatRoomList.value!!.size || checkRefreshLastChat) {
+                        checkRefreshLastChat = true
+
+                        lastChatting.value = chatRoomLastChat
+                        for(last in lastChatting.value!!){
+                            Log.d("aaaa","lastChatting roomId = ${last.chatRoomId}")
+                            Log.d("aaaa","lastChatting lastChatContent = ${last.chatLastContent}")
+                        }
+                        chatRoomLastChat.clear()
+                        lastChatting.value?.clear()
+                    }
+                }
+            }
         }
     }
 
@@ -135,23 +157,24 @@ class ChatViewModel : ViewModel() {
     fun getChatRoom(currentChatRoomId:String, userNickname: String){
         viewModelScope.launch {
             ChatRepository.getRoomInfo(currentChatRoomId) { exception, document ->
-                if (document != null) {
-                    chatUserList.postValue(document.get("chatUserList") as ArrayList<String>)
-                    chatRoomName.value = document.getString("chatRoomName")
-                    chatBirth.value = document.getString("chatBirth")
-                    chatBudget.value = document.getLong("chatBudget")!!.toInt()
-                    chatGender.value = document.getString("chatGender")
-                    chatOwnerNickname.value = document.getString("chatOwnerNickname")
-                    chatRoomId.value = document.id
-                    ChatRepository.getChatting(currentChatRoomId){ task, chatContentList ->
-                        if (task == null) {
-                            // chatContentList를 chatContent LiveData에 할당하여 UI에 업데이트
-                            chatContent.value = chatContentList
-                        }
-                        else {
-
+                try{
+                    if (document != null) {
+                        chatUserList.postValue(document.get("chatUserList") as ArrayList<String>)
+                        chatRoomName.value = document.getString("chatRoomName")
+                        chatBirth.value = document.getString("chatBirth")
+                        chatBudget.value = document.getLong("chatBudget")!!.toInt()
+                        chatGender.value = document.getString("chatGender")
+                        chatOwnerNickname.value = document.getString("chatOwnerNickname")
+                        chatRoomId.value = document.id
+                        ChatRepository.getChatting(currentChatRoomId){ task, chatContentList ->
+                            if (task == null) {
+                                // chatContentList를 chatContent LiveData에 할당하여 UI에 업데이트
+                                chatContent.value = chatContentList
+                            }
                         }
                     }
+                }catch (e:Exception){
+
                 }
             }
         }
@@ -200,6 +223,7 @@ class ChatViewModel : ViewModel() {
             ChatRepository.exitMember(userNickname,roomId,isSelf,isOwner)
         }
     }
+
 
     //채팅 새로고침
     @RequiresApi(Build.VERSION_CODES.O)
