@@ -27,13 +27,43 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:minHeight="?attr/actionBarSize"
-                    android:theme="@style/Theme.Georgeois.Toolbar" />
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:theme="@style/Theme.Georgeois.Toolbar">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <ImageView
+                            android:id="@+id/imageView_homeMain_beforeMonth"
+                            android:layout_width="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/ic_chevron_left_24px"
+                            android:layout_marginRight="@dimen/margin_10dp"/>
+                        <TextView
+                            android:id="@+id/textview_homeMain_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            style="@style/Theme.Georgeois.Text"
+                            android:textSize="@dimen/font_size_20sp"
+                            android:text="year" />
+                        <ImageView
+                            android:id="@+id/imageView_homeMain_afterMonth"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:src="@drawable/ic_chevron_right_24px"
+                            android:layout_marginLeft="@dimen/margin_10dp"/>
+                    </LinearLayout>
+                </com.google.android.material.appbar.MaterialToolbar>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:padding="@dimen/padding_size_15dp">
+
                     <LinearLayout
                         android:id="@+id/linearLayout_homeMain_analysis"
                         android:layout_width="match_parent"
@@ -229,6 +259,7 @@
                         android:layout_height="match_parent"
                         android:background="@drawable/border_my_info_main"
                         android:layout_marginTop="@dimen/margin_10dp"
+                        android:layout_marginBottom="50dp"
                         android:orientation="vertical">
 
                         <TextView

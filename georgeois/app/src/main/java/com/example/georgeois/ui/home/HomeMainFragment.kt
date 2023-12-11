@@ -1,13 +1,15 @@
 package com.example.georgeois.ui.home
-
 import android.annotation.SuppressLint
+import android.app.DatePickerDialog
 import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.DatePicker
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -21,6 +23,7 @@ import com.example.georgeois.databinding.RowHomeMainBinding
 import com.example.georgeois.dataclass.AccountBookClass
 import com.example.georgeois.ui.main.MainActivity
 import com.example.georgeois.utill.DialogAccountDetail
+import com.example.georgeois.utill.DialogClickYearMonth
 import com.example.georgeois.utill.DialogDismissListener
 import com.example.georgeois.utill.MoneyType
 import com.example.georgeois.viewModel.AccountBookViewModel
@@ -31,11 +34,11 @@ import com.kizitonwose.calendar.core.daysOfWeek
 import com.kizitonwose.calendar.view.MonthDayBinder
 import com.kizitonwose.calendar.view.ViewContainer
 import kotlinx.coroutines.launch
-import org.w3c.dom.Text
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.TextStyle
+import java.util.Calendar
 import java.util.Locale
 
 
@@ -97,6 +100,32 @@ class HomeMainFragment : Fragment(), DialogDismissListener {
             recyclerViewHomeMain.layoutManager = LinearLayoutManager(requireContext())
             recyclerViewHomeMain.adapter = adapter
 
+            imageViewHomeMainAfterMonth.setOnClickListener {
+                val currentMonth = fragmentHomeMainBinding.calendarViewHomeMain.findFirstVisibleMonth()?.yearMonth ?: return@setOnClickListener
+                val nextMonth = currentMonth.plusMonths(1)
+                fragmentHomeMainBinding.calendarViewHomeMain.smoothScrollToMonth(nextMonth)
+                fragmentHomeMainBinding.textviewHomeMainTitle.text = "${nextMonth.year}년 ${nextMonth.month.value}월"
+            }
+            imageViewHomeMainBeforeMonth.setOnClickListener {
+                val currentMonth = fragmentHomeMainBinding.calendarViewHomeMain.findFirstVisibleMonth()?.yearMonth ?: return@setOnClickListener
+                val nextMonth = currentMonth.minusMonths(1)
+                fragmentHomeMainBinding.calendarViewHomeMain.smoothScrollToMonth(nextMonth)
+                fragmentHomeMainBinding.textviewHomeMainTitle.text = "${nextMonth.year}년 ${nextMonth.month.value}월"
+            }
+            fragmentHomeMainBinding.textviewHomeMainTitle.setOnClickListener {
+                val month = fragmentHomeMainBinding.calendarViewHomeMain.findFirstVisibleMonth()?.yearMonth
+                val dialogClickYearMonth = DialogClickYearMonth(requireContext())
+                if (month != null) {
+                    dialogClickYearMonth.setYearMonthListener(object :DialogClickYearMonth.YearMonthListner{
+                        override fun onYearMonthSelected(year: String, month: String) {
+                            fragmentHomeMainBinding.textviewHomeMainTitle.text = "${year}년 ${month}월"
+                            calendarViewHomeMain.scrollToMonth(YearMonth.of(year.toInt(), month.toInt()))
+                        }
+                    })
+                    dialogClickYearMonth.callFunction(month.year,month.monthValue,layoutInflater)
+                }
+            }
+
             // 분석
             linearLayoutHomeMainAnalysis.setOnClickListener {
                 mainActivity.replaceFragment(MainActivity.HOME_ANALYSIS_FRAGMENT,true,null)
@@ -156,10 +185,22 @@ class HomeMainFragment : Fragment(), DialogDismissListener {
             return boardMainViewHolder
         }
 
+        @SuppressLint("ResourceAsColor")
         override fun onBindViewHolder(holder: HomeMainViewHolder, position: Int) {
             holder.rowHomeMainBinding.textViewHomeMainContent.text = datefilteredList[position].content
-            var amount = datefilteredList[position].amount
-            holder.rowHomeMainBinding.textViewHomeMainAmount.text = moneyType.moneyText(amount.toString())
+            var amount = datefilteredList[position].amount.toString()
+            amount = moneyType.moneyText("$amount")
+            when (datefilteredList[position].property) {
+                null -> {
+                    holder.rowHomeMainBinding.textViewHomeMainAmount.setTextColor(ContextCompat.getColor(requireContext(), R.color.accentGreen))
+                    holder.rowHomeMainBinding.textViewHomeMainAmount.text = "+ $amount"
+                }
+                else -> {
+                    holder.rowHomeMainBinding.textViewHomeMainAmount.setTextColor(ContextCompat.getColor(requireContext(), R.color.accentRed))
+                    holder.rowHomeMainBinding.textViewHomeMainAmount.text = "- $amount"
+                }
+            }
+
             holder.rowHomeMainBinding.textViewHomeMainCategory.text = datefilteredList[position].category
         }
 
@@ -281,11 +322,14 @@ class HomeMainFragment : Fragment(), DialogDismissListener {
 
 
     private fun updateTitle() {
+        var uDate = ""
         val month = fragmentHomeMainBinding.calendarViewHomeMain.findFirstVisibleMonth()?.yearMonth ?: return
-        fragmentHomeMainBinding.materialToolbarHomeMain.title = "${month.year}년 ${month.month.value}월"
-        accountBookViewModel.getMonthAccountBookList(uIdx,month.toString())
-        accountBookViewModel.getDayOfMonthAccountBookList(uIdx,month.toString())
+        fragmentHomeMainBinding.textviewHomeMainTitle.text = "${month.year}년 ${month.month.value}월"
+        accountBookViewModel.getMonthAccountBookList(uIdx, month.toString())
+        accountBookViewModel.getDayOfMonthAccountBookList(uIdx, month.toString())
     }
+
+
 
     override fun onResume() {
         super.onResume()

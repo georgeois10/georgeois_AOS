@@ -98,4 +98,8 @@
 
     </style>
 
+    <style name="Theme.Georgeois.NumberPicker" >
+        <item name="colorControlNormal">@color/colorPrimary</item>
+    </style>
+
 </resources>
