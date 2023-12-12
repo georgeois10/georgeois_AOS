@@ -35,8 +35,17 @@ interface UserApiService {
     @POST("saveProfileImage.php")
     fun saveProfile(@Part("id") id: RequestBody, @Part profile: MultipartBody.Part) : Call<ResponseBody>
 
-    @GET("findIdByPhoneNumber.php")
-    fun findIdByPhoneNumber(@Query("pnumber") pnumber: String) : Call<FindUserResponse>
+    @FormUrlEncoded
+    @POST("findIdByPhoneNumber.php")
+    fun findIdByPhoneNumber(@Field("pnumber") pnumber: String) : Call<FindUserResponse>
+
+    @FormUrlEncoded
+    @POST("findByIdAndPhoneNumber.php")
+    fun findByIdAndPhoneNumber(@Field("id") id: String, @Field("pnumber") pnumber: String) : Call<FindUserResponse>
+
+    @FormUrlEncoded
+    @POST("resetPassword.php")
+    fun resetPassword(@Field("idx") idx: Int,@Field("nicknm") nickname: String, @Field("pw") password: String) : Call<ResponseBody>
 
 
 }

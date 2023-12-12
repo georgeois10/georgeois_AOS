@@ -152,8 +152,6 @@ class LoginFindIdFragment : Fragment() {
      * 등록된 아이디들 불러와 RecyclerView에 넣어줌
      */
     private fun showUserIds(idList: List<FindId>) {
-        // TODO : 휴대폰 번호를 가지고 등록된 id 가져오는 기능 구현
-
         val loginFindIdAdapter = LoginFindIdAdapter()
         loginFindIdBinding.recyclerViewLoginFindIdIdList.apply {
             layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)

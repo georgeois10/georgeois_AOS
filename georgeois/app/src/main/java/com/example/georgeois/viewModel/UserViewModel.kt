@@ -6,13 +6,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.georgeois.BuildConfig
-import com.example.georgeois.dataclass.JoinUser
 import com.example.georgeois.resource.FieldState
 import com.example.georgeois.dataclass.User
 import com.example.georgeois.repository.UserRepository
 import com.example.georgeois.resource.FindUserResponse
 import com.example.georgeois.resource.SocialLoginType
 import com.example.georgeois.ui.main.MainActivity
+import com.example.georgeois.utill.CheckValidation
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.KakaoSdk
 import com.kakao.sdk.common.model.ClientError
@@ -52,7 +52,14 @@ class UserViewModel : ViewModel() {
     private val _findIdList = MutableLiveData<FieldState<List<Map<String, String>>>>()
     val findIdList: LiveData<FieldState<List<Map<String, String>>>> = _findIdList
 
+    private val _pwFieldState = MutableLiveData<FieldState<String>>()
+    val pwFieldState: LiveData<FieldState<String>> = _pwFieldState
 
+    private val _confirmPwFieldState = MutableLiveData<FieldState<String>>()
+    val confirmPwFieldState: LiveData<FieldState<String>> = _confirmPwFieldState
+
+    private val _resetPwState = MutableLiveData<FieldState<Boolean>>()
+    val resetPwState: LiveData<FieldState<Boolean>> = _resetPwState
 
 
     // --------- 로컬 로그인 ----------
@@ -328,12 +335,8 @@ class UserViewModel : ViewModel() {
                     // 응답 성공 시
                     if (response.body()?.result == true) {
                         // 조회 성공
-                        val ids = response.body()?.ids
+                        val ids = response.body()?.user
                         _findIdList.postValue(FieldState.Success(ids))
-//                        for (a in ids!!) {
-//                            Log.d("mytest", a.toString())
-//                            a["u_id"]?.let { Log.d("mytest", it) }
-//                        }
 
                         return
                     }
@@ -352,12 +355,116 @@ class UserViewModel : ViewModel() {
         }
     }
 
+
+    // 소셜 회원가입한 경우는 반환되지 않음
     fun findByIdAndPhoneNumber(id: String, phoneNumber: String) {
+        if (!(CheckValidation.validateId(id))) {
+            _findIdList.postValue(FieldState.Fail("잘못된 아이디입니다.\n소셜 회원가입인 경우는 소셜사이트에서 비밀번호를 변경해주세요."))
+            return
+        }
+        val result = UserRepository.findByIdAndPhoneNumber(id, phoneNumber)
 
+        result.enqueue(object : Callback<FindUserResponse> {
+            override fun onResponse(
+                call: Call<FindUserResponse>,
+                response: Response<FindUserResponse>
+            ) {
+                // 응답 실패 시
+                if (!(response.isSuccessful)) {
+                    Log.e("UserViewModel-findByIdAndPhoneNumber", "서버 응답 실패 - ${response.message()}")
+                    _findIdList.postValue(FieldState.Error("서버 연결에 실패하였습니다."))
+                    return
+                }
+
+                // 응답 성공 시
+                if (response.body()?.result == true) {
+                    // 조회 성공
+                    val user = response.body()?.user
+                    _findIdList.postValue(FieldState.Success(user))
+
+                    return
+                }
+                Log.d("mytag--", "${response.body().toString()}")
+
+                // 조회 실패 ( 응답은 성공하였지만 select 실패 )
+                // 가입된 계정 없음
+                _findIdList.postValue(FieldState.Success(null))
+                return
+            }
+
+            override fun onFailure(call: Call<FindUserResponse>, t: Throwable) {
+                Log.e("UserViewModel-findByIdAndPhoneNumber", "서버 연결 실패 - ${t.printStackTrace()}")
+                _findIdList.postValue(FieldState.Error("서버 연결에 실패하였습니다."))
+            }
+        })
     }
 
-    fun resetPassword(password: String) {
 
+    // --------- 비밀번호 재설정 ---------
+    fun resetPassword(idx: String, nickname: String, password: String) {
+        val result = UserRepository.resetPassword(idx.toInt(), nickname, password)
+
+        result.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(
+                call: Call<ResponseBody>,
+                response: Response<ResponseBody>
+            ) {
+                // 응답 실패 시
+                if (!(response.isSuccessful)) {
+                    Log.e("UserViewModel-resetPassword", "서버 응답 실패 - ${response.message()}")
+                    _resetPwState.postValue(FieldState.Error("서버 연결에 실패하였습니다."))
+                    return
+                }
+
+                // 응답 성공 시
+                val responseBody = response.body()?.string()
+                val isSuccess = responseBody?.let { JSONObject(it) }
+                // 응답 성공 시
+                if (isSuccess?.get("result") == true) {
+                    //  비밀번호 변경 완료
+                    _resetPwState.postValue(FieldState.Success(true))
+                    return
+                }
+
+                Log.d("mytag--", "${isSuccess?.get("result")}")
+                // 비밀번호 변경 실패
+                _resetPwState.postValue(FieldState.Fail("비밀번호 변경에 실패하였습니다. 다시 시도해 주세요."))
+                return
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                Log.e("UserViewModel-resetPassword", "서버 연결 실패 - ${t.printStackTrace()}")
+                _resetPwState.postValue(FieldState.Error("서버 연결에 실패하였습니다."))
+            }
+        })
     }
+
+    fun checkPasswordValidate(password: String) {
+        // 유효성 검사 통과 실패 시
+        if (!(CheckValidation.validatePassword(password))) {
+            _pwFieldState.value = FieldState.Fail("* 8~16사이의 숫자, 영어 소문자, 특수문자의 조합이어야 합니다.\n* 사용 가능한 특수문자( $@!%*#?& )")
+            return
+        }
+
+        // 검사 통과 시
+        _pwFieldState.value = FieldState.Success("* 사용 가능한 비밀번호 입니다.")
+    }
+
+
+    fun checkConfirmPasswordValidate(password: String, confirmPassword: String) {
+        if (password.isNotEmpty()) {
+            if (!(CheckValidation.validateConfirmPassword(password, confirmPassword))) {
+                _confirmPwFieldState.value = FieldState.Fail("* 비밀번호가 일치하지 않습니다.")
+                return
+            }
+
+            _confirmPwFieldState.value = FieldState.Success("* 비밀번호가 일치합니다.")
+        }
+    }
+
+    fun clearFindIdList() {
+        _findIdList.value = null
+    }
+
 
 }

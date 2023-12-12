@@ -4,17 +4,23 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.example.georgeois.R
 import com.example.georgeois.databinding.FragmentLoginResetPasswordBinding
+import com.example.georgeois.resource.FieldState
 import com.example.georgeois.ui.main.MainActivity
 import com.example.georgeois.utill.CheckValidation
 import com.example.georgeois.utill.CommonTextWatcher
+import com.example.georgeois.viewModel.JoinViewModel
+import com.example.georgeois.viewModel.UserViewModel
 import com.google.android.material.textfield.TextInputLayout
 
 class LoginResetPasswordFragment : Fragment() {
     private lateinit var loginResetPasswordBinding: FragmentLoginResetPasswordBinding
     private lateinit var mainActivity: MainActivity
+    private lateinit var userViewModel: UserViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -23,6 +29,33 @@ class LoginResetPasswordFragment : Fragment() {
     ): View {
         loginResetPasswordBinding = FragmentLoginResetPasswordBinding.inflate(inflater)
         mainActivity = activity as MainActivity
+        userViewModel = ViewModelProvider(this)[UserViewModel::class.java]
+
+        userViewModel.run {
+            // 비밀번호 hint, Error meesage update
+            pwFieldState.observe(requireActivity()) {
+                updateValidateMessage(loginResetPasswordBinding.textInputLayoutLoginResetPasswordPw, it)
+            }
+
+            // 비밀번호 hint, Error meesage update
+            confirmPwFieldState.observe(requireActivity()) {
+                updateValidateMessage(loginResetPasswordBinding.textInputLayoutLoginResetPasswordConfirmPw, it)
+            }
+
+            // 비밀번호 reset
+            resetPwState.observe(requireActivity()) {
+                when (it) {
+                    is FieldState.Success -> {
+                        mainActivity.removeFragment(MainActivity.LOGIN_RESET_PASSWORD_FRAGMENT)
+                        mainActivity.replaceFragment(MainActivity.LOGIN_MAIN_FRAGMENT,false,null)
+                        Toast.makeText(requireContext(), "비밀번호가 변경되었습니다.\n로그인 해 주세요.", Toast.LENGTH_SHORT).show()
+                    }
+
+                    else -> Toast.makeText(requireContext(), "${it.message}", Toast.LENGTH_SHORT).show()
+
+                }
+            }
+        }
 
         loginResetPasswordBinding.run {
 
@@ -38,13 +71,14 @@ class LoginResetPasswordFragment : Fragment() {
             // 비밀번호 유효성 검사
             textInputEditTextLoginResetPasswordPw.addTextChangedListener(CommonTextWatcher {
                 // 비밀번호 error, hint 처리
-                checkPasswordValidate()
+                val password = textInputEditTextLoginResetPasswordPw.text.toString()
+                val confirmPassword = textInputEditTextLoginResetPasswordConfirmPw.text.toString()
 
-                val confirmPwLength = textInputEditTextLoginResetPasswordConfirmPw.text?.length
+                userViewModel.checkPasswordValidate(password)
 
                 // 비밀번호 확인란에 텍스트가 존재할 때
-                if(confirmPwLength != null && confirmPwLength > 0 ) {
-                    checkConfirmPasswordValidate()
+                if(confirmPassword.isNotEmpty()) {
+                    userViewModel.checkConfirmPasswordValidate(password, confirmPassword)
                 }
             })
 
@@ -53,19 +87,19 @@ class LoginResetPasswordFragment : Fragment() {
                 val password = textInputEditTextLoginResetPasswordPw.text.toString()
                 val confirmPassword = textInputEditTextLoginResetPasswordConfirmPw.text.toString()
 
-                val passwordConfirmValidate = CheckValidation.validateConfirmPassword(password, confirmPassword)
-
-                validateMessageHandler(
-                    passwordConfirmValidate,
-                    textInputLayoutLoginResetPasswordConfirmPw,
-                    "비밀번호가 일치합니다.",
-                    "비밀번호가 일치하지 않습니다."
-                )
+                userViewModel.checkConfirmPasswordValidate(password, confirmPassword)
             })
 
             buttonLoginResetPasswordSetNewPw.setOnClickListener {
-                mainActivity.removeFragment(MainActivity.LOGIN_RESET_PASSWORD_FRAGMENT)
-                mainActivity.replaceFragment(MainActivity.LOGIN_MAIN_FRAGMENT,false,null)
+                val u_idx = requireArguments().getString("u_idx")
+                val u_nicknm = requireArguments().getString("u_nicknm")
+                val password = loginResetPasswordBinding.textInputEditTextLoginResetPasswordPw.text.toString()
+
+                if (userViewModel.pwFieldState.value is FieldState.Success && userViewModel.confirmPwFieldState.value is FieldState.Success) {
+                    userViewModel.resetPassword(u_idx!!, u_nicknm!!, password)
+                } else {
+                    Toast.makeText(requireContext(), "비밀번호를 확인해 주세요.", Toast.LENGTH_SHORT).show()
+                }
             }
         }
 
@@ -73,43 +107,37 @@ class LoginResetPasswordFragment : Fragment() {
         return loginResetPasswordBinding.root
     }
 
-    private fun checkConfirmPasswordValidate() {
-        val password = loginResetPasswordBinding.textInputEditTextLoginResetPasswordPw.text.toString()
-        val confirmPassword = loginResetPasswordBinding.textInputEditTextLoginResetPasswordConfirmPw.text.toString()
 
-        val confirmPasswordValidateResult = CheckValidation.validateConfirmPassword(password, confirmPassword)
+    /**
+     * ViewMdoel의 LiveDate의 결과에 따른 TextInputLayout 의 Helper, Error Message UI 업데이트
+     *
+     * helperMessage 색은 xml에서 @color/accentGreen 으로 지정 되어 있다.
+     * helperMessage 와 errorMessage 의 String 값은 [JoinViewModel] 에서 [FieldState] 에서 적용됨
+     *
+     * CASE
+     * [FieldState.Success.data] 에 helperMessage 설정
+     * [FieldState.Fail.message] 에 ErrorMessage 설정
+     * [FieldState.Error.message] 에 Error 메시지 설정
+     */
+    private fun updateValidateMessage(textInputLayout: TextInputLayout, fieldState: FieldState<String>) {
 
-        validateMessageHandler(
-            confirmPasswordValidateResult,
-            loginResetPasswordBinding.textInputLayoutLoginResetPasswordConfirmPw,
-            "비밀번호가 일치합니다.",
-            "비밀번호가 일치하지 않습니다."
-        )
-    }
+        when (fieldState) {
+            is FieldState.Success -> {
+                val helperMessage = fieldState.data.toString()
+                textInputLayout.error = null
+                textInputLayout.isErrorEnabled = false
+                textInputLayout.helperText = helperMessage
+            }
 
-    private fun checkPasswordValidate() {
-        val password = loginResetPasswordBinding.textInputEditTextLoginResetPasswordPw.text.toString()
+            is FieldState.Fail -> {
+                val errorMessage = fieldState.message.toString()
+                textInputLayout.isErrorEnabled = true
+                textInputLayout.error = errorMessage
+            }
 
-        val passwordValidateResult = CheckValidation.validatePassword(password)
-
-        // 비밀번호 error, hint 처리
-        validateMessageHandler(
-            passwordValidateResult,
-            loginResetPasswordBinding.textInputLayoutLoginResetPasswordPw,
-            "사용 가능한 비밀번호입니다.",
-            "* 8~16사이의 숫자, 영어 소문자, 특수문자의 조합이어야 합니다.\n* 사용 가능한 특수문자( $@!%*#?& )"
-        )
-
-    }
-
-    private fun validateMessageHandler(isSucceed: Boolean, textInputLayout: TextInputLayout, helperMessage: String, errorMessage: String) {
-        if (isSucceed) {
-            textInputLayout.error = null
-            textInputLayout.isErrorEnabled = false
-            textInputLayout.helperText = helperMessage
-        } else {
-            textInputLayout.isErrorEnabled = true
-            textInputLayout.error = errorMessage
+            is FieldState.Error -> {
+                Toast.makeText(requireContext(), "${fieldState.message}.", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 }
