@@ -11,9 +11,6 @@ import com.example.georgeois.dataclass.JoinUser
 import com.example.georgeois.resource.FieldState
 import com.example.georgeois.repository.UserRepository
 import com.example.georgeois.utill.CheckValidation
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -80,7 +77,7 @@ class JoinViewModel : ViewModel() {
         }
 
         // 검사 통과 시
-        CoroutineScope(Dispatchers.IO).launch {
+        viewModelScope.launch {
             try {
                 val result = UserRepository.checkIdDuplication(id)
                 if (result["result"] == true) {
@@ -95,8 +92,6 @@ class JoinViewModel : ViewModel() {
                 Log.e("JoinViewModel.checkIdDuplication", "${e.printStackTrace()}")
                 _idFieldState.postValue(FieldState.Error(e.message.toString()))
             }
-
-            this.cancel()
         }
 
     }
@@ -147,7 +142,7 @@ class JoinViewModel : ViewModel() {
             return
         }
 
-        CoroutineScope(Dispatchers.IO).launch {
+        viewModelScope.launch {
             try {
                 val result = UserRepository.checkNickNmDuplication(nickNm)
 
@@ -162,7 +157,6 @@ class JoinViewModel : ViewModel() {
                 _nickNmFieldState.postValue(FieldState.Error(e.message.toString()))
             }
 
-            this.cancel()
         }
     }
 

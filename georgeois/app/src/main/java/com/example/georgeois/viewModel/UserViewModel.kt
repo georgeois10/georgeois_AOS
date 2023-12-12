@@ -23,9 +23,6 @@ import com.navercorp.nid.oauth.NidOAuthLogin
 import com.navercorp.nid.oauth.OAuthLoginCallback
 import com.navercorp.nid.profile.NidProfileCallback
 import com.navercorp.nid.profile.data.NidProfileResponse
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import okhttp3.ResponseBody
 import org.json.JSONObject
@@ -63,11 +60,8 @@ class UserViewModel : ViewModel() {
 
 
     // --------- 로컬 로그인 ----------
-    /**
-     * 코드 수정할 예정
-     */
     fun login(id: String, pw: String) {
-        CoroutineScope(Dispatchers.Main).launch {
+        viewModelScope.launch {
             val result = UserRepository.login(id, pw)
             val userMap = result["user"]
 
@@ -116,14 +110,12 @@ class UserViewModel : ViewModel() {
             )
             _user.postValue(user)
 
-            this.cancel()
         }
     }
 
 
     // --------- 네이버 로그인 ----------
     fun naverLogin(mainActivity: MainActivity) {
-        // TODO : 네이버 로그인 화면으로 이동 구현
         NaverIdLoginSDK.initialize(mainActivity,
             BuildConfig.NAVER_CLIENT_ID,
             BuildConfig.NAVER_CLIENT_SECRET,
@@ -195,7 +187,6 @@ class UserViewModel : ViewModel() {
                         false -> {
                             _loginSuccessState.postValue(FieldState.Success(null))
                             val primaryId = profile.id
-                            // TODO : 로그인 성공시 _user 에 유저 데이터 넣어줘야 함
                             login(email, primaryId!!.substring(0, 8))
                         }
 
@@ -285,7 +276,6 @@ class UserViewModel : ViewModel() {
                                 _loginSuccessState.postValue(FieldState.Success(null))
 
                                 val primaryId = user.id
-                                // TODO : 로그인 성공시 _user 에 유저 데이터 넣어줘야 함
                                 login(kakaoId, primaryId.toString().substring(0, 8))
                             }
 
@@ -384,7 +374,6 @@ class UserViewModel : ViewModel() {
 
                     return
                 }
-                Log.d("mytag--", "${response.body().toString()}")
 
                 // 조회 실패 ( 응답은 성공하였지만 select 실패 )
                 // 가입된 계정 없음
