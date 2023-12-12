@@ -4,7 +4,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
@@ -12,11 +14,17 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.georgeois.R
 import com.example.georgeois.databinding.FragmentLoginFindIdBinding
 import com.example.georgeois.databinding.RowLoginFindIdBinding
+import com.example.georgeois.resource.FieldState
 import com.example.georgeois.ui.main.MainActivity
+import com.example.georgeois.viewModel.AuthViewModel
+import com.example.georgeois.viewModel.UserViewModel
 
 class LoginFindIdFragment : Fragment() {
     private lateinit var loginFindIdBinding: FragmentLoginFindIdBinding
     private lateinit var mainActivity: MainActivity
+    private lateinit var authViewModel: AuthViewModel
+    private lateinit var userViewModel: UserViewModel
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -26,6 +34,89 @@ class LoginFindIdFragment : Fragment() {
 
         loginFindIdBinding = FragmentLoginFindIdBinding.inflate(inflater)
         mainActivity = activity as MainActivity
+        authViewModel = ViewModelProvider(this)[AuthViewModel::class.java]
+        userViewModel = ViewModelProvider(this)[UserViewModel::class.java]
+
+        authViewModel.run {
+            // 휴대폰 인증번호 전송 요청에 따른 Toast 메시지 update
+            phoneNumberFieldState.observe(requireActivity()) {
+                when(it) {
+                    is FieldState.Success -> {
+                        Toast.makeText(requireContext(), "${it.data}", Toast.LENGTH_SHORT).show()
+                    }
+
+                    is FieldState.Fail -> {
+                        Toast.makeText(requireContext(), "${it.message}", Toast.LENGTH_SHORT).show()
+                    }
+
+                    else -> Unit
+                }
+            }
+
+            // 휴대폰 인증 hint, Error message update
+            confirmCodeFieldState.observe(requireActivity()) {
+//                updateValidateMessage(joinMainBinding.textInputLayoutJoinMainVerificationNumber, it)
+
+                val textInputLayout = loginFindIdBinding.textInputLayoutLoginFindIdVerificationNumber
+                when (it) {
+                    is FieldState.Success -> {
+                        // 핸드폰 인증 성공
+                        val helperMessage = it.data.toString()
+                        textInputLayout.error = null
+                        textInputLayout.isErrorEnabled = false
+                        textInputLayout.helperText = helperMessage
+                        // 인증 완료되면 인증번호 발송, 확인 버튼 클릭 불가능하게 변경
+                        loginFindIdBinding.buttonLoginFindIdSendVerificationNumber.isClickable = false
+                        loginFindIdBinding.buttonLoginFindIdCheckVerificationNumber.isClickable = false
+
+                        // 핸드폰 번호로 등록된 유저 아이디 찾기
+                        val phoneNumber = loginFindIdBinding.textInputEditTextLoginFindIdPNumber.text.toString()
+                        userViewModel.findIdByPhoneNumber(phoneNumber)
+                    }
+
+                    is FieldState.Fail -> {
+                        val errorMessage = it.message.toString()
+                        textInputLayout.requestFocus()
+                        textInputLayout.isErrorEnabled = true
+                        textInputLayout.error = errorMessage
+                    }
+
+                    is FieldState.Error -> {
+                        Toast.makeText(requireContext(), "오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        }
+
+        userViewModel.run {
+            findIdList.observe(requireActivity()) {
+                when (it) {
+                    is FieldState.Success -> {
+                        val ids = it.data
+
+                        if (ids == null) {
+                            Toast.makeText(requireContext(), "가입된 계정이 존재하지 않습니다.", Toast.LENGTH_SHORT).show()
+                            return@observe
+                        }
+
+                        val idList: List<FindId> = ids.map {user ->
+                            FindId(user["u_id"]!!, user["u_auth"]!!.toCharArray()[0])
+                        }
+
+                        showUserIds(idList)
+                    }
+
+                    is FieldState.Fail -> {
+                        Toast.makeText(requireContext(), "${it.message}", Toast.LENGTH_SHORT).show()
+                    }
+
+                    is FieldState.Error -> {
+                        Toast.makeText(requireContext(), "${it.message}", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        }
+
 
         loginFindIdBinding.run {
 
@@ -40,48 +131,38 @@ class LoginFindIdFragment : Fragment() {
 
             // 전화번호로 인증번호 발송 클릭
             buttonLoginFindIdSendVerificationNumber.setOnClickListener {
-                // TODO : 인증번호 발송 기능 구현
+                val phoneNumber = textInputEditTextLoginFindIdPNumber.text.toString()
+                authViewModel.sendVerificationNumber(phoneNumber, requireActivity())
             }
 
             // 인증번호 확인 클릭
             buttonLoginFindIdCheckVerificationNumber.setOnClickListener {
-                // TODO : 인증번호 확인 기능 구현
-                val loginFindIdAdapter = LoginFindIdAdapter()
-
-                // 인증 성공 시
-                recyclerViewLoginFindIdIdList.apply {
-                    layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-                    adapter = loginFindIdAdapter
-                }
-
-                // recyclerView 에 전달될 테스트 리스트
-                val testList = listOf(
-                    FindId("test1", '1'),
-                    FindId("test2", '2'),
-                    FindId("test3", '3'),
-                    FindId("test4", '4'),
-                    FindId("test5", '1'),
-                    FindId("test6", '2'),
-                    FindId("test7", '3'),
-                    FindId("test7", '3'),
-                    FindId("test7", '3'),
-                    FindId("test7", '3'),
-                    FindId("test7", '3'),
-                    FindId("test7", '3'),
-                    FindId("test7", '3'),
-                    FindId("test7", '3'),
-                    FindId("test7", '3'),
-                    FindId("test7", '3'),
-                    FindId("test7", '3')
-
-                )
-                loginFindIdAdapter.submitList(testList)
+                val code = textInputEditTextLoginFindIdVerificationNumber.text.toString()
+                authViewModel.checkVerificationNumber(code)
             }
 
         }
 
         return loginFindIdBinding.root
     }
+
+
+    /**
+     * 인증 성공시 호출
+     * 등록된 아이디들 불러와 RecyclerView에 넣어줌
+     */
+    private fun showUserIds(idList: List<FindId>) {
+        // TODO : 휴대폰 번호를 가지고 등록된 id 가져오는 기능 구현
+
+        val loginFindIdAdapter = LoginFindIdAdapter()
+        loginFindIdBinding.recyclerViewLoginFindIdIdList.apply {
+            layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+            adapter = loginFindIdAdapter
+        }
+
+        loginFindIdAdapter.submitList(idList)
+    }
+
 
     data class FindId (
         val id: String,
@@ -94,7 +175,11 @@ class LoginFindIdFragment : Fragment() {
             fun bind(findId : FindId) {
                 rowLoginFindIdBinding.run {
                     textViewItemLoginFindIdId.text = findId.id
-                    textViewItemLoginFindIdAuthType.text = findId.authType.toString()
+                    textViewItemLoginFindIdAuthType.text = when (findId.authType) {
+                        'K' -> "카카오 로그인"
+                        'N' -> "네이버 로그인"
+                        else -> ""
+                    }
                 }
             }
         }

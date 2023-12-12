@@ -1,6 +1,7 @@
 package com.example.georgeois.service
 
 import com.example.georgeois.dataclass.JoinUser
+import com.example.georgeois.resource.FindUserResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
@@ -34,9 +35,8 @@ interface UserApiService {
     @POST("saveProfileImage.php")
     fun saveProfile(@Part("id") id: RequestBody, @Part profile: MultipartBody.Part) : Call<ResponseBody>
 
+    @GET("findIdByPhoneNumber.php")
+    fun findIdByPhoneNumber(@Query("pnumber") pnumber: String) : Call<FindUserResponse>
 
-//    @FormUrlEncoded
-//    @POST("joinUser.php")
-//    fun join(@FieldMap joinUser: Map<String, String>) : Call<ResponseBody>
 
 }

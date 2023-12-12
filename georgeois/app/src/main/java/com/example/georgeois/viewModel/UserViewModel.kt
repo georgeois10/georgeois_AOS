@@ -6,9 +6,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.georgeois.BuildConfig
+import com.example.georgeois.dataclass.JoinUser
 import com.example.georgeois.resource.FieldState
 import com.example.georgeois.dataclass.User
 import com.example.georgeois.repository.UserRepository
+import com.example.georgeois.resource.FindUserResponse
 import com.example.georgeois.resource.SocialLoginType
 import com.example.georgeois.ui.main.MainActivity
 import com.kakao.sdk.auth.model.OAuthToken
@@ -25,7 +27,11 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import okhttp3.ResponseBody
 import org.json.JSONObject
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -42,6 +48,10 @@ class UserViewModel : ViewModel() {
 
     private val _loginSuccessState = MutableLiveData<FieldState<SocialLoginType?>>()
     val loginSuccessState: LiveData<FieldState<SocialLoginType?>> = _loginSuccessState
+
+    private val _findIdList = MutableLiveData<FieldState<List<Map<String, String>>>>()
+    val findIdList: LiveData<FieldState<List<Map<String, String>>>> = _findIdList
+
 
 
 
@@ -293,6 +303,61 @@ class UserViewModel : ViewModel() {
      */
     fun clearLoginSuccessState() {
         _loginSuccessState.value = null
+    }
+
+
+
+    // -------- 아이디, 비밀번호 찾기 ---------
+    fun findIdByPhoneNumber(phoneNumber: String) {
+        viewModelScope.launch {
+
+            val result = UserRepository.findIdByPhoneNumber(phoneNumber)
+
+            result.enqueue(object : Callback<FindUserResponse> {
+                override fun onResponse(
+                    call: Call<FindUserResponse>,
+                    response: Response<FindUserResponse>
+                ) {
+                    // 응답 실패 시
+                    if (!(response.isSuccessful)) {
+                        Log.e("UserViewModel-findIdByPhoneNumber", "서버 응답 실패 - ${response.message()}")
+                        _findIdList.postValue(FieldState.Error("서버 연결에 실패하였습니다."))
+                        return
+                    }
+
+                    // 응답 성공 시
+                    if (response.body()?.result == true) {
+                        // 조회 성공
+                        val ids = response.body()?.ids
+                        _findIdList.postValue(FieldState.Success(ids))
+//                        for (a in ids!!) {
+//                            Log.d("mytest", a.toString())
+//                            a["u_id"]?.let { Log.d("mytest", it) }
+//                        }
+
+                        return
+                    }
+
+                    // 조회 실패 ( 응답은 성공하였지만 select 실패 )
+                    // 가입된 계정 없음
+                    _findIdList.postValue(FieldState.Success(null))
+                    return
+                }
+
+                override fun onFailure(call: Call<FindUserResponse>, t: Throwable) {
+                    Log.e("UserViewModel-findIdByPhoneNumber", "서버 연결 실패 - ${t.printStackTrace()}")
+                    _findIdList.postValue(FieldState.Error("서버 연결에 실패하였습니다."))
+                }
+            })
+        }
+    }
+
+    fun findByIdAndPhoneNumber(id: String, phoneNumber: String) {
+
+    }
+
+    fun resetPassword(password: String) {
+
     }
 
 }
