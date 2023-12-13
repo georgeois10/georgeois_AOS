@@ -1,6 +1,8 @@
 package com.example.georgeois.viewModel
 
+import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -46,6 +48,9 @@ class UserViewModel : ViewModel() {
     private val _loginSuccessState = MutableLiveData<FieldState<SocialLoginType?>>()
     val loginSuccessState: LiveData<FieldState<SocialLoginType?>> = _loginSuccessState
 
+    private val _checkedAutoLogin = MutableLiveData<Boolean>(false)
+    val checkedAutoLogin: LiveData<Boolean> = _checkedAutoLogin
+
     private val _findIdList = MutableLiveData<FieldState<List<Map<String, String>>>>()
     val findIdList: LiveData<FieldState<List<Map<String, String>>>> = _findIdList
 
@@ -60,6 +65,10 @@ class UserViewModel : ViewModel() {
 
 
     // --------- 로컬 로그인 ----------
+    fun setAutoLogin(isChecked: Boolean) {
+        _checkedAutoLogin.value = isChecked
+    }
+
     fun login(id: String, pw: String) {
         viewModelScope.launch {
             val result = UserRepository.login(id, pw)
@@ -109,7 +118,6 @@ class UserViewModel : ViewModel() {
                 json.getString("mod_user"),
             )
             _user.postValue(user)
-
         }
     }
 
