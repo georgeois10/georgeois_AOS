@@ -1,6 +1,8 @@
 package com.example.georgeois.ui.user
 
+import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -28,13 +30,43 @@ class LoginMainFragment : Fragment() {
     ): View {
         loginMainBinding = FragmentLoginMainBinding.inflate(inflater)
         mainActivity = activity as MainActivity
-
         userViewModel = ViewModelProvider(mainActivity)[UserViewModel::class.java]
+
+        // 자동 로그인
+        val pref = mainActivity.getSharedPreferences("saved_login_info", Context.MODE_PRIVATE)
+
+        if (pref != null) {
+            val id = pref.getString("saved_user_id", null)
+            val pw = pref.getString("saved_user_pw", null)
+
+            if (!(id.isNullOrEmpty()) && !(pw.isNullOrEmpty())) {
+                userViewModel.login(id, pw)
+            }
+        }
+
+
 
         userViewModel.run {
             user.observe(mainActivity){
                 if (it != null) {
+
+                    // 자동로그인 체크라면
+                    if (checkedAutoLogin.value == true) {
+                        // sharedPreferences 에 저장
+                        val pref = mainActivity.getSharedPreferences("saved_login_info", Context.MODE_PRIVATE)
+                        val userId = it.u_id
+                        val userPw = it.u_pw
+
+                        pref.edit().putString("saved_user_id", userId).apply()
+                        pref.edit().putString("saved_user_pw", userPw).apply()
+
+                    }
+//                    pref.edit().putString("saved_user_id", null).apply()
+//                    pref.edit().putString("saved_user_pw", null).apply()
+
                     mainActivity.replaceFragment(MainActivity.MAIN_FRAGMENT,true,null)
+                } else {
+                    Toast.makeText(requireContext(), "아이디 혹은 비밀번호가 틀렸습니다.", Toast.LENGTH_SHORT).show()
                 }
             }
 
@@ -90,10 +122,7 @@ class LoginMainFragment : Fragment() {
 
             // 자동로그인 checkBox
             checkBoxLoginMainAutoLogin.setOnCheckedChangeListener { _, isChecked ->
-                if (isChecked) {
-                    // TODO : 자동로그인 구현
-                    Toast.makeText(requireContext(), "체크됨", Toast.LENGTH_SHORT).show()
-                }
+                userViewModel.setAutoLogin(isChecked)
             }
             // 카카오 로그인
             linearLayoutLoginMainKakaoLogin.setOnClickListener {
