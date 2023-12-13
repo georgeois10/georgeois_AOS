@@ -3,6 +3,7 @@ import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.content.res.Configuration
 import android.graphics.Color
+import android.graphics.Paint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -187,20 +188,40 @@ class HomeMainFragment : Fragment(), DialogDismissListener {
 
         @SuppressLint("ResourceAsColor")
         override fun onBindViewHolder(holder: HomeMainViewHolder, position: Int) {
-            holder.rowHomeMainBinding.textViewHomeMainContent.text = datefilteredList[position].content
+
             var amount = datefilteredList[position].amount.toString()
             amount = moneyType.moneyText("$amount")
             when (datefilteredList[position].property) {
                 null -> {
-                    holder.rowHomeMainBinding.textViewHomeMainAmount.setTextColor(ContextCompat.getColor(requireContext(), R.color.accentGreen))
                     holder.rowHomeMainBinding.textViewHomeMainAmount.text = "+ $amount"
+                    if(datefilteredList[position].budregi_yn == 1) {
+                        holder.rowHomeMainBinding.textViewHomeMainAmount.setTextColor(ContextCompat.getColor(requireContext(), R.color.lightGray))
+                        holder.rowHomeMainBinding.textViewHomeMainContent.setTextColor(ContextCompat.getColor(requireContext(), R.color.lightGray))
+                        holder.rowHomeMainBinding.textViewHomeMainCategory.setTextColor(ContextCompat.getColor(requireContext(), R.color.lightGray))
+                    }else{
+                        holder.rowHomeMainBinding.textViewHomeMainAmount.setTextColor(ContextCompat.getColor(requireContext(), R.color.accentGreen))
+                        holder.rowHomeMainBinding.textViewHomeMainContent.setTextColor(ContextCompat.getColor(requireContext(), R.color.accentGray))
+                        holder.rowHomeMainBinding.textViewHomeMainCategory.setTextColor(ContextCompat.getColor(requireContext(), R.color.accentGray))
+                    }
                 }
                 else -> {
-                    holder.rowHomeMainBinding.textViewHomeMainAmount.setTextColor(ContextCompat.getColor(requireContext(), R.color.accentRed))
                     holder.rowHomeMainBinding.textViewHomeMainAmount.text = "- $amount"
+                    if(datefilteredList[position].budregi_yn == 1) {
+                        holder.rowHomeMainBinding.textViewHomeMainAmount.setTextColor(ContextCompat.getColor(requireContext(), R.color.lightGray))
+                        holder.rowHomeMainBinding.textViewHomeMainContent.setTextColor(ContextCompat.getColor(requireContext(), R.color.lightGray))
+                        holder.rowHomeMainBinding.textViewHomeMainCategory.setTextColor(ContextCompat.getColor(requireContext(), R.color.lightGray))
+                    }else{
+                        holder.rowHomeMainBinding.textViewHomeMainAmount.setTextColor(ContextCompat.getColor(requireContext(), R.color.accentRed))
+                        holder.rowHomeMainBinding.textViewHomeMainContent.setTextColor(ContextCompat.getColor(requireContext(), R.color.accentGray))
+                        holder.rowHomeMainBinding.textViewHomeMainCategory.setTextColor(ContextCompat.getColor(requireContext(), R.color.accentGray))
+                    }
                 }
             }
+            if(datefilteredList[position].budregi_yn == 1){
 
+            }else{
+
+            }
             holder.rowHomeMainBinding.textViewHomeMainCategory.text = datefilteredList[position].category
         }
 
@@ -266,10 +287,7 @@ class HomeMainFragment : Fragment(), DialogDismissListener {
             }
             var moneyType = MoneyType()
 
-            // Rounding logic for inAmount
             sumOfIn.text = if (totalInAmount > 0) moneyType.formatAmount(totalInAmount.toDouble()) else ""
-
-            // Rounding logic for outAmount
             sumOfOut.text = if (totalOutAmount > 0) moneyType.formatAmount(totalOutAmount.toDouble()) else ""
         }
         if(isSelectable){
@@ -322,7 +340,6 @@ class HomeMainFragment : Fragment(), DialogDismissListener {
 
 
     private fun updateTitle() {
-        var uDate = ""
         val month = fragmentHomeMainBinding.calendarViewHomeMain.findFirstVisibleMonth()?.yearMonth ?: return
         fragmentHomeMainBinding.textviewHomeMainTitle.text = "${month.year}년 ${month.month.value}월"
         accountBookViewModel.getMonthAccountBookList(uIdx, month.toString())

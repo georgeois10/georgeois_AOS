@@ -1,11 +1,13 @@
 package com.example.georgeois.viewModel
 
+import android.accounts.Account
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.georgeois.dataclass.AccountBookClass
+import com.example.georgeois.dataclass.CategoryAccountBookClass
 import com.example.georgeois.dataclass.InAccountBookClass
 import com.example.georgeois.dataclass.MonthAccountBookClass
 import com.example.georgeois.dataclass.OutAccountBookClass
@@ -16,6 +18,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 
@@ -36,6 +39,11 @@ class AccountBookViewModel : ViewModel() {
     private val _dayOfMonthAccountBook = MutableLiveData<List<DayAccountBookClass>>()
     val dayOfMonthAccountBook : LiveData<List<DayAccountBookClass>> get() = _dayOfMonthAccountBook
 
+    private val _inCategoryAccountBook = MutableLiveData<List<CategoryAccountBookClass>>()
+    val inCategoryAccountBookList : LiveData<List<CategoryAccountBookClass>> get() = _inCategoryAccountBook
+
+    private val _outCategoryAccountBook = MutableLiveData<List<CategoryAccountBookClass>>()
+    val outCategoryAccountBookList : LiveData<List<CategoryAccountBookClass>> get() = _outCategoryAccountBook
     suspend fun fetchInData(idx: Int): List<InAccountBookClass> = viewModelScope.async {
         try {
             val result = InAccountBookRepository.getInAccountBook(idx)
@@ -67,6 +75,9 @@ class AccountBookViewModel : ViewModel() {
             val inAccountBookList = fetchInData(uIdx)
             val outAccountBookList = fetchOutData(uIdx)
             val allAccountBookList = mutableListOf<AccountBookClass>()
+            val inCategoryList = mutableListOf<CategoryAccountBookClass>()
+            val outCategoryList = mutableListOf<CategoryAccountBookClass>()
+
             for( i in inAccountBookList){
                 i.i_idx?.let {
                     AccountBookClass('i',
@@ -79,9 +90,43 @@ class AccountBookViewModel : ViewModel() {
                         it,uIdx,o.cre_user,o.u_nicknm,o.o_amount,o.o_content,o.o_category,o.o_date,o.o_imgpath,o.o_budregi_yn,o.o_property)
                 }?.let { allAccountBookList.add(it) }
             }
+
+            val filteredOutAccountBookList = outAccountBookList.filter { it.o_budregi_yn != 1 }
+
+            val groupedOutAccountBookList = filteredOutAccountBookList
+                .groupBy {
+                    val dateTime = LocalDateTime.parse(it.o_date, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+                    it.o_category to YearMonth.of(dateTime.year, dateTime.month)
+                }
+                .map { (key, group) ->
+                    val sumAmount = group.sumOf { it.o_amount }
+                    val itemCount = group.size
+                    CategoryAccountBookClass(key.first, sumAmount, itemCount, key.second.toString())
+                }
+            Log.e("테스트_in","$groupedOutAccountBookList")
+            outCategoryList.addAll(groupedOutAccountBookList)
+
+            val filteredInAccountBookList = inAccountBookList.filter { it.i_budregi_yn != 1 }
+
+            val groupedInAccountBookList = filteredInAccountBookList
+                .groupBy {
+                    val dateTime = LocalDateTime.parse(it.i_date, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+                    it.i_category to YearMonth.of(dateTime.year, dateTime.month)
+                }
+                .map { (key, group) ->
+                    val sumAmount = group.sumOf { it.i_amount }
+                    val itemCount = group.size
+                    CategoryAccountBookClass(key.first, sumAmount, itemCount, key.second.toString())
+                }
+
+            inCategoryList.addAll(groupedInAccountBookList)
+            Log.e("테스트_out","$groupedInAccountBookList")
+
             val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
             allAccountBookList.sortBy { LocalDateTime.parse(it.date, formatter) }
             _allAccountBookList.value = allAccountBookList
+            _inCategoryAccountBook.value = inCategoryList
+            _outCategoryAccountBook.value = outCategoryList
         }
     }
 
@@ -91,7 +136,6 @@ class AccountBookViewModel : ViewModel() {
             val outAccountBookList = fetchOutData(uIdx)
             var inAmount = 0
             var outAmount = 0
-
             // month = 2023-12
             try {
                 val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
@@ -101,7 +145,6 @@ class AccountBookViewModel : ViewModel() {
                 }.filter {
                     it.i_budregi_yn == 0
                 }.sumOf { it.i_amount }
-
 
                 outAmount = outAccountBookList.filter {
                     LocalDate.parse("${it.o_date.substring(0, 7)}-01", formatter) == LocalDate.parse("${month}-01", formatter)
@@ -128,7 +171,7 @@ class AccountBookViewModel : ViewModel() {
                 val dailyList = mutableListOf<DayAccountBookClass>()
 
                 // 수입 항목 저장
-                inAccountBookList.filter { it.i_budregi_yn == 0 }.forEach { inItem ->
+                inAccountBookList.forEach { inItem ->
                     try {
                         val transactionDate = LocalDate.parse(inItem.i_date.substring(0, 10), formatter)
                         if (transactionDate.monthValue == LocalDate.parse(month + "-01").monthValue) {
@@ -146,7 +189,7 @@ class AccountBookViewModel : ViewModel() {
                 }
 
                 // 지출 항목 저장
-                outAccountBookList.filter { it.o_budregi_yn == 0 }.forEach { outItem ->
+                outAccountBookList.forEach { outItem ->
                     try {
                         val transactionDate = LocalDate.parse(outItem.o_date.substring(0, 10), formatter)
                         if (transactionDate.monthValue == LocalDate.parse(month + "-01").monthValue) {
@@ -169,6 +212,7 @@ class AccountBookViewModel : ViewModel() {
             }
         }
     }
+
 
 
 

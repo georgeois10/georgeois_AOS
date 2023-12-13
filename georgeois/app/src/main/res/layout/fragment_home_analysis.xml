@@ -13,7 +13,23 @@
         android:layout_height="wrap_content"
         android:background="?attr/colorPrimary"
         android:minHeight="?attr/actionBarSize"
-        android:theme="@style/Theme.Georgeois.Toolbar" />
+        android:theme="@style/Theme.Georgeois.Toolbar" >
+
+        <Button
+            android:id="@+id/button_homeAnalysis"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="수입"
+            android:textSize="@dimen/font_size_16sp"
+            android:textStyle="bold"
+            android:layout_gravity="right"
+            style="@style/Theme.Georgeois.Text"
+            android:textColor="@color/white"
+            android:backgroundTint="@color/accentGreen"
+            android:fontFamily="@font/space"
+            android:layout_marginRight="@dimen/margin_4dp"/>
+    </com.google.android.material.appbar.MaterialToolbar>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -61,30 +77,66 @@
                         android:backgroundTint="#00FFFFFF"/>
                 </LinearLayout>
 
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/linearLayout_homeAnalysis_textNodata"
+                    android:padding="@dimen/margin_12dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/Theme.Georgeois.Text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="분석할 데이터가 없어요!"
+                        android:textStyle="bold"
+                        android:textSize="@dimen/font_size_26sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/animationView"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.48"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/animationView"
+                        app:layout_constraintVertical_bias="0.236">
+
+                    </TextView>
+
+                    <com.airbnb.lottie.LottieAnimationView
+                        android:id="@+id/animationView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.64"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.0"
+                        app:lottie_autoPlay="true"
+                        app:lottie_loop="true"
+                        app:lottie_rawRes="@raw/json_home_analysis_nodata" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
                 <com.github.mikephil.charting.charts.PieChart
                     android:id="@+id/pieChart_homeAnalysis"
                     android:layout_width="match_parent"
                     android:layout_height="400dp" />
 
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_marginTop="@dimen/margin_12dp"
+                <LinearLayout
+                    android:id="@+id/LinearLayout_homeAnalysis"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:cardPreventCornerOverlap="false"
-                    app:cardUseCompatPadding="true">
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:layout_marginTop="@dimen/margin_12dp"
+                    android:background="@drawable/border_my_info_main"
+                    android:padding="@dimen/padding_size_15dp">
 
-                    <LinearLayout
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recyclerView_homeAnalysis"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="vertical"
-                        android:padding="@dimen/padding_size_15dp">
-
-                        <androidx.recyclerview.widget.RecyclerView
-                            android:id="@+id/recyclerView_homeAnalysis"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent" />
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
+                        android:layout_height="match_parent" />
+                </LinearLayout>
 
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>

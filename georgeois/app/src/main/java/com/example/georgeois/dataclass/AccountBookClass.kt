@@ -50,3 +50,12 @@ data class DayAccountBookClass(
     var outAmount:Int,
     var day : String
 )
+
+
+data class CategoryAccountBookClass(
+    val category: String,
+    val amount : Int,
+    val count:Int,
+    val date: String,
+)
+
