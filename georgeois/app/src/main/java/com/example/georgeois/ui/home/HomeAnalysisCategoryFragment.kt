@@ -179,9 +179,9 @@ class HomeAnalysisCategoryFragment : Fragment(), DialogDismissListener {
 
             init {
                 rowHomeAnalysisCategoryBinding.root.setOnClickListener {
-                    val dialogAccountDetail =
-                        DialogAccountDetail(requireContext(), layoutInflater, inCategory, outCategory)
-                    dialogAccountDetail.callFunction(datefilteredList[adapterPosition])
+                    val dialogAccountDetail = DialogAccountDetail(requireContext(), layoutInflater,inCategory,outCategory)
+                    dialogAccountDetail.setOnDialogDismissListener(this@HomeAnalysisCategoryFragment)
+                    dialogAccountDetail.callFunction(datefilteredList[position])
                 }
             }
         }
@@ -263,17 +263,17 @@ class HomeAnalysisCategoryFragment : Fragment(), DialogDismissListener {
         viewLifecycleOwner.lifecycleScope.launch {
             accountBookViewModel.fetchOutData(uIdx)
             accountBookViewModel.fetchInData(uIdx)
+            accountBookViewModel.getAllAccountBookList(uIdx)
+            accountBookViewModel.getMonthAccountBookList(uIdx, yearMonth.toString())
+            accountBookViewModel.getDayOfMonthAccountBookList(uIdx, yearMonth.toString())
+            accountBookViewModel.getMonthCategoryAccountBookList(uIdx, inOrOut, category)
+            accountBookViewModel.allAccountBookList.observe(viewLifecycleOwner){
+                val latestData = accountBookViewModel.monthCategoryAccountBook.value ?: emptyList()
+                adapter.submitList(latestData)
+                adapter.notifyDataSetChanged()
+            }
         }
-        accountBookViewModel.getAllAccountBookList(uIdx)
-        accountBookViewModel.getMonthAccountBookList(uIdx, yearMonth.toString())
-        accountBookViewModel.getDayOfMonthAccountBookList(uIdx, yearMonth.toString())
-        accountBookViewModel.getMonthCategoryAccountBookList(uIdx, inOrOut, category)
-        accountBookViewModel.allAccountBookList.observe(viewLifecycleOwner){
-            val latestData = accountBookViewModel.monthCategoryAccountBook.value ?: emptyList()
-            adapter.submitList(latestData)
-            adapter.notifyDataSetChanged()
-        }
-        Log.e("테스트-다이얼로그","${accountBookViewModel.allAccountBookList}")
+
 
     }
 
