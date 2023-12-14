@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:transitionGroup="true"
     tools:context=".ui.home.HomeAnalysisCategoryFragment">
@@ -13,7 +14,8 @@
         android:layout_height="wrap_content"
         android:background="?attr/colorPrimary"
         android:minHeight="?attr/actionBarSize"
-        android:theme="@style/Theme.Georgeois.Toolbar" />
+        android:theme="@style/Theme.Georgeois.Toolbar"
+        app:menu="@menu/menu_home_today"/>
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -64,53 +66,99 @@
                         android:src="@drawable/ic_chevron_right_24px"
                         android:backgroundTint="#00FFFFFF"/>
                 </LinearLayout>
-
                 <LinearLayout
+                    android:id="@id/linearLayout_homeAnalysisCategory_count"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="right">
-
-                    <TextView
-                        android:layout_width="wrap_content"
+                    android:orientation="vertical">
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="총"
-                        style="@style/Theme.Georgeois.Text"
-                        android:textSize="@dimen/font_size_16sp"/>
+                        android:orientation="horizontal"
+                        android:gravity="right">
 
-                    <TextView
-                        android:id="@+id/textView_homeAnalysisCategory_sumOfRow"
-                        android:layout_width="wrap_content"
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="총"
+                            style="@style/Theme.Georgeois.Text"
+                            android:textSize="@dimen/font_size_16sp"/>
+
+                        <TextView
+                            android:id="@+id/textView_homeAnalysisCategory_sumOfRow"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/margin_4dp"
+                            style="@style/Theme.Georgeois.Text"
+                            android:textSize="@dimen/font_size_16sp"
+                            android:text="1건" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_marginTop="@dimen/margin_4dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/margin_4dp"
-                        style="@style/Theme.Georgeois.Text"
-                        android:textSize="@dimen/font_size_16sp"
-                        android:text="1건" />
+                        android:orientation="horizontal"
+                        android:gravity="right">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="합계"
+                            style="@style/Theme.Georgeois.Text"
+                            android:textSize="@dimen/font_size_16sp"/>
+
+                        <TextView
+                            android:id="@+id/textView_homeAnalysisCategory_totalOfRow"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="10,000"
+                            style="@style/Theme.Georgeois.Text"
+                            android:textSize="@dimen/font_size_16sp"
+                            android:layout_marginLeft="@dimen/margin_4dp"/>
+                    </LinearLayout>
                 </LinearLayout>
 
-                <LinearLayout
-                    android:layout_marginTop="@dimen/margin_4dp"
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/linearLayout_homeAnalysisCategory_textNodata"
+                    android:padding="@dimen/margin_12dp"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="right">
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
 
                     <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="합계"
                         style="@style/Theme.Georgeois.Text"
-                        android:textSize="@dimen/font_size_16sp"/>
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="데이터가 없어요!"
+                        android:textStyle="bold"
+                        android:textSize="@dimen/font_size_26sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/animationView"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.48"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/animationView"
+                        app:layout_constraintVertical_bias="0.236">
 
-                    <TextView
-                        android:id="@+id/textView_homeAnalysisCategory_totalOfRow"
-                        android:layout_width="wrap_content"
+                    </TextView>
+
+                    <com.airbnb.lottie.LottieAnimationView
+                        android:id="@+id/animationView"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="10,000"
-                        style="@style/Theme.Georgeois.Text"
-                        android:textSize="@dimen/font_size_16sp"
-                        android:layout_marginLeft="@dimen/margin_4dp"/>
-                </LinearLayout>
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.64"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.0"
+                        app:lottie_autoPlay="true"
+                        app:lottie_loop="true"
+                        app:lottie_rawRes="@raw/json_home_analysis_nodata" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:layout_marginTop="@dimen/margin_4dp"

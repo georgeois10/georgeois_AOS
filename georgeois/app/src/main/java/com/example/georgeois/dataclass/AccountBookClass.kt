@@ -57,5 +57,6 @@ data class CategoryAccountBookClass(
     val amount : Int,
     val count:Int,
     val date: String,
+    val inOrOut : Char
 )
 

@@ -3,32 +3,22 @@ package com.example.georgeois.utill
 import DateTimePicker
 import android.content.Context
 import android.content.DialogInterface
-import android.util.Log
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
-import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
-import android.widget.Toast
-import androidx.core.content.ContentProviderCompat.requireContext
+import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.children
-import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import com.example.georgeois.R
 import com.example.georgeois.databinding.DialogAccountDetailBinding
-import com.example.georgeois.databinding.LayoutEditBudgetBinding
 import com.example.georgeois.dataclass.AccountBookClass
 import com.example.georgeois.dataclass.InAccountBookClass
 import com.example.georgeois.dataclass.OutAccountBookClass
 import com.example.georgeois.repository.InAccountBookRepository
 import com.example.georgeois.repository.OutAccountBookRepository
-import com.example.georgeois.viewModel.AccountBookViewModel
-import com.example.georgeois.viewModel.UserViewModel
 import com.google.android.material.chip.Chip
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.snackbar.Snackbar
-import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -203,18 +193,25 @@ class DialogAccountDetail(private val context: Context, private val layoutInflat
             dialog.dismiss()
 
         }
-        builder.setNegativeButton("취소"){ dialog,which ->
-
+        builder.setNegativeButton("삭제"){ dialog,which ->
+            val deleteBuilder = MaterialAlertDialogBuilder(context, R.style.DialogTheme).apply {
+                val customTitle = setCustomTitle("삭제하시겠습니까?")
+                setCustomTitle(customTitle)
+                setNegativeButton("삭제"){ dialogInterface: DialogInterface, i: Int ->
+                    when(accountDetail.isInorOut) {
+                        'i' -> InAccountBookRepository.deleteInAccountBook(accountDetail.idx)
+                        'o' -> OutAccountBookRepository.deleteInAccountBook(accountDetail.idx)
+                    }
+                    dismissListener?.onDialogDismissed()
+                    dialog.dismiss()
+                }
+                setPositiveButton("취소",null)
+            }
+            deleteBuilder.show()
         }
 
         val dialog = builder.create()
-
-        dialogAccountDetailBinding.imageButtonDialogAccountDetailDelete.setOnClickListener {
-            when(accountDetail.isInorOut) {
-                'i' -> InAccountBookRepository.deleteInAccountBook(accountDetail.idx)
-                'o' -> OutAccountBookRepository.deleteInAccountBook(accountDetail.idx)
-            }
-            dismissListener?.onDialogDismissed()
+        dialogAccountDetailBinding.imageButtonDialogAccountDetailClose.setOnClickListener {
             dialog.dismiss()
         }
         dialogAccountDetailBinding.imageButtonDialogAccountDetail.setOnClickListener {
@@ -228,6 +225,16 @@ class DialogAccountDetail(private val context: Context, private val layoutInflat
 
         dialog.show()
 
+    }
+    fun setCustomTitle(title: String): TextView {
+        val customTitle = TextView(context).apply {
+            text = title  // 타이틀 텍스트 설정
+            textSize = 25f  // 텍스트 사이즈 설정
+            typeface = ResourcesCompat.getFont(context, R.font.space)  // 글꼴 스타일 설정
+            setTextColor(Color.BLACK)  // 텍스트 색상 설정
+            setPadding(100, 100, 0, 20)  // 패딩 설정 (단위: px)
+        }
+        return customTitle
     }
 
 }

@@ -217,12 +217,8 @@ class HomeMainFragment : Fragment(), DialogDismissListener {
                     }
                 }
             }
-            if(datefilteredList[position].budregi_yn == 1){
-
-            }else{
-
-            }
             holder.rowHomeMainBinding.textViewHomeMainCategory.text = datefilteredList[position].category
+            holder.rowHomeMainBinding.textViewHomeMainContent.text = datefilteredList[position].content
         }
 
         override fun getItemCount(): Int {

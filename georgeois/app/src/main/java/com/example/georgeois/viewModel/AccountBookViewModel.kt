@@ -44,6 +44,9 @@ class AccountBookViewModel : ViewModel() {
 
     private val _outCategoryAccountBook = MutableLiveData<List<CategoryAccountBookClass>>()
     val outCategoryAccountBookList : LiveData<List<CategoryAccountBookClass>> get() = _outCategoryAccountBook
+
+    private val _monthCategoryAccountBook = MutableLiveData<List<AccountBookClass>>()
+    val monthCategoryAccountBook : LiveData<List<AccountBookClass>> get() = _monthCategoryAccountBook
     suspend fun fetchInData(idx: Int): List<InAccountBookClass> = viewModelScope.async {
         try {
             val result = InAccountBookRepository.getInAccountBook(idx)
@@ -92,7 +95,6 @@ class AccountBookViewModel : ViewModel() {
             }
 
             val filteredOutAccountBookList = outAccountBookList.filter { it.o_budregi_yn != 1 }
-
             val groupedOutAccountBookList = filteredOutAccountBookList
                 .groupBy {
                     val dateTime = LocalDateTime.parse(it.o_date, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
@@ -101,9 +103,8 @@ class AccountBookViewModel : ViewModel() {
                 .map { (key, group) ->
                     val sumAmount = group.sumOf { it.o_amount }
                     val itemCount = group.size
-                    CategoryAccountBookClass(key.first, sumAmount, itemCount, key.second.toString())
+                    CategoryAccountBookClass(key.first, sumAmount, itemCount, key.second.toString(),'o')
                 }
-            Log.e("테스트_in","$groupedOutAccountBookList")
             outCategoryList.addAll(groupedOutAccountBookList)
 
             val filteredInAccountBookList = inAccountBookList.filter { it.i_budregi_yn != 1 }
@@ -116,17 +117,18 @@ class AccountBookViewModel : ViewModel() {
                 .map { (key, group) ->
                     val sumAmount = group.sumOf { it.i_amount }
                     val itemCount = group.size
-                    CategoryAccountBookClass(key.first, sumAmount, itemCount, key.second.toString())
+                    CategoryAccountBookClass(key.first, sumAmount, itemCount, key.second.toString(),'i')
                 }
-
             inCategoryList.addAll(groupedInAccountBookList)
-            Log.e("테스트_out","$groupedInAccountBookList")
+
 
             val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
             allAccountBookList.sortBy { LocalDateTime.parse(it.date, formatter) }
             _allAccountBookList.value = allAccountBookList
             _inCategoryAccountBook.value = inCategoryList
             _outCategoryAccountBook.value = outCategoryList
+            Log.e("테스트_allIn","${inCategoryList}")
+            Log.e("테스트_allOut","${outCategoryList}")
         }
     }
 
@@ -139,19 +141,16 @@ class AccountBookViewModel : ViewModel() {
             // month = 2023-12
             try {
                 val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-
                 inAmount = inAccountBookList.filter {
                     LocalDate.parse("${it.i_date.substring(0, 7)}-01", formatter) == LocalDate.parse("${month}-01", formatter)
                 }.filter {
                     it.i_budregi_yn == 0
                 }.sumOf { it.i_amount }
-
                 outAmount = outAccountBookList.filter {
                     LocalDate.parse("${it.o_date.substring(0, 7)}-01", formatter) == LocalDate.parse("${month}-01", formatter)
                 }.filter {
                     it.o_budregi_yn == 0
                 }.sumOf { it.o_amount }
-
                 val sum = inAmount - outAmount
                 _monthAccountBook.value = MonthAccountBookClass(inAmount, outAmount, sum, month)
                 Log.e("테스트_view", "$sum")
@@ -212,7 +211,45 @@ class AccountBookViewModel : ViewModel() {
             }
         }
     }
+    fun getMonthCategoryAccountBookList(uIdx: Int, inOrOut:Char,category: String) {
+        viewModelScope.launch {
+            when(inOrOut){
+                'i'->{
+                    val inAccountBookList = fetchInData(uIdx)
+                    val monthCategoryABList = inAccountBookList
+                        .filter { it.i_category == category }
+                        .mapNotNull { i ->
+                            i.i_idx?.let {
+                                AccountBookClass(
+                                    'i',
+                                    it, uIdx, i.cre_user, i.u_nicknm, i.i_amount, i.i_content, i.i_category, i.i_date, i.i_imgpath, i.i_budregi_yn, null
+                                )
+                            }
+                        }
+                    _monthCategoryAccountBook.value = monthCategoryABList
+                }
+                'o' -> {
+                    val outAccountBookList = fetchOutData(uIdx)
+                    val monthCategoryABList = outAccountBookList
+                        .filter { it.o_category == category }
+                        .mapNotNull { o ->
+                            o.o_idx?.let {
+                                AccountBookClass(
+                                    'o',
+                                    it, uIdx, o.cre_user, o.u_nicknm, o.o_amount, o.o_content, o.o_category, o.o_date, o.o_imgpath, o.o_budregi_yn,o.o_property
+                                )
+                            }
+                        }
+                    _monthCategoryAccountBook.value = monthCategoryABList
+                }
 
+            }
+
+
+
+
+        }
+    }
 
 
 
