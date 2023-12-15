@@ -32,8 +32,10 @@
                 style="@style/Theme.Georgeois.Text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="@dimen/margin_8dp"
+                android:layout_marginStart="6dp"
                 android:layout_weight="1"
+                android:layout_marginBottom="@dimen/margin_8dp"
                 android:text="내용"
                 android:textSize="@dimen/font_size_16sp" />
 
@@ -53,7 +55,7 @@
                 android:layout_weight="1"
                 android:gravity="right"
                 android:text="날짜"
-                android:textSize="@dimen/font_size_16sp" />
+                android:textSize="@dimen/font_size_14sp" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
