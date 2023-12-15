@@ -398,8 +398,8 @@ class UserViewModel : ViewModel() {
 
 
     // --------- 비밀번호 재설정 ---------
-    fun resetPassword(idx: String, nickname: String, password: String) {
-        val result = UserRepository.resetPassword(idx.toInt(), nickname, password)
+    fun resetPassword(idx: Int, nickname: String, password: String) {
+        val result = UserRepository.resetPassword(idx, nickname, password)
 
         result.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(
