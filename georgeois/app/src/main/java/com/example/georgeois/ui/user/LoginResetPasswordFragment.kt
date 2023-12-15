@@ -96,7 +96,7 @@ class LoginResetPasswordFragment : Fragment() {
                 val password = loginResetPasswordBinding.textInputEditTextLoginResetPasswordPw.text.toString()
 
                 if (userViewModel.pwFieldState.value is FieldState.Success && userViewModel.confirmPwFieldState.value is FieldState.Success) {
-                    userViewModel.resetPassword(u_idx!!, u_nicknm!!, password)
+                    userViewModel.resetPassword(u_idx!!.toInt(), u_nicknm!!, password)
                 } else {
                     Toast.makeText(requireContext(), "비밀번호를 확인해 주세요.", Toast.LENGTH_SHORT).show()
                 }
