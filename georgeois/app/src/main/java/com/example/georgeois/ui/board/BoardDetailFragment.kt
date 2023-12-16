@@ -1,7 +1,8 @@
 package com.example.georgeois.ui.board
 
+import android.content.DialogInterface
 import android.content.res.ColorStateList
-import android.icu.lang.UCharacter.GraphemeClusterBreak.T
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -9,20 +10,23 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.georgeois.R
 import com.example.georgeois.databinding.FragmentBoardDetailBinding
 import com.example.georgeois.databinding.RowBoardDetailCommentBinding
-import com.example.georgeois.databinding.RowHomeAnalysisCategoryBinding
 import com.example.georgeois.dataclass.BoardClass
+import com.example.georgeois.repository.BoardRepository
 import com.example.georgeois.ui.main.MainActivity
 import com.example.georgeois.viewModel.BoardViewModel
 import com.example.georgeois.viewModel.UserViewModel
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -62,8 +66,22 @@ class BoardDetailFragment : Fragment() {
                     inflateMenu(R.menu.menu_board_update)
                     setOnMenuItemClickListener{
                         when(it.itemId){
-                            R.id.edit_menu-> Toast.makeText(requireContext(),"수정버튼이용",Toast.LENGTH_SHORT).show()
-                            R.id.delete_menu-> Toast.makeText(requireContext(),"삭제버튼이용",Toast.LENGTH_SHORT).show()
+                            R.id.edit_menu-> {
+
+                            }
+                            R.id.delete_menu-> {
+                                val deleteBuilder = MaterialAlertDialogBuilder(context, R.style.DialogTheme).apply {
+                                    val customTitle = setCustomTitle("정말로 삭제하시겠습니까?")
+                                    setCustomTitle(customTitle)
+                                    setNegativeButton("삭제"){ dialogInterface: DialogInterface, i: Int ->
+                                        BoardRepository.deleteBoard(board.b_idx!!)
+                                        dialogInterface.dismiss()
+                                        mainActivity.removeFragment(MainActivity.BOARD_DETAIL_FRAGMENT)
+                                    }
+                                    setPositiveButton("취소",null)
+                                }
+                                deleteBuilder.show()
+                            }
                         }
                         true
                     }
@@ -160,6 +178,17 @@ class BoardDetailFragment : Fragment() {
         override fun getItemCount(): Int {
             return itemList.size
         }
+    }
+
+    fun setCustomTitle(title: String): TextView {
+        val customTitle = TextView(context).apply {
+            text = title  // 타이틀 텍스트 설정
+            textSize = 25f  // 텍스트 사이즈 설정
+            typeface = ResourcesCompat.getFont(context, R.font.space)  // 글꼴 스타일 설정
+            setTextColor(Color.BLACK)  // 텍스트 색상 설정
+            setPadding(100, 100, 0, 20)  // 패딩 설정 (단위: px)
+        }
+        return customTitle
     }
 
 

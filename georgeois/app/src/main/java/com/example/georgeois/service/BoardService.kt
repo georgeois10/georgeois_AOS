@@ -4,6 +4,7 @@ import com.example.georgeois.dataclass.BoardClass
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.Body
+import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.Headers
@@ -18,5 +19,7 @@ interface BoardService {
     @GET("selectBoard.php")
     fun selectBoard(): Call<Map<String, List<BoardClass>>>
 
-
+    @FormUrlEncoded
+    @POST("delynBoard.php")
+    fun delynBoard(@Field("idx") idx: Int): Call<ResponseBody>
 }

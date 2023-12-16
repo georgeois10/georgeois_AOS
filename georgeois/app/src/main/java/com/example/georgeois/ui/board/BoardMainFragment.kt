@@ -135,7 +135,6 @@ class BoardMainFragment : Fragment() {
 
         inner class BoardMainViewHolder(val rowBoardMainBinding: RowBoardMainBinding) :
             RecyclerView.ViewHolder(rowBoardMainBinding.root) {
-            private val boardTitle :TextView = rowBoardMainBinding.textViewRowBoardMainTitle
 
             init {
 
