@@ -67,14 +67,13 @@ class BoardRegisterFragment : Fragment() {
                 }
             }
 
-            contentTextWatcher = ContentTextWatcher(textIputEditTextBoardRegisterContent,textViewBoardRegisterTextCount)
-            textInputLayoutBoardRegisterContent.editText?.addTextChangedListener(contentTextWatcher)
+            contentTextWatcher = ContentTextWatcher(textViewBoardRegisterTextCount)
+            editTextBoardRegisterContext.addTextChangedListener(contentTextWatcher)
             fragmentBoardRegisterBinding.textInputEditTextBoardRegisterTitle.requestFocus()
             fragmentBoardRegisterBinding.textInputEditTextBoardRegisterTitle.postDelayed({
                 val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 imm.showSoftInput(fragmentBoardRegisterBinding.textInputEditTextBoardRegisterTitle, InputMethodManager.SHOW_IMPLICIT)
-            }, 200) // Delay for 200 milliseconds
-
+            }, 200)
             imageButtonBoardRegisterAdd.setOnClickListener {
                 constraintLayoutBoardRegister.visibility = View.VISIBLE
                 scrollToBottom()
@@ -90,7 +89,7 @@ class BoardRegisterFragment : Fragment() {
     fun save(){
         fragmentBoardRegisterBinding.run {
 
-            val Content = textIputEditTextBoardRegisterContent.text?.toString()
+            val Content = editTextBoardRegisterContext.text?.toString()
             val Title = textInputEditTextBoardRegisterTitle.text?.toString()
             if(!Content.isNullOrBlank() && !Title.isNullOrBlank()){
                 var boardClass = BoardClass(
@@ -116,7 +115,6 @@ class BoardRegisterFragment : Fragment() {
 
     private fun scrollToBottom() {
         fragmentBoardRegisterBinding.scrollViewBoardRegister.post {
-            // This ensures that the scrolling takes place after the layout is complete
             fragmentBoardRegisterBinding.scrollViewBoardRegister.fullScroll(View.FOCUS_DOWN)
         }
     }

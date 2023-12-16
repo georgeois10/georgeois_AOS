@@ -10,7 +10,7 @@ import android.widget.TextView
 import com.example.georgeois.R
 import com.google.android.material.textfield.TextInputEditText
 
-class ContentTextWatcher(private val textInputEditText: TextInputEditText, private val textView: TextView) : TextWatcher {
+class ContentTextWatcher(private val textView: TextView) : TextWatcher {
 
     private val maxCharacterCount = 1000
 
@@ -40,9 +40,5 @@ class ContentTextWatcher(private val textInputEditText: TextInputEditText, priva
 
         shakeAnimator.start()
     }
-
-    private fun shakeView(editText: TextInputEditText) {
-        val parentView = editText.parent as View // Assuming TextInputEditText is directly inside a parent view
-        shakeView(parentView)
-    }
+    
 }

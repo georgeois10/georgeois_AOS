@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
+    android:id="@+id/linearLayout_test"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -45,34 +46,19 @@
                     android:hint="제목" />
             </com.google.android.material.textfield.TextInputLayout>
 
-<!--            <EditText-->
-<!--                android:layout_marginTop="@dimen/margin_12dp"-->
-<!--                android:id="@+id/editText_boardRegister_context"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:gravity="top"-->
-<!--                android:hint="내용"-->
-<!--                style="@style/Theme.Georgeois.Text"-->
-<!--                android:textSize="@dimen/font_size_16sp"-->
-<!--                android:background="#00FFFFFF"/>-->
-
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/textInputLayout_boardRegister_content"
+            <EditText
+                android:layout_marginTop="@dimen/margin_12dp"
+                android:id="@+id/editText_boardRegister_context"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="top"
+                android:hint="내용"
+                android:padding="@dimen/margin_10dp"
                 style="@style/Theme.Georgeois.Text"
-                app:boxBackgroundMode="none">
+                android:textSize="@dimen/font_size_16sp"
+                android:maxLength="1000"
+                android:background="#00FFFFFF"/>
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/textIputEditText_boardRegister_content"
-                    style="@style/Theme.Georgeois.Text"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="top"
-                    android:maxLength="1000"
-                    android:textSize="@dimen/font_size_16sp" />
-            </com.google.android.material.textfield.TextInputLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/constraintLayout_boardRegister"
