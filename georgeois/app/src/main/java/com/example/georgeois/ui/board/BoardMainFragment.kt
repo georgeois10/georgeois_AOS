@@ -26,6 +26,7 @@ import com.example.georgeois.utill.SpaceItemDecoration
 import com.example.georgeois.viewModel.BoardViewModel
 import com.example.georgeois.viewModel.UserViewModel
 import kotlinx.coroutines.launch
+import java.io.Serializable
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -140,8 +141,8 @@ class BoardMainFragment : Fragment() {
 
                 rowBoardMainBinding.root.setOnClickListener {
                     val bundle = Bundle()
-                    bundle.putString("boardTitle", boardTitle.text.toString())
-                    if(boardTitle.text == "Item 2") bundle.putString("boardOwner","Owner")
+                    bundle.putSerializable("board", boardList[position] as Serializable)
+
                     mainActivity.replaceFragment(MainActivity.BOARD_DETAIL_FRAGMENT,true,bundle)
                 }
             }

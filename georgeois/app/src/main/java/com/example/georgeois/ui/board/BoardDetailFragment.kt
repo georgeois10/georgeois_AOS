@@ -1,41 +1,64 @@
 package com.example.georgeois.ui.board
 
 import android.content.res.ColorStateList
+import android.icu.lang.UCharacter.GraphemeClusterBreak.T
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.georgeois.R
 import com.example.georgeois.databinding.FragmentBoardDetailBinding
 import com.example.georgeois.databinding.RowBoardDetailCommentBinding
 import com.example.georgeois.databinding.RowHomeAnalysisCategoryBinding
+import com.example.georgeois.dataclass.BoardClass
 import com.example.georgeois.ui.main.MainActivity
+import com.example.georgeois.viewModel.BoardViewModel
+import com.example.georgeois.viewModel.UserViewModel
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 class BoardDetailFragment : Fragment() {
     lateinit var boardDetailBinding: FragmentBoardDetailBinding
     lateinit var mainActivity: MainActivity
+    lateinit var userViewModel: UserViewModel
+    lateinit var boardViewModel: BoardViewModel
     private var isClicked = false
+    var uIdx = 0
+    var uNickName = ""
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         boardDetailBinding = FragmentBoardDetailBinding.inflate(inflater)
         mainActivity = activity as MainActivity
+        userViewModel = ViewModelProvider(requireActivity())[UserViewModel::class.java]
+        boardViewModel = ViewModelProvider(requireActivity())[BoardViewModel::class.java]
         boardDetailBinding.run {
-            var boardTitle = arguments?.getString("boardTitle")!!
-            var owner = arguments?.getString("boardOwner")
+            userViewModel.user.observe(requireActivity()){
+                uIdx = it!!.u_idx
+                uNickName = it!!.u_nickNm
+            }
+
+            val board = arguments?.getSerializable("board") as? BoardClass
+
             materialToolbarBoardDetail.run {
-                title = boardTitle
-                setNavigationIcon(R.drawable.ic_arrow_back_24px)
+                title = board!!.b_title
                 setNavigationOnClickListener {
                     mainActivity.removeFragment(MainActivity.BOARD_DETAIL_FRAGMENT)
                 }
-                if(owner!=null) {
+                Log.e("게시판-테스트","$board")
+                Log.e("게시판-user","$uIdx")
+                if(board.u_idx==uIdx) {
                     inflateMenu(R.menu.menu_board_update)
                     setOnMenuItemClickListener{
                         when(it.itemId){
@@ -48,7 +71,16 @@ class BoardDetailFragment : Fragment() {
                 }
                 
             }
-            textViewBoardDetailTitle.text = boardTitle
+            textViewBoardDetailTitle.text = board!!.b_title
+            textViewBoardDetailContent.text = board!!.b_content
+            textViewBoardDetailCommentCount.text = board!!.b_comm_cnt.toString()
+            textViewBoardDetailCommentCount2.text = board!!.b_comm_cnt.toString()
+            textViewBoardDetailHitsCount.text = board!!.b_hits.toString()
+            textViewBoardDetailRecommendCount.text = board!!.b_reco_cnt.toString()
+            textViewBoardDetailNickName.text = uNickName
+            var settingDate = LocalDateTime.parse(board.b_date, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+                .format(DateTimeFormatter.ofPattern("yyyy년 MM월 dd일"))
+            textViewBoardDetailDate.text = settingDate
             imageButtonBoardDetailRecommend.setOnClickListener {
                 isClicked = !isClicked // 클릭 상태 토글
 
