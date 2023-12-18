@@ -140,8 +140,8 @@ class BoardMainFragment : Fragment() {
 
                 rowBoardMainBinding.root.setOnClickListener {
                     val bundle = Bundle()
-                    bundle.putSerializable("board", boardList[position] as Serializable)
-
+                    boardList[position].b_idx?.let { it1 -> bundle.putInt("boardIdx", it1) }
+                    boardList[position].u_idx?.let { it1 -> bundle.putInt("boardUIdx", it1) }
                     mainActivity.replaceFragment(MainActivity.BOARD_DETAIL_FRAGMENT,true,bundle)
                 }
             }

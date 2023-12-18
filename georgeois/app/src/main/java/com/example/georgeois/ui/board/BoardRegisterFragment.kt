@@ -13,6 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import com.example.georgeois.R
 import com.example.georgeois.databinding.FragmentBoardRegisterBinding
 import com.example.georgeois.dataclass.BoardClass
+import com.example.georgeois.dataclass.InAccountBookClass
 import com.example.georgeois.repository.BoardRepository
 import com.example.georgeois.repository.InAccountBookRepository
 import com.example.georgeois.ui.main.MainActivity
@@ -35,7 +36,8 @@ class BoardRegisterFragment : Fragment() {
     var uIdx = 0
     var uNicknm = ""
     var cre_user = ""
-
+    var boardIdx : Int? = null
+    lateinit var result : BoardClass
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -52,8 +54,22 @@ class BoardRegisterFragment : Fragment() {
         }
 
         fragmentBoardRegisterBinding.run {
+            boardIdx = arguments?.getInt("boardIdx")
+
+            if (boardIdx != null) {
+                lifecycleScope.launch {
+                    boardViewModel.fetchAllBoard()
+                }
+                boardViewModel.allBoardList.observe(viewLifecycleOwner) {
+                    result = it.find { it.b_idx == boardIdx }!!
+                    textInputEditTextBoardRegisterTitle.setText("${result!!.b_title}")
+                    editTextBoardRegisterContext.setText("${result!!.b_content}")
+                    materialToolbarBoardRegister.title = "게시글 수정"
+                }
+            } else{
+                materialToolbarBoardRegister.title = "게시글 작성"
+            }
             materialToolbarBoardRegister.run {
-                title = "게시글 작성"
                 setNavigationIcon(R.drawable.ic_arrow_back_24px)
                 setNavigationOnClickListener {
                     mainActivity.removeFragment(MainActivity.BOARD_REGISTER_FRAGMENT)
@@ -61,7 +77,14 @@ class BoardRegisterFragment : Fragment() {
                 inflateMenu(R.menu.menu_save)
                 setOnMenuItemClickListener{
                     when(it.itemId){
-                        R.id.save_menu->save()
+                        R.id.save_menu->{
+                            if(boardIdx==null){
+                                save()
+                            }else{
+                                update(result)
+                            }
+
+                        }
                     }
                     true
                 }
@@ -118,6 +141,36 @@ class BoardRegisterFragment : Fragment() {
             fragmentBoardRegisterBinding.scrollViewBoardRegister.fullScroll(View.FOCUS_DOWN)
         }
     }
+
+    fun update(boardClass: BoardClass) {
+        fragmentBoardRegisterBinding.run {
+            val content = editTextBoardRegisterContext.text?.toString()
+            val title = textInputEditTextBoardRegisterTitle.text?.toString()
+
+            if (!content.isNullOrBlank() && !title.isNullOrBlank()) {
+                val updateBoard = BoardClass(
+                    boardClass.b_idx,
+                    uIdx,
+                    title,
+                    uNicknm,
+                    content,
+                    "none",
+                    boardClass.b_hits,
+                    boardClass.b_reco_cnt,
+                    boardClass.b_comm_cnt,
+                    boardClass.b_noti_cnt,
+                    boardClass.b_date,
+                    cre_user
+                )
+
+                BoardRepository.updateBoard(updateBoard)
+                mainActivity.removeFragment(MainActivity.BOARD_REGISTER_FRAGMENT)
+            }
+
+            Snackbar.make(fragmentBoardRegisterBinding.root, "수정되었습니다.", Snackbar.LENGTH_SHORT).show()
+        }
+    }
+
 
 
 }

@@ -1,6 +1,8 @@
 package com.example.georgeois.service
 
 import com.example.georgeois.dataclass.BoardClass
+import com.example.georgeois.dataclass.InAccountBookClass
+import com.example.georgeois.repository.BoardRepository
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.Body
@@ -20,6 +22,15 @@ interface BoardService {
     fun selectBoard(): Call<Map<String, List<BoardClass>>>
 
     @FormUrlEncoded
+    @POST("selectIdxBoard.php")
+    fun selectIdxBoard(@Field("u_Idx") idx: Int): Call<Map<String, List<BoardClass>>>
+
+    @FormUrlEncoded
     @POST("delynBoard.php")
     fun delynBoard(@Field("idx") idx: Int): Call<ResponseBody>
+
+
+    @Headers("Content-Type: application/json")
+    @POST("updateBoard.php")
+    fun updateBoard(@Body boardClass: BoardClass): Call<ResponseBody>
 }

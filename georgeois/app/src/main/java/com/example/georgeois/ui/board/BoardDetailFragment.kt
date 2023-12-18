@@ -5,7 +5,6 @@ import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -16,6 +15,8 @@ import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.georgeois.R
@@ -27,54 +28,67 @@ import com.example.georgeois.ui.main.MainActivity
 import com.example.georgeois.viewModel.BoardViewModel
 import com.example.georgeois.viewModel.UserViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import kotlinx.coroutines.launch
+import java.io.Serializable
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 class BoardDetailFragment : Fragment() {
-    lateinit var boardDetailBinding: FragmentBoardDetailBinding
+    lateinit var fragmentBoardDetailBinding: FragmentBoardDetailBinding
     lateinit var mainActivity: MainActivity
     lateinit var userViewModel: UserViewModel
     lateinit var boardViewModel: BoardViewModel
     private var isClicked = false
     var uIdx = 0
     var uNickName = ""
+    var boardIdx = 0
+    var boardUIdx = 0
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        boardDetailBinding = FragmentBoardDetailBinding.inflate(inflater)
+        fragmentBoardDetailBinding = FragmentBoardDetailBinding.inflate(inflater)
         mainActivity = activity as MainActivity
         userViewModel = ViewModelProvider(requireActivity())[UserViewModel::class.java]
         boardViewModel = ViewModelProvider(requireActivity())[BoardViewModel::class.java]
-        boardDetailBinding.run {
+        fragmentBoardDetailBinding.run {
+            boardIdx = arguments?.getInt("boardIdx")!!
+            boardUIdx = arguments?.getInt("boardUIdx")!!
             userViewModel.user.observe(requireActivity()){
                 uIdx = it!!.u_idx
                 uNickName = it!!.u_nickNm
             }
-
-            val board = arguments?.getSerializable("board") as? BoardClass
+            boardViewModel.getUidxBoardList(uIdx)
+            lifecycleScope.launch {
+                boardViewModel.fetchAllBoard()
+            }
+            boardViewModel.allBoardList.observe(viewLifecycleOwner){
+                var result = it.find { it.b_idx == boardIdx }
+                updateUI(result!!)
+            }
 
             materialToolbarBoardDetail.run {
-                title = board!!.b_title
                 setNavigationOnClickListener {
                     mainActivity.removeFragment(MainActivity.BOARD_DETAIL_FRAGMENT)
                 }
-                Log.e("게시판-테스트","$board")
-                Log.e("게시판-user","$uIdx")
-                if(board.u_idx==uIdx) {
+
+                if(boardUIdx==uIdx) {
                     inflateMenu(R.menu.menu_board_update)
                     setOnMenuItemClickListener{
                         when(it.itemId){
                             R.id.edit_menu-> {
-
+                                val bundle = Bundle()
+                                bundle.putInt("boardIdx",boardIdx)
+                                bundle.putInt("boardUIdx",boardUIdx)
+                                mainActivity.replaceFragment(MainActivity.BOARD_REGISTER_FRAGMENT,true,bundle)
                             }
                             R.id.delete_menu-> {
                                 val deleteBuilder = MaterialAlertDialogBuilder(context, R.style.DialogTheme).apply {
                                     val customTitle = setCustomTitle("정말로 삭제하시겠습니까?")
                                     setCustomTitle(customTitle)
                                     setNegativeButton("삭제"){ dialogInterface: DialogInterface, i: Int ->
-                                        BoardRepository.deleteBoard(board.b_idx!!)
+                                        BoardRepository.deleteBoard(boardIdx)
                                         dialogInterface.dismiss()
                                         mainActivity.removeFragment(MainActivity.BOARD_DETAIL_FRAGMENT)
                                     }
@@ -87,18 +101,9 @@ class BoardDetailFragment : Fragment() {
                     }
                     linearLayoutBoardDetailReport.visibility = View.GONE
                 }
-                
+
             }
-            textViewBoardDetailTitle.text = board!!.b_title
-            textViewBoardDetailContent.text = board!!.b_content
-            textViewBoardDetailCommentCount.text = board!!.b_comm_cnt.toString()
-            textViewBoardDetailCommentCount2.text = board!!.b_comm_cnt.toString()
-            textViewBoardDetailHitsCount.text = board!!.b_hits.toString()
-            textViewBoardDetailRecommendCount.text = board!!.b_reco_cnt.toString()
-            textViewBoardDetailNickName.text = uNickName
-            var settingDate = LocalDateTime.parse(board.b_date, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-                .format(DateTimeFormatter.ofPattern("yyyy년 MM월 dd일"))
-            textViewBoardDetailDate.text = settingDate
+
             imageButtonBoardDetailRecommend.setOnClickListener {
                 isClicked = !isClicked // 클릭 상태 토글
 
@@ -122,28 +127,14 @@ class BoardDetailFragment : Fragment() {
 
             var itemList = mutableListOf(
                 "내역",
-                "내역2",
-                "내역3",
-                "내역4",
-                "내역5",
-                "내역6",
-                "내역7",
-                "내역8",
-                "내역9",
-                "내역10",
-                "내역11",
-                "내역12",
-                "내역123",
-                "내역14",
-                "내역15",
-
+                "내역2"
                 )
 
             val adapter = BoardDetailAdapter(itemList)
             recyclerviewBoardDetailComment.layoutManager = LinearLayoutManager(requireContext())
             recyclerviewBoardDetailComment.adapter = adapter
         }
-        return boardDetailBinding.root
+        return fragmentBoardDetailBinding.root
     }
     inner class BoardDetailAdapter(var itemList: MutableList<String>) :
         RecyclerView.Adapter<BoardDetailAdapter.BoardDetailViewHolder>() {
@@ -191,5 +182,34 @@ class BoardDetailFragment : Fragment() {
         return customTitle
     }
 
+    override fun onResume() {
+        super.onResume()
+        userViewModel.user.observe(requireActivity()){
+            uIdx = it!!.u_idx
+            uNickName = it!!.u_nickNm
+        }
+
+        boardViewModel.allBoardList.observe(viewLifecycleOwner){
+            var result = it.find { it.b_idx == boardIdx }
+            updateUI(result!!)
+        }
+
+
+    }
+    fun updateUI(board:BoardClass){
+        fragmentBoardDetailBinding.run {
+            materialToolbarBoardDetail.title = board!!.b_title
+            textViewBoardDetailTitle.text = board!!.b_title
+            textViewBoardDetailContent.text = board!!.b_content
+            textViewBoardDetailCommentCount.text = board!!.b_comm_cnt.toString()
+            textViewBoardDetailCommentCount2.text = board!!.b_comm_cnt.toString()
+            textViewBoardDetailHitsCount.text = board!!.b_hits.toString()
+            textViewBoardDetailRecommendCount.text = board!!.b_reco_cnt.toString()
+            textViewBoardDetailNickName.text = uNickName
+            var settingDate = LocalDateTime.parse(board!!.b_date, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+                .format(DateTimeFormatter.ofPattern("yyyy년 MM월 dd일"))
+            textViewBoardDetailDate.text = settingDate
+        }
+    }
 
 }

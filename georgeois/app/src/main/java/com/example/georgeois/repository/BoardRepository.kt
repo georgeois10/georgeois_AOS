@@ -38,6 +38,9 @@ class BoardRepository {
         suspend fun getBoardList(): List<BoardClass> {
             return retrofit.selectBoard().awaitResponse().body()?.get("board") ?: emptyList()
         }
+        suspend fun getIdxBoardList(uIdx:Int): List<BoardClass> {
+            return retrofit.selectIdxBoard(uIdx).awaitResponse().body()?.get("board") ?: emptyList()
+        }
 
         fun deleteBoard(idx:Int):Call<ResponseBody>{
             val result = retrofit.delynBoard(idx)
@@ -55,6 +58,28 @@ class BoardRepository {
 
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                     Log.d("php delyn변경", "실패")
+                }
+
+            })
+            return result
+        }
+
+        fun updateBoard(boardClass: BoardClass):Call<ResponseBody> {
+            val result = retrofit.updateBoard(boardClass)
+            result.enqueue(object : Callback<ResponseBody> {
+                override fun onResponse(
+                    call: Call<ResponseBody>,
+                    response: Response<ResponseBody>
+                ) {
+                    if (response.isSuccessful) {
+                        Log.d("php update", "${response.body()?.string()}")
+                    } else {
+                        Log.e("php update", "에러남 ${response.code()}: ${response.message()}")
+                    }
+                }
+
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                    Log.d("php update", "실패")
                 }
 
             })
