@@ -1,6 +1,5 @@
 package com.example.georgeois.dataclass
 
-import java.io.Serializable
 
 data class BoardClass(
     val b_idx : Int?,
@@ -19,4 +18,4 @@ data class BoardClass(
     val b_noti_cnt : Int,
     val b_date : String,
     val cre_user : String,
-): Serializable
+)

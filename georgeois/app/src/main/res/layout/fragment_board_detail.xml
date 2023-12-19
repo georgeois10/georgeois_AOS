@@ -218,7 +218,7 @@
                 android:orientation="horizontal">
 
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/textInputLayout_boardDetail_inputMessage"
+                    android:id="@+id/textInputLayout_boardDetail_sendComment"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
@@ -228,7 +228,7 @@
                     app:boxStrokeWidthFocused="0dp">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/textInputEditText_boardDetail_inputMessage"
+                        android:id="@+id/textInputEditText_boardDetail_sendComment"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:background="@drawable/border_chat_main_recyclerview"
@@ -244,6 +244,7 @@
                     android:layout_gravity="center_vertical">
 
                     <ImageView
+                        android:id="@+id/imageView_boardDetail_sendComment"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_gravity="center"

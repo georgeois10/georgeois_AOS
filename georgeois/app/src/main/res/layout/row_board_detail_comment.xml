@@ -7,25 +7,104 @@
     android:paddingBottom="@dimen/margin_8dp"
     android:orientation="vertical">
 
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="@dimen/margin_4dp"
         android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_4dp"
+            android:layout_weight="1"
             android:orientation="horizontal">
-
             <TextView
                 android:id="@+id/textView_boardDetailComment_name"
                 style="@style/Theme.Georgeois.Text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="유저닉네임"
+                android:layout_marginBottom="@dimen/margin_10dp"
+                android:textSize="@dimen/font_size_16sp" />
+
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="유저닉네임"
-                android:textSize="@dimen/font_size_16sp" />
+                app:cardBackgroundColor="#00FFFFFF"
+                app:cardCornerRadius="0dp"
+                app:cardElevation="0dp"
+                app:cardForegroundColor="#00FFFFFF"
+                app:cardMaxElevation="0dp"
+                app:strokeColor="@color/lightGray">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/margin_4dp"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/imagevView_rowComment_reco"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_thumb_up_24px"
+                        app:tint="@color/accentGray" />
+
+                    <View
+                        android:id="@+id/divider_visibility_forMe"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:background="?android:attr/listDivider" />
+
+                    <ImageView
+                        android:id="@+id/imageView_rowComment_report"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_report_24px"
+                        app:tint="@color/accentRed" />
+
+                    <View
+
+                        android:id="@+id/divider_visibility_forU"
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:visibility="gone"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:background="?android:attr/listDivider" />
+
+                    <ImageView
+                        android:id="@+id/imageView_rowComment_delete"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_delete_24px"
+                        android:visibility="gone"
+                        app:tint="@color/black" />
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="@dimen/margin_4dp"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/textView_boardDetailComment_content"
+                style="@style/Theme.Georgeois.Text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_8dp"
+                android:layout_marginBottom="@dimen/margin_4dp"
+                android:layout_weight="1"
+                android:text="댓글 내용"
+                android:textSize="@dimen/font_size_18sp" />
 
             <TextView
                 android:id="@+id/textView_boardDetailComment_date"
@@ -34,22 +113,16 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="right"
+                android:textColor="@color/lightGray"
                 android:text="날짜"
                 android:textSize="@dimen/font_size_16sp" />
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/textView_boardDetailComment_content"
-            style="@style/Theme.Georgeois.Text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_8dp"
-            android:layout_marginBottom="@dimen/margin_4dp"
-            android:text="댓글 내용"
-            android:textSize="@dimen/font_size_18sp" />
+
 
 
     </LinearLayout>
+
 
     <View
         android:layout_width="match_parent"
